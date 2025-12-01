@@ -1,0 +1,53 @@
+'use client';
+
+import { AlertModal } from '@/components/modal/alert-modal';
+import { Eye } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+
+const CellAction = ({ data }: { data: any }) => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const onConfirm = async () => {
+    try {
+      // You can perform delete or deactivate logic here if needed
+    } catch (error: any) {
+      // Handle error if needed
+    } finally {
+      setOpen(false);
+    }
+  };
+
+  const handleViewUser = () => {
+    router.push(
+      `/hotel-panel/service-management/chatwithstaff/details/${data.chatId}`
+    );
+  };
+
+
+  return (
+    <>
+      {/* Optional Alert Modal */}
+      <AlertModal
+        isOpen={open}
+        onCloseAction={() => setOpen(false)}
+        onConfirmAction={onConfirm}
+        loading={loading}
+        description="Are you sure you want to proceed with this action?"
+      />
+
+      <div className="flex space-x-2">
+        <button
+          onClick={handleViewUser}
+          className="p-1 rounded-md group hover:bg-[#a07d3d5e]"
+        >
+          <Eye className="w-4 text-button-dark group-hover:text-white" />
+        </button>
+      </div>
+    </>
+  );
+};
+
+export default CellAction;
