@@ -1164,6 +1164,7 @@ import { ImManWoman } from 'react-icons/im';
 import { Menu, X } from 'lucide-react';
 import { getSessionStorageItem } from 'utils/localstorage';
 import { allServices } from 'utils/allservices';
+import AnimatedSelect from '@/components/ui/AnimatedSelect';
 
 export default function RootLayout({
   children
@@ -1505,6 +1506,7 @@ function SuperAdminPanelSideNav() {
 
 function HotelPanelSideNav() {
   const [adminData, setAdminData] = useState<any>(null);
+  const [openGuestSubMenu, setOpenGuestSubMenu] = useState(false);
 
   useEffect(() => {
     setAdminData(getSessionStorageItem<any>('admin'));
@@ -1580,13 +1582,52 @@ function HotelPanelSideNav() {
             </NavItem>
           )}
           {hasAccess('guest-management') && (
-            <NavItem
-              href="/hotel-panel/guest-management"
-              label="Booking Management"
-            >
-              <ImManWoman className="h-5 w-5 lg:h-6 lg:w-6" />
-            </NavItem>
+            <div className="rounded-lg">
+              <div onClick={() => setOpenGuestSubMenu((prev) => !prev)}>
+                <NavItem
+                  href="/hotel-panel/guest-management"
+                  label="Booking Management"
+                >
+                  <Users className="h-5 w-5 lg:h-6 lg:w-6" />
+                </NavItem>
+              </div>
+
+              <div
+                className={`pl-4 mt-1 overflow-hidden transition-all duration-300 ease-in-out ${
+                  openGuestSubMenu ? 'max-h-screen' : 'max-h-0'
+                }`}
+              >
+                <NavItem
+                  href="/hotel-panel/guest-management/room-upgrade"
+                  label="Room Upgrade"
+                >
+                  <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
+                </NavItem>
+
+                <NavItem
+                  href="/hotel-panel/guest-management/room-categories"
+                  label="Room Categories"
+                >
+                  <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
+                </NavItem>
+
+                <NavItem
+                  href="/hotel-panel/guest-management/food-plans"
+                  label="Food Plans"
+                >
+                  <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
+                </NavItem>
+
+                <NavItem
+                  href="/hotel-panel/guest-management/services"
+                  label="Services"
+                >
+                  <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
+                </NavItem>
+              </div>
+            </div>
           )}
+
           {hasServiceAccess() && (
             <NavItem
               href="/hotel-panel/service-management"
