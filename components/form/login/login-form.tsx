@@ -93,7 +93,7 @@ const LoginForm = () => {
         permissions: []
       };
 
-      const allowedModules = [];
+      const allowedModules: string[] = [];
 
       setSessionStorageItem('admin', {
         token: 'test-token',
