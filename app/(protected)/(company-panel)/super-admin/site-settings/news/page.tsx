@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import {
-  FiMoreVertical,
   FiPlus,
   FiEdit,
   FiTrash2,
@@ -29,8 +28,6 @@ export default function NewsPage() {
   };
 
   const [items, setItems] = useState<any[]>([]);
-  const [openId, setOpenId] = useState<string | null>(null);
-
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -84,10 +81,6 @@ export default function NewsPage() {
     setFormData(emptyForm);
   };
 
-  const toggleDropdown = (id: string) => {
-    setOpenId(openId === id ? null : id);
-  };
-
   const deleteNews = async (id: string) => {
     if (!confirm('Are you sure you want to delete this news?')) return;
 
@@ -137,54 +130,96 @@ export default function NewsPage() {
         </button>
       </div>
 
-      {/* LIST */}
-      {items.map((item) => (
-        <div
-          key={item._id}
-          className="border bg-white rounded-xl p-5 shadow-sm relative"
-        >
-          <h3 className="font-semibold text-[#3b2f1c]">{item.title}</h3>
-          <p className="text-sm text-gray-600">{item.excerpt}</p>
-
-          {/* Dropdown trigger */}
-          <button
-            className="absolute top-4 right-4 p-2"
-            onClick={() => toggleDropdown(item._id)}
+      {/* CARD GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {items.map((item) => (
+          <motion.div
+            key={item._id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 relative group"
           >
-            <FiMoreVertical size={18} />
-          </button>
-
-          {/* Dropdown (INSIDE MAP ONLY) */}
-          <AnimatePresence>
-            {openId === item._id && (
-              <motion.div
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                className="absolute right-4 top-0 bg-white border rounded-lg shadow-md w-36 overflow-hidden"
-              >
+            {/* Image Preview */}
+            <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+              {item.image ? (
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f3f4f6" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+                  }}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+              )}
+              
+              {/* Action Icons - Top Right */}
+              <div className="absolute top-3 right-3 flex gap-2">
                 <button
-                  className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50"
                   onClick={() => {
                     setEditingId(item._id);
                     setFormData(item);
                     setShowForm(true);
                   }}
+                  className="p-2 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-md transition-all duration-200 hover:scale-110"
+                  title="Edit"
                 >
-                  <FiEdit size={16} /> Edit
+                  <FiEdit size={16} className="text-[#9b743f]" />
                 </button>
-
+                
                 <button
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-gray-50"
                   onClick={() => deleteNews(item._id)}
+                  className="p-2 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-md transition-all duration-200 hover:scale-110"
+                  title="Delete"
                 >
-                  <FiTrash2 size={16} /> Delete
+                  <FiTrash2 size={16} className="text-red-500" />
                 </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      ))}
+              </div>
+
+              {/* Category Badge */}
+              {item.category && (
+                <div className="absolute bottom-3 left-3">
+                  <span className="px-3 py-1 bg-[#9b743f] text-white text-xs font-medium rounded-full shadow-sm">
+                    {item.category}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Card Content */}
+            <div className="p-5">
+              <h3 className="font-semibold text-lg text-[#3b2f1c] mb-2 line-clamp-2">
+                {item.title}
+              </h3>
+              
+              <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                {item.excerpt}
+              </p>
+
+              {/* Meta Info */}
+              <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
+                <span className="flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  {item.date ? new Date(item.date).toLocaleDateString() : 'No date'}
+                </span>
+                
+                {item.source && (
+                  <span className="text-[#9b743f] font-medium truncate max-w-[120px]" title={item.source}>
+                    {item.source}
+                  </span>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
 
       {/* FORM MODAL */}
       <AnimatePresence>
