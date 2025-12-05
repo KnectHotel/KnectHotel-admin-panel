@@ -33,7 +33,7 @@ export default function BlogsPage() {
   // FETCH BLOGS FROM API
   const fetchBlogs = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/blogsdetails');
+      const res = await fetch('http://localhost:3001/api/blogs');
       const data = await res.json();
       console.log('Blog API Response:', data); // Debug log
       
@@ -63,11 +63,11 @@ export default function BlogsPage() {
     e.preventDefault();
 
     const payload = { ...formData };
-    let url = 'http://localhost:3001/api/blogsdetails/createblogs';
+    let url = 'http://localhost:3001/api/blogs/createblogs';
     let method = 'POST';
 
     if (editingId) {
-      url = `http://localhost:3001/api/blogsdetails/${editingId}`;
+      url = `http://localhost:3001/api/blogs/${editingId}`;
       method = 'PUT';
     }
 
@@ -99,7 +99,7 @@ export default function BlogsPage() {
     if (!confirm('Are you sure you want to delete this blog?')) return;
 
     try {
-      const res = await fetch(`http://localhost:3001/api/blogsdetails/${id}`, {
+      const res = await fetch(`http://localhost:3001/api/blogs/${id}`, {
         method: 'DELETE'
       });
 
