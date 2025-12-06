@@ -7,7 +7,8 @@ import {
   FiBell,
   FiTrendingUp,
   FiFlag,
-  FiStar
+  FiStar,
+  FiUsers
 } from 'react-icons/fi';
 
 const sections = [
@@ -15,7 +16,8 @@ const sections = [
   { name: 'News', path: 'news', icon: <FiBell size={26} /> },
   { name: 'Updates', path: 'updates', icon: <FiTrendingUp size={26} /> },
   { name: 'Milestones', path: 'milestones', icon: <FiFlag size={26} /> },
-  { name: 'Reviews', path: 'reviews', icon: <FiStar size={26} /> }
+  { name: 'Reviews', path: 'reviews', icon: <FiStar size={26} /> },
+  { name: 'Collaborations', path: 'collaborations', icon: <FiUsers size={26} /> }
 ];
 
 export default function ContentManagementPage() {

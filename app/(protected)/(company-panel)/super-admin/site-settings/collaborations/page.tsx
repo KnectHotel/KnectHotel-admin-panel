@@ -1,29 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   FiPlus,
   FiEdit,
   FiTrash2,
   FiArrowLeft,
-  FiStar,
   FiX
 } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function BlogsPage() {
+export default function CollaborationPage() {
   const emptyForm = {
-    title: '',
-    image: '',
+    name: '',
     description: '',
-    content: '',
-    contributor: '',
-    article: '',
-    date: '',
-    BannerImage: '',
-    youtubeLink: '',
-    instagramLink: '',
-    linkdinLink: ''
+    logo: '',
+    type: ''
   };
 
   const [items, setItems] = useState<any[]>([]);
@@ -33,18 +25,17 @@ export default function BlogsPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  // FETCH BLOGS FROM API
-  const fetchBlogs = async () => {
+  // FETCH COLLABORATIONS FROM API
+  const fetchCollaborations = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/blogs');
+      const res = await fetch('http://localhost:3001/api/collaborations');
       const data = await res.json();
-      console.log('Blog API Response:', data); // Debug log
+      console.log('Collaboration API Response:', data);
       
-      // Handle different response structures
       if (data.data) {
         setItems(data.data);
-      } else if (data.blogs) {
-        setItems(data.blogs);
+      } else if (data.collaborations) {
+        setItems(data.collaborations);
       } else if (Array.isArray(data)) {
         setItems(data);
       } else {
@@ -58,7 +49,7 @@ export default function BlogsPage() {
   };
 
   useEffect(() => {
-    fetchBlogs();
+    fetchCollaborations();
   }, []);
 
   // HANDLE SUBMIT → CREATE OR UPDATE
@@ -66,11 +57,11 @@ export default function BlogsPage() {
     e.preventDefault();
 
     const payload = { ...formData };
-    let url = 'http://localhost:3001/api/blogs/createblogs';
+    let url = 'http://localhost:3001/api/collaborations';
     let method = 'POST';
 
     if (editingId) {
-      url = `http://localhost:3001/api/blogs/${editingId}`;
+      url = `http://localhost:3001/api/collaborations/${editingId}`;
       method = 'PUT';
     }
 
@@ -84,16 +75,16 @@ export default function BlogsPage() {
       const data = await res.json();
 
       if (res.ok) {
-        fetchBlogs(); // refresh list
+        fetchCollaborations();
         setShowForm(false);
         setEditingId(null);
         setFormData(emptyForm);
       } else {
-        alert('Error: ' + (data.message || 'Failed to save blog'));
+        alert('Error: ' + (data.message || 'Failed to save collaboration'));
       }
     } catch (err) {
       console.log('Error submitting:', err);
-      alert('Failed to save blog');
+      alert('Failed to save collaboration');
     }
   };
 
@@ -108,14 +99,14 @@ export default function BlogsPage() {
     if (!deleteId) return;
 
     try {
-      const res = await fetch(`http://localhost:3001/api/blogs/${deleteId}`, {
+      const res = await fetch(`http://localhost:3001/api/collaborations/${deleteId}`, {
         method: 'DELETE'
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        setItems((prev) => prev.filter((b) => b._id !== deleteId));
+        setItems((prev) => prev.filter((c) => c._id !== deleteId));
         setShowDeleteModal(false);
         setDeleteId(null);
       } else {
@@ -134,17 +125,10 @@ export default function BlogsPage() {
   const handleEdit = (item: any) => {
     setEditingId(item._id);
     setFormData({
-      title: item.title || '',
-      image: item.image || '',
+      name: item.name || '',
       description: item.description || '',
-      content: item.content || '',
-      contributor: item.contributor || '',
-      article: item.article || '',
-      date: item.date || '',
-      BannerImage: item.BannerImage || '',
-      youtubeLink: item.youtubeLink || '',
-      instagramLink: item.instagramLink || '',
-      linkdinLink: item.linkdinLink || ''
+      logo: item.logo || '',
+      type: item.type || ''
     });
     setShowForm(true);
   };
@@ -160,7 +144,7 @@ export default function BlogsPage() {
           >
             <FiArrowLeft size={20} />
           </button>
-          <h1 className="text-2xl font-semibold text-[#3b2f1c]">Blogs</h1>
+          <h1 className="text-2xl font-semibold text-[#3b2f1c]">Collaborations</h1>
         </div>
 
         <button
@@ -171,7 +155,7 @@ export default function BlogsPage() {
           }}
           className="flex items-center gap-2 bg-[#9b743f] text-white px-4 py-2 rounded-md shadow-sm hover:bg-[#825f34] transition-colors"
         >
-          <FiPlus /> Add Blog
+          <FiPlus /> Add Collaboration
         </button>
       </div>
 
@@ -188,11 +172,11 @@ export default function BlogsPage() {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={1.5}
-              d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
             />
           </svg>
-          <p className="text-lg font-medium">No blogs found</p>
-          <p className="text-sm opacity-70">Start by adding a new blog entry</p>
+          <p className="text-lg font-medium">No collaborations found</p>
+          <p className="text-sm opacity-70">Start by adding a new collaboration</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -203,16 +187,15 @@ export default function BlogsPage() {
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 relative group"
             >
-              {/* Image Preview */}
-              <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
-                {item.image ? (
+              {/* Logo/Header Section */}
+              <div className="relative h-48 bg-gradient-to-br from-[#f3f4f6] to-[#e5e7eb] overflow-hidden">
+                {item.logo ? (
                   <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover"
+                    src={item.logo}
+                    alt={item.name}
+                    className="w-full h-full object-contain p-8"
                     onError={(e) => {
-                      e.currentTarget.src =
-                        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f3f4f6" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+                      e.currentTarget.style.display = 'none';
                     }}
                   />
                 ) : (
@@ -228,7 +211,7 @@ export default function BlogsPage() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={1.5}
-                        d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+                        d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                       />
                     </svg>
                   </div>
@@ -253,12 +236,11 @@ export default function BlogsPage() {
                   </button>
                 </div>
 
-                {/* Rating Badge */}
-                {item.ratingAvg > 0 && (
+                {/* Type Badge */}
+                {item.type && (
                   <div className="absolute bottom-3 left-3">
-                    <span className="px-3 py-1 bg-[#9b743f] text-white text-xs font-medium rounded-full shadow-sm flex items-center gap-1">
-                      <FiStar size={12} fill="currentColor" />
-                      {item.ratingAvg} ({item.ratingCount})
+                    <span className="px-3 py-1 bg-[#9b743f] text-white text-xs font-medium rounded-full shadow-sm">
+                      {item.type}
                     </span>
                   </div>
                 )}
@@ -266,11 +248,11 @@ export default function BlogsPage() {
 
               {/* Card Content */}
               <div className="p-5">
-                <h3 className="font-semibold text-lg text-[#3b2f1c] mb-2 line-clamp-2">
-                  {item.title}
+                <h3 className="font-semibold text-lg text-[#3b2f1c] mb-2 line-clamp-1">
+                  {item.name}
                 </h3>
 
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                <p className="text-sm text-gray-600 mb-3 line-clamp-3">
                   {item.description || 'No description available'}
                 </p>
 
@@ -291,19 +273,10 @@ export default function BlogsPage() {
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                       />
                     </svg>
-                    {item.date
-                      ? new Date(item.date).toLocaleDateString()
+                    {item.createdAt
+                      ? new Date(item.createdAt).toLocaleDateString()
                       : 'No date'}
                   </span>
-
-                  {item.contributor && (
-                    <span
-                      className="text-[#9b743f] font-medium truncate max-w-[120px]"
-                      title={item.contributor}
-                    >
-                      {item.contributor}
-                    </span>
-                  )}
                 </div>
               </div>
             </motion.div>
@@ -311,7 +284,7 @@ export default function BlogsPage() {
         </div>
       )}
 
-      {/* ADD/EDIT BLOG MODAL */}
+      {/* ADD/EDIT COLLABORATION MODAL */}
       <AnimatePresence>
         {showForm && (
           <motion.div
@@ -324,12 +297,12 @@ export default function BlogsPage() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+              className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-[#9b743f] to-[#c49a5a]">
                 <h2 className="text-2xl font-bold text-white">
-                  {editingId ? 'Edit Blog' : 'Add New Blog'}
+                  {editingId ? 'Edit Collaboration' : 'Add New Collaboration'}
                 </h2>
                 <button
                   type="button"
@@ -354,18 +327,18 @@ export default function BlogsPage() {
                       Basic Information
                     </h3>
 
-                    {/* TITLE */}
+                    {/* NAME */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                        Title <span className="text-red-500">*</span>
+                        Name <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
                         required
-                        placeholder="Enter blog title"
-                        value={formData.title}
+                        placeholder="Enter collaboration name"
+                        value={formData.name}
                         onChange={(e) =>
-                          setFormData({ ...formData, title: e.target.value })
+                          setFormData({ ...formData, name: e.target.value })
                         }
                         className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
                       />
@@ -374,11 +347,12 @@ export default function BlogsPage() {
                     {/* DESCRIPTION */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                        Description
+                        Description <span className="text-red-500">*</span>
                       </label>
                       <textarea
-                        rows={3}
-                        placeholder="Brief description of the blog"
+                        rows={4}
+                        required
+                        placeholder="Brief description of the collaboration"
                         value={formData.description}
                         onChange={(e) =>
                           setFormData({ ...formData, description: e.target.value })
@@ -387,60 +361,21 @@ export default function BlogsPage() {
                       />
                     </div>
 
-                    {/* CONTENT */}
+                    {/* TYPE */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                        Content
+                        Type <span className="text-red-500">*</span>
                       </label>
-                      <textarea
-                        rows={4}
-                        placeholder="Full blog content"
-                        value={formData.content}
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g., Media, Technology, Business"
+                        value={formData.type}
                         onChange={(e) =>
-                          setFormData({ ...formData, content: e.target.value })
+                          setFormData({ ...formData, type: e.target.value })
                         }
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all resize-none"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
                       />
-                    </div>
-                  </div>
-
-                  {/* Meta Information Section */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
-                      Meta Information
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* CONTRIBUTOR */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                          Contributor
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="Contributor name"
-                          value={formData.contributor}
-                          onChange={(e) =>
-                            setFormData({ ...formData, contributor: e.target.value })
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
-                        />
-                      </div>
-
-                      {/* DATE */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                          Date
-                        </label>
-                        <input
-                          type="date"
-                          value={formData.date}
-                          onChange={(e) =>
-                            setFormData({ ...formData, date: e.target.value })
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
-                        />
-                      </div>
                     </div>
                   </div>
 
@@ -450,121 +385,20 @@ export default function BlogsPage() {
                       Media
                     </h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* IMAGE */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                          Main Image URL
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="https://example.com/image.jpg"
-                          value={formData.image}
-                          onChange={(e) =>
-                            setFormData({ ...formData, image: e.target.value })
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
-                        />
-                      </div>
-
-                      {/* BANNER IMAGE */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                          Banner Image URL
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="https://example.com/banner.jpg"
-                          value={formData.BannerImage}
-                          onChange={(e) =>
-                            setFormData({ ...formData, BannerImage: e.target.value })
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Article Section */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
-                      Article
-                    </h3>
-
-                    {/* ARTICLE */}
+                    {/* LOGO */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                        Article Content
+                        Logo URL
                       </label>
-                      <textarea
-                        rows={4}
-                        placeholder="Full article text"
-                        value={formData.article}
+                      <input
+                        type="text"
+                        placeholder="https://example.com/logo.png"
+                        value={formData.logo}
                         onChange={(e) =>
-                          setFormData({ ...formData, article: e.target.value })
+                          setFormData({ ...formData, logo: e.target.value })
                         }
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all resize-none"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
                       />
-                    </div>
-                  </div>
-
-                  {/* Social Links Section */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
-                      Social Links
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {/* YOUTUBE */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                          YouTube Link
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="https://youtube.com/..."
-                          value={formData.youtubeLink}
-                          onChange={(e) =>
-                            setFormData({ ...formData, youtubeLink: e.target.value })
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
-                        />
-                      </div>
-
-                      {/* INSTAGRAM */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                          Instagram Link
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="https://instagram.com/..."
-                          value={formData.instagramLink}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              instagramLink: e.target.value
-                            })
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
-                        />
-                      </div>
-
-                      {/* LINKEDIN */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                          LinkedIn Link
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="https://linkedin.com/..."
-                          value={formData.linkdinLink}
-                          onChange={(e) =>
-                            setFormData({ ...formData, linkdinLink: e.target.value })
-                          }
-                          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
-                        />
-                      </div>
                     </div>
                   </div>
 
@@ -585,7 +419,7 @@ export default function BlogsPage() {
                       type="submit"
                       className="px-6 py-2.5 bg-gradient-to-r from-[#9b743f] to-[#c49a5a] text-white rounded-lg font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
                     >
-                      {editingId ? 'Update Blog' : 'Create Blog'}
+                      {editingId ? 'Update Collaboration' : 'Create Collaboration'}
                     </button>
                   </div>
                 </form>
@@ -615,10 +449,10 @@ export default function BlogsPage() {
                   <FiTrash2 size={24} className="text-red-600" />
                 </div>
                 <h3 className="text-xl font-bold text-center text-gray-900 mb-2">
-                  Delete Blog
+                  Delete Collaboration
                 </h3>
                 <p className="text-center text-gray-600 mb-6">
-                  Are you sure you want to delete this blog? This action cannot be undone.
+                  Are you sure you want to delete this collaboration? This action cannot be undone.
                 </p>
                 <div className="flex gap-3">
                   <button
