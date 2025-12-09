@@ -1,35 +1,15 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import {
-  getAllRoles,
-  Role
-} from '@/lib/superAdmin/api/rolesAndPermissions/getAllRoles';
+import { getAllRoles, Role } from '@/lib/superAdmin/api/rolesAndPermissions/getAllRoles';
 import { useRouter } from 'next/navigation';
 import FormWrapper from './form-wrapper';
-import {
-  addAdminSchema,
-  editAdminSchema,
-  AdminSchemaType
-} from 'schema/company-panel';
+import { addAdminSchema, editAdminSchema, AdminSchemaType } from 'schema/company-panel';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronDown, Eye, EyeOff } from 'lucide-react';
 import { addAdmin } from '@/lib/superAdmin/api/admin/addAdmin';
 import { getAdminById } from '@/lib/superAdmin/api/admin/getAdmins';
@@ -37,26 +17,13 @@ import { editAdmin } from '@/lib/superAdmin/api/admin/editAdmin';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import apiCall from '@/lib/axios';
 
-interface Admin {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  mobileNumber?: string;
-  roleId: string;
-  status: string;
-  housekeepingStatus: string;
-  [key: string]: any;
-}
-
 type Props = {
   adminID?: string;
-  mode: string;
+  mode: 'add' | 'edit' | 'view';
 };
 
 const AdminForm = ({ adminID, mode }: Props) => {
   const router = useRouter();
-  const [admin, setAdminData] = useState<Admin | undefined>();
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
   const [employee, setEmployee] = useState<any>(null);
@@ -67,30 +34,32 @@ const AdminForm = ({ adminID, mode }: Props) => {
       firstName: '',
       lastName: '',
       email: '',
-      password: mode === 'add' ? '' : undefined, // Password only in add mode
+      password: mode === 'add' ? '' : undefined,
       mobileNumber: '',
       roleId: '',
-      status: 'Active' 
-      housekeepingStatus: 'CLEANED'   
+      status: 'Active',
+      // housekeepingStatus: 'CLEANED'
     }
   });
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
-      const [rolesRes, employeeData] = await Promise.all([
-        getAllRoles(),
-        adminID
-          ? apiCall('GET', `api/employee/${adminID}`)
-          : Promise.resolve(null)
-      ]);
-      if (rolesRes.status) setRoles(rolesRes.roles);
-      if (employeeData && employeeData.employee)
-        setEmployee(employeeData.employee);
-      setLoading(false);
+      try {
+        setLoading(true);
+        const [rolesRes, employeeData] = await Promise.all([
+          getAllRoles(),
+          adminID ? apiCall('GET', `api/employee/${adminID}`) : Promise.resolve(null)
+        ]);
+        if (rolesRes?.status) setRoles(rolesRes.roles || []);
+        if (employeeData?.employee) setEmployee(employeeData.employee);
+      } catch (err) {
+        console.error('Fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
-  }, [adminID, form, mode]);
+  }, [adminID, mode]);
 
   // Reset form only after both roles and employee are loaded
   useEffect(() => {
@@ -101,12 +70,13 @@ const AdminForm = ({ adminID, mode }: Props) => {
         email: employee.email || '',
         password: undefined,
         mobileNumber: employee.mobileNumber || '',
-        roleId: employee.roleId?._id || '', // This should match the SelectItem value
-        status: employee.status || 'Active'
-        housekeepingStatus: employee.housekeepingStatus || 'CLEANED'
+        roleId: employee.roleId?._id || '',
+        status: employee.status || 'Active',
+        // housekeepingStatus: employee.housekeepingStatus || 'CLEANED'
       });
     }
-  }, [roles, employee, form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roles, employee]);
 
   const onSubmit = async (data: AdminSchemaType) => {
     console.log('Form Data:', data);
@@ -117,13 +87,14 @@ const AdminForm = ({ adminID, mode }: Props) => {
         ToastAtTopRight.fire('Admin added successfully!', 'success');
         router.push('/super-admin/admin-management');
       } else if (mode === 'edit') {
-        await editAdmin(adminID!, data);
+        if (!adminID) throw new Error('adminID is required for edit');
+        await editAdmin(adminID, data);
         ToastAtTopRight.fire('Admin updated successfully!', 'success');
         router.push('/super-admin/admin-management');
       }
     } catch (error: any) {
       console.error('Submit Error:', error);
-      ToastAtTopRight.fire(error.message || 'Something went wrong', 'error');
+      ToastAtTopRight.fire(error?.message || 'Something went wrong', 'error');
     } finally {
       setLoading(false);
     }
@@ -132,10 +103,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
   return (
     <FormWrapper title={'Admin Profile'}>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-10"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -161,6 +129,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="lastName"
@@ -185,6 +154,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="email"
@@ -209,6 +179,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
                 </FormItem>
               )}
             />
+
             {mode === 'add' && (
               <FormField
                 control={form.control}
@@ -234,13 +205,9 @@ const AdminForm = ({ adminID, mode }: Props) => {
                             type="button"
                             onClick={() => setShowPassword((prev) => !prev)}
                             className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black focus:outline-none"
-                            tabIndex={-1} // prevent tabbing to the icon
+                            tabIndex={-1}
                           >
-                            {showPassword ? (
-                              <EyeOff size={18} />
-                            ) : (
-                              <Eye size={18} />
-                            )}
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                           </button>
                         </div>
                       </FormControl>
@@ -250,6 +217,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
                 }}
               />
             )}
+
             <FormField
               control={form.control}
               name="mobileNumber"
@@ -267,10 +235,8 @@ const AdminForm = ({ adminID, mode }: Props) => {
                         maxLength={10}
                         value={field.value}
                         onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, ''); // Allow only digits
-                          if (value.length <= 10) {
-                            field.onChange(value);
-                          }
+                          const value = e.target.value.replace(/\D/g, '');
+                          if (value.length <= 10) field.onChange(value);
                         }}
                         disabled={mode === 'view' || loading}
                         className="bg-[#F6EEE0] text-black border-none placeholder:text-black placeholder:text-xs 2xl:text-sm placeholder:opacity-45 pr-10"
@@ -281,6 +247,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
                 </FormItem>
               )}
             />
+
             {/* Role Selection */}
             <FormField
               control={form.control}
@@ -291,11 +258,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
                     Select Role <span className="text-red-500 ml-1">*</span>
                   </FormLabel>
                   <div className="flex gap-1">
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      disabled={mode === 'view' || loading}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value} disabled={mode === 'view' || loading}>
                       <FormControl>
                         <SelectTrigger className="min-w-40 bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none">
                           <SelectValue placeholder="Select a role" />
@@ -315,6 +278,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="status"
@@ -325,11 +289,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
                   </FormLabel>
                   <FormControl>
                     <div className="flex gap-1">
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        disabled={mode === 'view' || loading}
-                      >
+                      <Select onValueChange={field.onChange} value={field.value} disabled={mode === 'view' || loading}>
                         <SelectTrigger className="min-w-32 bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none">
                           <SelectValue placeholder="Select status" />
                         </SelectTrigger>
@@ -360,11 +320,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
                   </FormLabel>
                   <FormControl>
                     <div className="flex gap-1">
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        disabled={mode === 'view' || loading}
-                      >
+                      <Select onValueChange={field.onChange} value={field.value} disabled={mode === 'view' || loading}>
                         <SelectTrigger className="min-w-32 bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none">
                           <SelectValue placeholder="Select room status" />
                         </SelectTrigger>
@@ -382,21 +338,13 @@ const AdminForm = ({ adminID, mode }: Props) => {
               )}
             />
           </div>
+
           {/* Buttons */}
           <div className="flex items-center gap-3">
-            <Button
-              type="button"
-              onClick={() => router.back()}
-              className="btn-secondary"
-              disabled={loading}
-            >
+            <Button type="button" onClick={() => router.back()} className="btn-secondary" disabled={loading}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              className="btn-primary"
-              disabled={mode === 'view' || loading}
-            >
+            <Button type="submit" className="btn-primary" disabled={mode === 'view' || loading}>
               Save Changes
             </Button>
           </div>

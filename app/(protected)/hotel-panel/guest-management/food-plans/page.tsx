@@ -1,3 +1,4 @@
+// KnectHotel-admin-panel/app/(protected)/hotel-panel/guest-management/food-plans/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
