@@ -179,7 +179,23 @@ export const guestSchema = z
           })
           .optional()
       })
-      .optional()
+      .optional(),
+      
+    // New Booking Fields
+    discountType: z.enum(['percentage', 'flat']).optional(),
+    discountAmount: z.coerce.number().min(0).optional(),
+    
+    extraCharges: z.array(z.object({
+      title: z.string().min(1),
+      amount: z.coerce.number().min(0),
+      reason: z.string().optional(),
+    })).optional().default([]),
+    
+    lateCheckout: z.object({
+      hours: z.coerce.number().min(0).optional(),
+      amount: z.coerce.number().min(0).optional(),
+      reason: z.string().optional(),
+    }).optional(),
   })
   .superRefine((data, ctx) => {
     const adults = Number(data.adultGuestsCount ?? 0);

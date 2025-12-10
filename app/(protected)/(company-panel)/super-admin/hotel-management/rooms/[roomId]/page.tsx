@@ -1,0 +1,25 @@
+import { RoomForm } from '@/components/form/room-management/room-form';
+
+export default function RoomPage({ params }: { params: { roomId: string } }) {
+  // In a real app, fetch room data based on params.roomId
+  const initialData = params.roomId === 'add' ? null : {
+    roomNumber: '101',
+    roomType: 'Deluxe',
+    roomCategory: 'Non-Smoking',
+    floorNumber: '1',
+    tower: 'Tower A',
+    bedType: 'King',
+    maxOccupancy: 2,
+    roomSize: '350',
+    amenities: 'WiFi, AC, TV',
+    baseRate: 5000,
+  };
+
+  return (
+    <div className="flex-col">
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        <RoomForm initialData={initialData} />
+      </div>
+    </div>
+  );
+}

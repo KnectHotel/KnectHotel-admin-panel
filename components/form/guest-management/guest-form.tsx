@@ -28,7 +28,7 @@ import { Input } from '@/components/ui/input';
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react';
+import { ChevronDown, ChevronUp, Eye, EyeOff, Plus, Trash } from 'lucide-react';
 import { Heading } from '@/components/ui/heading';
 import apiCall from '@/lib/axios';
 import { ToastAtTopRight } from '@/lib/sweetalert';
@@ -124,6 +124,13 @@ const getBorderColorClass = (status?: string) => {
   }
 };
 
+const DUMMY_ROOMS = [
+  { roomNumber: '101', type: 'Deluxe', category: 'Non-Smoking', tariff: 5000 },
+  { roomNumber: '102', type: 'Standard', category: 'Smoking', tariff: 3500 },
+  { roomNumber: '201', type: 'Suite', category: 'Non-Smoking', tariff: 12000 },
+  { roomNumber: '202', type: 'Deluxe', category: 'Non-Smoking', tariff: 5500 },
+];
+
 const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
   const [services, setServices] = useState<Service[]>([]);
   const [images, setImages] = useState<(string | null)[]>(Array(6).fill(null));
@@ -205,6 +212,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       setLoading(false);
     }
   };
+
+
 
   const handleSecondaryIdProofUpload =
     (index: number) => async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -491,6 +500,11 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         }
       }
     }
+  });
+  
+  const { fields: extraChargeFields, append: appendExtraCharge, remove: removeExtraCharge } = useFieldArray({
+    control: addGuestForm.control,
+    name: 'extraCharges'
   });
   // const { fields, append, remove, replace } = useFieldArray({
   //   control: addGuestForm.control,
@@ -1362,23 +1376,74 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
 
     if (r > t) {
       // Received cannot exceed Tariff
-      addGuestForm.setError('receivedAmt', {
-        type: 'validate',
-        message: 'Received cannot be greater than Tariff'
-      });
+      // addGuestForm.setError('receivedAmt', {
+      //   type: 'validate',
+      //   message: 'Received cannot be greater than Tariff'
+      // });
       // Set due to full tariff to reflect the error state clearly
-      addGuestForm.setValue('roomTariffDue', t, { shouldValidate: true });
-      return;
+      // addGuestForm.setValue('roomTariffDue', t, { shouldValidate: true });
+      // return;
     }
 
     addGuestForm.clearErrors('receivedAmt');
 
-    const due = round2(Math.max(0, t - r));
+    // NEW CALCULATION LOGIC
+    const discountType = addGuestForm.getValues('discountType');
+    const discountAmount = toNum(addGuestForm.getValues('discountAmount'));
+    const extraCharges = addGuestForm.getValues('extraCharges') || [];
+    const lateCheckoutAmount = toNum(addGuestForm.getValues('lateCheckout.amount'));
+    const serviceDue = toNum(addGuestForm.getValues('serviceDue'));
+
+    let totalVal = t;
+
+    // Apply Discount
+    let discountVal = 0;
+    if (discountType === 'percentage') {
+       discountVal = (t * discountAmount) / 100;
+    } else {
+       discountVal = discountAmount;
+    }
+    totalVal -= discountVal;
+
+    // Add Extra Charges
+    const extraChargesTotal = extraCharges.reduce((acc, curr) => acc + toNum(curr.amount), 0);
+    totalVal += extraChargesTotal;
+
+    // Add Late Checkout
+    totalVal += lateCheckoutAmount;
+
+    // Add Service Due (if it's part of the total payable, usually it is separate but let's assume it adds up)
+    totalVal += serviceDue; // Assuming serviceDue is part of the final bill
+
+    const due = round2(Math.max(0, totalVal - r));
+    
     addGuestForm.setValue('roomTariffDue', due, {
       shouldValidate: true,
       shouldDirty: true
     });
-  }, [tariffWatch, receivedWatch]);
+  }, [tariffWatch, receivedWatch, 
+      addGuestForm.watch('discountType'), 
+      addGuestForm.watch('discountAmount'), 
+      addGuestForm.watch('extraCharges'), 
+      addGuestForm.watch('lateCheckout.amount'),
+      addGuestForm.watch('serviceDue')
+  ]);
+
+  // Auto-fill Room Details
+  useEffect(() => {
+     if (assignedRoomNumber) {
+        const room = DUMMY_ROOMS.find(r => r.roomNumber === assignedRoomNumber);
+        if (room) {
+           addGuestForm.setValue('roomCategory', room.category);
+           addGuestForm.setValue('roomTariff', room.tariff);
+           // Rate Plan could be added here if it existed in schema
+           ToastAtTopRight.fire({
+              icon: 'success',
+              title: `Room ${room.roomNumber} details auto-filled`,
+            });
+        }
+     }
+  }, [assignedRoomNumber]);
 
   const isWalkIn = (v?: string | null) => {
     const s = (v ?? '').trim().toLowerCase();
@@ -2434,6 +2499,45 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                     )}
                   />
 
+                <div className="md:col-span-1">
+                   <FormLabel className="text-black text-[0.8rem]">Discount</FormLabel>
+                   <div className="flex gap-2">
+                    <FormField
+                      control={addGuestForm.control}
+                      name="discountType"
+                      render={({ field }) => (
+                         <Select onValueChange={field.onChange} value={field.value} disabled={!isEnabled}>
+                            <FormControl>
+                              <SelectTrigger className="bg-[#F6EEE0] w-[110px] text-xs">
+                                <SelectValue placeholder="Type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="percentage">%</SelectItem>
+                              <SelectItem value="flat">Flat</SelectItem>
+                            </SelectContent>
+                         </Select>
+                      )}
+                    />
+                    <FormField
+                      control={addGuestForm.control}
+                      name="discountAmount"
+                      render={({ field }) => (
+                         <FormControl>
+                            <Input
+                               type="number"
+                               placeholder="Amt"
+                               disabled={!isEnabled}
+                               className="bg-[#F6EEE0] text-xs p-2 rounded-md"
+                               {...field}
+                               onChange={(e) => field.onChange(toNum(e.target.value))}
+                            />
+                         </FormControl>
+                      )}
+                    />
+                   </div>
+                </div>
+
                   {/* Room Tariff (kept as-is) */}
                   {/* <FormField
                     control={addGuestForm.control}
@@ -2825,6 +2929,148 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       </FormItem>
                     )}
                   />
+
+                  {/* Extra Charges Section */}
+                   <div className="col-span-1 md:col-span-3 mt-4 border-t pt-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <FormLabel className="text-sm font-semibold text-gray-700">Extra Charges</FormLabel>
+                        <Button type="button" size="sm" variant="outline" onClick={() => appendExtraCharge({ title: '', amount: 0, reason: '' })} className="h-7 text-xs">
+                           <Plus className="h-3 w-3 mr-1" /> Add Charge
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-1 gap-2">
+                        {extraChargeFields.map((field, index) => (
+                           <div key={field.id} className="flex gap-2 items-center">
+                              <FormField
+                                control={addGuestForm.control}
+                                name={`extraCharges.${index}.title`}
+                                render={({ field }) => (
+                                   <Input placeholder="Title (e.g. Damage)" {...field} className="bg-[#F6EEE0] text-xs h-8" />
+                                )}
+                              />
+                               <FormField
+                                control={addGuestForm.control}
+                                name={`extraCharges.${index}.amount`}
+                                render={({ field }) => (
+                                   <Input 
+                                      type="number" 
+                                      placeholder="Amount" 
+                                      {...field} 
+                                      onChange={(e) => field.onChange(toNum(e.target.value))}
+                                      className="bg-[#F6EEE0] text-xs h-8 w-24" 
+                                   />
+                                )}
+                              />
+                               <FormField
+                                control={addGuestForm.control}
+                                name={`extraCharges.${index}.reason`}
+                                render={({ field }) => (
+                                   <Input placeholder="Reason" {...field} className="bg-[#F6EEE0] text-xs h-8" />
+                                )}
+                              />
+                              <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-red-500" onClick={() => removeExtraCharge(index)}>
+                                 <Trash className="h-4 w-4" />
+                              </Button>
+                           </div>
+                        ))}
+                      </div>
+                   </div>
+
+                   {/* Late Checkout Module */}
+                   <div className="col-span-1 md:col-span-3 mt-4 border-t pt-4">
+                      <FormLabel className="text-sm font-semibold text-gray-700 mb-2 block">Late Checkout</FormLabel>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                         <FormField
+                            control={addGuestForm.control}
+                            name="lateCheckout.hours"
+                            render={({ field }) => (
+                               <FormItem>
+                                  <FormLabel className="text-[0.7rem] text-gray-600">Hours Delayed</FormLabel>
+                                  <FormControl>
+                                     <Input type="number" placeholder="Hours" {...field} onChange={e => field.onChange(toNum(e.target.value))} className="bg-[#F6EEE0] text-xs h-9" />
+                                  </FormControl>
+                               </FormItem>
+                            )}
+                         />
+                         <FormField
+                            control={addGuestForm.control}
+                            name="lateCheckout.amount"
+                            render={({ field }) => (
+                               <FormItem>
+                                  <FormLabel className="text-[0.7rem] text-gray-600">Charge Amount</FormLabel>
+                                  <FormControl>
+                                     <Input type="number" placeholder="Amount" {...field} onChange={e => field.onChange(toNum(e.target.value))} className="bg-[#F6EEE0] text-xs h-9" />
+                                  </FormControl>
+                               </FormItem>
+                            )}
+                         />
+                         <FormField
+                            control={addGuestForm.control}
+                            name="lateCheckout.reason"
+                            render={({ field }) => (
+                               <FormItem>
+                                  <FormLabel className="text-[0.7rem] text-gray-600">Notes/Reason</FormLabel>
+                                  <FormControl>
+                                     <Input placeholder="Reason" {...field} className="bg-[#F6EEE0] text-xs h-9" />
+                                  </FormControl>
+                               </FormItem>
+                            )}
+                         />
+                      </div>
+                   </div>
+
+                   {/* Billing Breakdown Summary */}
+                   <div className="col-span-1 md:col-span-3 mt-6 bg-white p-4 rounded-md border border-gray-200 shadow-sm">
+                      <h3 className="font-semibold text-gray-800 mb-3 text-sm border-b pb-2">Billing Breakdown</h3>
+                      <div className="flex flex-col gap-2 text-sm text-gray-600">
+                         <div className="flex justify-between">
+                            <span>Room Tariff</span>
+                            <span>₹{toNum(tariffWatch).toFixed(2)}</span>
+                         </div>
+                         <div className="flex justify-between text-red-500">
+                            <span>Discount ({addGuestForm.watch('discountType') === 'percentage' ? `${addGuestForm.watch('discountAmount')}%` : 'Flat'})</span>
+                            <span>- ₹{
+                               (addGuestForm.watch('discountType') === 'percentage' 
+                                  ? (toNum(tariffWatch) * toNum(addGuestForm.watch('discountAmount')) / 100) 
+                                  : toNum(addGuestForm.watch('discountAmount'))).toFixed(2)
+                            }</span>
+                         </div>
+                         <div className="flex justify-between text-blue-600">
+                            <span>Extra Charges</span>
+                            <span>+ ₹{(addGuestForm.watch('extraCharges') || []).reduce((acc, curr) => acc + toNum(curr.amount), 0).toFixed(2)}</span>
+                         </div>
+                         <div className="flex justify-between text-blue-600">
+                            <span>Late Checkout</span>
+                            <span>+ ₹{toNum(addGuestForm.watch('lateCheckout.amount')).toFixed(2)}</span>
+                         </div>
+                          <div className="flex justify-between text-blue-600">
+                            <span>Service Due</span>
+                            <span>+ ₹{toNum(addGuestForm.watch('serviceDue')).toFixed(2)}</span>
+                         </div>
+                         <div className="border-t my-1"></div>
+                         <div className="flex justify-between font-bold text-lg text-black">
+                            <span>Total Payable</span>
+                            <span>₹{(
+                               toNum(tariffWatch) 
+                               - (addGuestForm.watch('discountType') === 'percentage' 
+                                  ? (toNum(tariffWatch) * toNum(addGuestForm.watch('discountAmount')) / 100) 
+                                  : toNum(addGuestForm.watch('discountAmount')))
+                               + (addGuestForm.watch('extraCharges') || []).reduce((acc, curr) => acc + toNum(curr.amount), 0)
+                               + toNum(addGuestForm.watch('lateCheckout.amount'))
+                               + toNum(addGuestForm.watch('serviceDue'))
+                            ).toFixed(2)}</span>
+                         </div>
+                         <div className="flex justify-between text-green-600 font-medium">
+                            <span>Received Amount</span>
+                            <span>- ₹{toNum(receivedWatch).toFixed(2)}</span>
+                         </div>
+                         <div className="border-t my-1"></div>
+                         <div className="flex justify-between font-bold text-base text-red-600">
+                            <span>Outstanding Balance</span>
+                            <span>₹{toNum(addGuestForm.watch('roomTariffDue')).toFixed(2)}</span>
+                         </div>
+                      </div>
+                   </div>
 
                   {/* Booking Status */}
                   <FormField

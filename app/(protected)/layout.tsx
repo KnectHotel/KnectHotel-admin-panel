@@ -1141,7 +1141,7 @@
 // }
 'use client';
 import Link from 'next/link';
-import { LogOut, Users, Landmark, Ticket } from 'lucide-react';
+import { LogOut, Users, Landmark, Ticket, BedDouble } from 'lucide-react';
 import Providers from '../providers';
 import { NavItem } from '../nav-item';
 import logo from '../../public/assets/logo.svg';
@@ -1444,6 +1444,12 @@ function SuperAdminPanelSideNav() {
                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
                 <NavItem
+                  href="/super-admin/hotel-management/rooms"
+                  label="Room Management"
+                >
+                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
+                </NavItem>
+                <NavItem
                   href="/super-admin/hotel-management/room-upgrade"
                   label="Room Upgrade"
                 >
@@ -1626,6 +1632,15 @@ function HotelPanelSideNav() {
                 </NavItem>
               </div>
             </div>
+          )}
+          
+          {hasAccess('hotel-management') && (
+            <NavItem
+              href="/hotel-panel/room-management"
+              label="Room Management"
+            >
+              <BedDouble className="h-5 w-5 lg:h-6 lg:w-6" />
+            </NavItem>
           )}
 
           {hasServiceAccess() && (

@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { dummyFoodPlans, dummyHotels } from '@/data/foodPlans';
+import { dummyFoodPlans } from '@/data/foodPlans';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const { id } = params;
+  const { id } = context.params;
+
   const plan = dummyFoodPlans.find((p) => p._id === id);
 
   if (!plan) {

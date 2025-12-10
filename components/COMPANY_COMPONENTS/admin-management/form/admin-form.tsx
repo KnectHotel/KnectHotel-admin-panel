@@ -310,7 +310,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
             />
 
             {/* Room Status */}
-            <FormField
+            {/* <FormField
               control={form.control}
               name="housekeepingStatus"
               render={({ field }) => (
@@ -336,7 +336,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
                   <ChevronDown className="absolute right-4 top-[2.2rem] text-black w-4 h-4" />
                 </FormItem>
               )}
-            />
+            /> */}
           </div>
 
           {/* Buttons */}
