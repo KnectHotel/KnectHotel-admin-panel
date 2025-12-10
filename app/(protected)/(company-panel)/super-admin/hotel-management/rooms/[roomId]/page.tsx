@@ -1,19 +1,30 @@
 import { RoomForm } from '@/components/form/room-management/room-form';
 
-export default function RoomPage({ params }: { params: { roomId: string } }) {
-  // In a real app, fetch room data based on params.roomId
-  const initialData = params.roomId === 'add' ? null : {
-    roomNumber: '101',
-    roomType: 'Deluxe',
-    roomCategory: 'Non-Smoking',
-    floorNumber: '1',
-    tower: 'Tower A',
-    bedType: 'King',
-    maxOccupancy: 2,
-    roomSize: '350',
-    amenities: 'WiFi, AC, TV',
-    baseRate: 5000,
-  };
+type PageProps = {
+  params: Promise<{
+    roomId: string;
+  }>;
+};
+
+export default async function RoomPage({ params }: PageProps) {
+  const { roomId } = await params;
+
+  // In a real app, fetch room data based on roomId
+  const initialData =
+    roomId === 'add'
+      ? null
+      : {
+          roomNumber: '101',
+          roomType: 'Deluxe',
+          roomCategory: 'Non-Smoking',
+          floorNumber: '1',
+          tower: 'Tower A',
+          bedType: 'King',
+          maxOccupancy: 2,
+          roomSize: '350',
+          amenities: 'WiFi, AC, TV',
+          baseRate: 5000,
+        };
 
   return (
     <div className="flex-col">
