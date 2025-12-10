@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dummyFoodPlans } from '@/data/foodPlans';
 
+type RouteContext = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
 export async function GET(
   req: NextRequest,
-  context: { params: { id: string } }
+  context: RouteContext
 ) {
-  const { id } = context.params;
+  const { id } = await context.params;
 
   const plan = dummyFoodPlans.find((p) => p._id === id);
 
