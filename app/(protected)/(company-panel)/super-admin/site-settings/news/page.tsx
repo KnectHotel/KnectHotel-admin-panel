@@ -37,7 +37,7 @@ export default function NewsPage() {
 
   // FETCH NEWS LIST
   useEffect(() => {
-    fetch('http://localhost:3001/api/news')
+    fetch('https://uat-api.knecthotel.com/api/news')
       .then((res) => res.json())
       .then((data) => {
         setItems(data.data || []);
@@ -50,11 +50,11 @@ export default function NewsPage() {
 
     const payload = { ...formData };
 
-    let url = 'http://localhost:3001/api/news/createnews';
+    let url = 'https://uat-api.knecthotel.com/api/news/createnews';
     let method = 'POST';
 
     if (editingId) {
-      url = `http://localhost:3001/api/news/${editingId}`;
+      url = `https://uat-api.knecthotel.com/api/news/${editingId}`;
       method = 'PUT';
     }
 
@@ -93,7 +93,7 @@ export default function NewsPage() {
     if (!deleteId) return;
 
     try {
-      const res = await fetch(`http://localhost:3001/api/news/${deleteId}`, {
+      const res = await fetch(`https://uat-api.knecthotel.com/api/news/${deleteId}`, {
         method: 'DELETE'
       });
 

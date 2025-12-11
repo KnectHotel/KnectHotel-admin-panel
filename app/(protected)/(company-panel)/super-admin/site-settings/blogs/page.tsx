@@ -36,7 +36,7 @@ export default function BlogsPage() {
   // FETCH BLOGS FROM API
   const fetchBlogs = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/blogs');
+      const res = await fetch('https://uat-api.knecthotel.com/api/blogs');
       const data = await res.json();
       console.log('Blog API Response:', data); // Debug log
       
@@ -66,11 +66,11 @@ export default function BlogsPage() {
     e.preventDefault();
 
     const payload = { ...formData };
-    let url = 'http://localhost:3001/api/blogs/createblogs';
+    let url = 'https://uat-api.knecthotel.com/api/blogs/createblogs';
     let method = 'POST';
 
     if (editingId) {
-      url = `http://localhost:3001/api/blogs/${editingId}`;
+      url = `https://uat-api.knecthotel.com/api/blogs/${editingId}`;
       method = 'PUT';
     }
 
@@ -108,7 +108,7 @@ export default function BlogsPage() {
     if (!deleteId) return;
 
     try {
-      const res = await fetch(`http://localhost:3001/api/blogs/${deleteId}`, {
+      const res = await fetch(`https://uat-api.knecthotel.com/api/blogs/${deleteId}`, {
         method: 'DELETE'
       });
 

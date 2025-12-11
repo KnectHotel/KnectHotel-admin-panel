@@ -28,7 +28,7 @@ export default function CollaborationPage() {
   // FETCH COLLABORATIONS FROM API
   const fetchCollaborations = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/collaborations');
+      const res = await fetch('https://uat-api.knecthotel.com/api/collaborations');
       const data = await res.json();
       console.log('Collaboration API Response:', data);
       
@@ -57,11 +57,11 @@ export default function CollaborationPage() {
     e.preventDefault();
 
     const payload = { ...formData };
-    let url = 'http://localhost:3001/api/collaborations';
+    let url = 'https://uat-api.knecthotel.com/api/collaborations';
     let method = 'POST';
 
     if (editingId) {
-      url = `http://localhost:3001/api/collaborations/${editingId}`;
+      url = `https://uat-api.knecthotel.com/api/collaborations/${editingId}`;
       method = 'PUT';
     }
 
@@ -99,7 +99,7 @@ export default function CollaborationPage() {
     if (!deleteId) return;
 
     try {
-      const res = await fetch(`http://localhost:3001/api/collaborations/${deleteId}`, {
+      const res = await fetch(`https://uat-api.knecthotel.com/api/collaborations/${deleteId}`, {
         method: 'DELETE'
       });
 
