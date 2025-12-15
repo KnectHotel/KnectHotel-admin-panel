@@ -501,7 +501,7 @@ const HotelForm = ({
     const url =
       mode === 'edit'
         ? `api/hotel/update-hotel/${hotelId}`
-        : 'api/hotel/add-hotel';
+        : 'api/hotel/add-hotel/external';
 
     const method = mode === 'edit' ? 'PUT' : 'POST';
 
