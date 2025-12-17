@@ -494,10 +494,10 @@ const HotelForm = ({
       //   : [],
       rooms: data.roomConfigs
         ? data.roomConfigs.map((room: any) => ({
-            roomName: room.roomType,
-            roomType: room.roomType,
-            features: Array.isArray(room.features) ? room.features : [] // ✅ full array
-          }))
+          roomName: room.roomType,
+          roomType: room.roomType,
+          features: Array.isArray(room.features) ? room.features : [] // ✅ full array
+        }))
         : [],
       wifi: {
         wifiName: data?.wifi?.wifiName || '',
@@ -653,18 +653,18 @@ const HotelForm = ({
             //   })) || [],
             roomConfigs: Array.isArray(res?.hotel?.rooms)
               ? res.hotel.rooms.map((room: any) => ({
-                  roomType: room?.roomType ?? '',
-                  // map features[] -> string[]
-                  features: Array.isArray(room?.features)
-                    ? Array.from(
-                        new Set(
-                          room.features
-                            .map((s: any) => String(s ?? '').trim())
-                            .filter(Boolean)
-                        )
-                      )
-                    : []
-                }))
+                roomType: room?.roomType ?? '',
+                // map features[] -> string[]
+                features: Array.isArray(room?.features)
+                  ? Array.from(
+                    new Set(
+                      room.features
+                        .map((s: any) => String(s ?? '').trim())
+                        .filter(Boolean)
+                    )
+                  )
+                  : []
+              }))
               : [],
 
             hotelLicenseCertifications:
@@ -795,9 +795,9 @@ const HotelForm = ({
 
           roomConfigs: Array.isArray(d.rooms)
             ? d.rooms.map((room: any) => ({
-                roomType: room.roomType ?? '',
-                feature: room.features?.[0] ?? '' // ✅ singular key
-              }))
+              roomType: room.roomType ?? '',
+              feature: room.features?.[0] ?? '' // ✅ singular key
+            }))
             : []
         });
         setSelectedState(d.state || '');
@@ -1337,11 +1337,10 @@ const HotelForm = ({
                       <div className="flex items-center gap-2">
                         {/* Clickable tile to add images */}
                         <div
-                          className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${
-                            isDisabled
+                          className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled
                               ? 'cursor-not-allowed opacity-50'
                               : 'cursor-pointer'
-                          } rounded-md border border-gray-100`}
+                            } rounded-md border border-gray-100`}
                           onClick={() =>
                             !isDisabled && triggerFileInput(roomImageRef)
                           }
@@ -1352,7 +1351,7 @@ const HotelForm = ({
                             <img
                               src={
                                 imagePreviews.roomImage[
-                                  imagePreviews.roomImage.length - 1
+                                imagePreviews.roomImage.length - 1
                                 ]
                               }
                               alt="Last uploaded room"
@@ -1378,11 +1377,10 @@ const HotelForm = ({
 
                         {/* “Add more” icon */}
                         <Upload
-                          className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${
-                            !isDisabled
+                          className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${!isDisabled
                               ? 'text-black cursor-pointer'
                               : 'text-gray-400 cursor-not-allowed'
-                          }`}
+                            }`}
                           onClick={() =>
                             !isDisabled && triggerFileInput(roomImageRef)
                           }
@@ -1485,11 +1483,10 @@ const HotelForm = ({
                         >
                           <DropdownMenu.Trigger asChild>
                             <button
-                              className={`flex items-center gap-2 px-4 py-2 rounded-md border ${
-                                status === 'PENDING'
+                              className={`flex items-center gap-2 px-4 py-2 rounded-md border ${status === 'PENDING'
                                   ? 'bg-red-100 text-red-700'
                                   : 'bg-green-100 text-green-700'
-                              }`}
+                                }`}
                             >
                               {status}
                               {showDropdown ? (
@@ -2966,17 +2963,16 @@ const HotelForm = ({
                               type="button"
                               variant="outline"
                               disabled={computedDisabled}
-                              className={`w-full justify-between bg-[#F6EEE0] text-gray-700 border-none ${
-                                !valueAsDate ? 'text-muted-foreground' : ''
-                              }`}
+                              className={`w-full justify-between bg-[#F6EEE0] text-gray-700 border-none ${!valueAsDate ? 'text-muted-foreground' : ''
+                                }`}
                             >
                               <span>
                                 {valueAsDate
                                   ? valueAsDate.toLocaleDateString(undefined, {
-                                      day: '2-digit',
-                                      month: 'short',
-                                      year: 'numeric'
-                                    })
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric'
+                                  })
                                   : 'Pick a date'}
                               </span>
                               <CalendarIcon className="h-4 w-4 opacity-70" />
@@ -3206,7 +3202,7 @@ const HotelForm = ({
                         }
                       >
                         {imagePreviews.hotelLicenseImage &&
-                        imagePreviews.hotelLicenseImage.length > 0 ? (
+                          imagePreviews.hotelLicenseImage.length > 0 ? (
                           <img
                             src={imagePreviews.hotelLicenseImage[0]} // Display the uploaded image
                             alt="Hotel License Preview"
@@ -3332,7 +3328,7 @@ const HotelForm = ({
                         }
                       >
                         {imagePreviews.legalBusinessLicenseImage &&
-                        imagePreviews.legalBusinessLicenseImage.length > 0 ? (
+                          imagePreviews.legalBusinessLicenseImage.length > 0 ? (
                           <img
                             src={imagePreviews.legalBusinessLicenseImage[0]} // Display the first uploaded image
                             alt="Business License Preview"
@@ -3360,11 +3356,10 @@ const HotelForm = ({
                         />
                       </FormControl>
                       <Upload
-                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${
-                          imagePreviews.legalBusinessLicenseImage && !isDisabled
+                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.legalBusinessLicenseImage && !isDisabled
                             ? 'text-black cursor-pointer'
                             : 'text-gray-400 cursor-not-allowed'
-                        }`}
+                          }`}
                         onClick={
                           () =>
                             imagePreviews.legalBusinessLicenseImage &&
@@ -3504,7 +3499,7 @@ const HotelForm = ({
                         }
                       >
                         {imagePreviews.touristLicenseImage &&
-                        imagePreviews.touristLicenseImage.length > 0 ? (
+                          imagePreviews.touristLicenseImage.length > 0 ? (
                           <img
                             src={imagePreviews.touristLicenseImage[0]} // Display the first uploaded image
                             alt="Tourist License Preview"
@@ -3531,11 +3526,10 @@ const HotelForm = ({
                         />
                       </FormControl>
                       <Upload
-                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${
-                          imagePreviews.touristLicenseImage && !isDisabled
+                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.touristLicenseImage && !isDisabled
                             ? 'text-black cursor-pointer'
                             : 'text-gray-400 cursor-not-allowed'
-                        }`}
+                          }`}
                         onClick={
                           () =>
                             imagePreviews.touristLicenseImage &&
@@ -3613,7 +3607,7 @@ const HotelForm = ({
                         }
                       >
                         {imagePreviews.tanNumberImage &&
-                        imagePreviews.tanNumberImage.length > 0 ? (
+                          imagePreviews.tanNumberImage.length > 0 ? (
                           <img
                             src={imagePreviews.tanNumberImage[0]} // Display the first uploaded image
                             alt="TAN Number Preview"
@@ -3640,11 +3634,10 @@ const HotelForm = ({
                         />
                       </FormControl>
                       <Upload
-                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${
-                          imagePreviews.tanNumberImage && !isDisabled
+                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.tanNumberImage && !isDisabled
                             ? 'text-black cursor-pointer'
                             : 'text-gray-400 cursor-not-allowed'
-                        }`}
+                          }`}
                         onClick={
                           () =>
                             imagePreviews.tanNumberImage &&
@@ -3779,7 +3772,7 @@ const HotelForm = ({
                         }
                       >
                         {imagePreviews.dataPrivacyGdprImage &&
-                        imagePreviews.dataPrivacyGdprImage.length > 0 ? (
+                          imagePreviews.dataPrivacyGdprImage.length > 0 ? (
                           <img
                             src={imagePreviews.dataPrivacyGdprImage[0]} // Display the first uploaded image
                             alt="GDPR Compliance Preview"
@@ -3806,11 +3799,10 @@ const HotelForm = ({
                         />
                       </FormControl>
                       <Upload
-                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${
-                          imagePreviews.dataPrivacyGdprImage && !isDisabled
+                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.dataPrivacyGdprImage && !isDisabled
                             ? 'text-black cursor-pointer'
                             : 'text-gray-400 cursor-not-allowed'
-                        }`}
+                          }`}
                         onClick={
                           () =>
                             imagePreviews.dataPrivacyGdprImage &&
@@ -3902,17 +3894,16 @@ const HotelForm = ({
                     </FormLabel>
                     <div className="flex items-center gap-2">
                       <div
-                        className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${
-                          isDisabled
+                        className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled
                             ? 'cursor-not-allowed opacity-50'
                             : 'cursor-pointer'
-                        } rounded-md border border-gray-100`}
+                          } rounded-md border border-gray-100`}
                         onClick={() =>
                           !isDisabled && triggerFileInput(gstImageRef)
                         }
                       >
                         {imagePreviews.gstImage &&
-                        imagePreviews.gstImage.length > 0 ? (
+                          imagePreviews.gstImage.length > 0 ? (
                           <img
                             src={imagePreviews.gstImage[0]}
                             alt="GST Certificate Preview"
@@ -3936,11 +3927,10 @@ const HotelForm = ({
                       </FormControl>
 
                       <Upload
-                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${
-                          imagePreviews.gstImage && !isDisabled
+                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.gstImage && !isDisabled
                             ? 'text-black cursor-pointer'
                             : 'text-gray-400 cursor-not-allowed'
-                        }`}
+                          }`}
                         onClick={() =>
                           imagePreviews.gstImage &&
                           !isDisabled &&
