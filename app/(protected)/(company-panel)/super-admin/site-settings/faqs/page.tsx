@@ -6,49 +6,46 @@ import {
   FiPlus,
   FiEdit,
   FiTrash2,
-  FiFlag,
+  FiHelpCircle,
   FiArrowLeft
 } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+
 import { API_BASE_URL } from '@/lib/api-config';
 
-const API_BASE = `${API_BASE_URL}/milestones`;
+const API_BASE = `${API_BASE_URL}/faqs`;
 
-export default function MilestonesPage() {
+export default function FaqsPage() {
   const [items, setItems] = useState<any[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    year: "",
-    title: "",
-    description: "",
-    details: "",
-    achievement: "",
-    images: ""
+    question: "",
+    answer: "",
   });
 
-  // FETCH MILESTONES
-  const fetchMilestones = async () => {
+  // FETCH FAQ LIST
+  const fetchFaqs = async () => {
     try {
       const res = await fetch(API_BASE);
       const json = await res.json();
       setItems(json.data || []);
     } catch (err) {
-      console.error("Error loading milestones:", err);
+      console.error("Error loading FAQs:", err);
     }
   };
 
   useEffect(() => {
-    fetchMilestones();
+    fetchFaqs();
   }, []);
 
   const toggleDropdown = (id: string) => {
     setOpenId(openId === id ? null : id);
   };
 
-  // CREATE / UPDATE
+  // CREATE / UPDATE FAQ
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
@@ -56,69 +53,52 @@ export default function MilestonesPage() {
       const url = editingId ? `${API_BASE}/${editingId}` : API_BASE;
       const method = editingId ? "PUT" : "POST";
 
-      const payload = {
-        ...formData,
-        images: formData.images.split(",").map((img) => img.trim())
-      };
-
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(formData),
       });
 
       const json = await res.json();
       if (json.success) {
-        fetchMilestones();
+        fetchFaqs();
         setShowForm(false);
         setEditingId(null);
-        setFormData({
-          year: "",
-          title: "",
-          description: "",
-          details: "",
-          achievement: "",
-          images: ""
-        });
+        setFormData({ question: "", answer: "" });
       }
     } catch (err) {
-      console.error("Error saving milestone:", err);
+      console.error("Error saving FAQ:", err);
     }
   };
 
-  // DELETE
-  const deleteItem = async (id: string) => {
+  // DELETE FAQ
+  const deleteFaq = async (id: string) => {
     try {
       const res = await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
       const json = await res.json();
-      if (json.success) fetchMilestones();
+      if (json.success) fetchFaqs();
     } catch (err) {
-      console.error("Error deleting milestone:", err);
+      console.error("Error deleting FAQ:", err);
     }
   };
 
   // OPEN EDIT FORM
-  const editItem = (item: any) => {
+  const editFaq = (item: any) => {
     setEditingId(item._id);
     setShowForm(true);
-
     setFormData({
-      year: item.year,
-      title: item.title,
-      description: item.description,
-      details: item.details,
-      achievement: item.achievement,
-      images: item.images ? item.images.join(", ") : ""
+      question: item.question,
+      answer: item.answer,
     });
   };
 
   return (
     <div className="p-6 w-full">
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
         className="flex justify-between items-center mb-6"
       >
         <div className="flex items-center gap-3">
@@ -127,7 +107,7 @@ export default function MilestonesPage() {
           </button>
 
           <h1 className="text-2xl font-semibold text-[#3b2f1c] flex items-center gap-2">
-            <FiFlag className="text-[#9b743f]" /> Milestones
+            <FiHelpCircle className="text-[#9b743f]" /> FAQs
           </h1>
         </div>
 
@@ -136,19 +116,12 @@ export default function MilestonesPage() {
           whileTap={{ scale: 0.97 }}
           onClick={() => {
             setEditingId(null);
-            setFormData({
-              year: "",
-              title: "",
-              description: "",
-              details: "",
-              achievement: "",
-              images: ""
-            });
+            setFormData({ question: "", answer: "" });
             setShowForm(true);
           }}
           className="flex items-center gap-2 bg-[#9b743f] text-white px-4 py-2 rounded-md"
         >
-          <FiPlus /> Add Milestone
+          <FiPlus /> Add FAQ
         </motion.button>
       </motion.div>
 
@@ -159,7 +132,7 @@ export default function MilestonesPage() {
             src="https://cdn-icons-png.flaticon.com/512/7187/7187948.png"
             className="w-20 mx-auto opacity-70"
           />
-          <p className="text-lg font-medium mt-4">No milestones found</p>
+          <p className="text-lg font-medium mt-4">No FAQs found</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -170,8 +143,8 @@ export default function MilestonesPage() {
               animate={{ opacity: 1, y: 0 }}
               className="border bg-white rounded-xl p-5 shadow-sm relative"
             >
-              <h3 className="font-semibold text-[#3b2f1c]">{item.year} – {item.title}</h3>
-              <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+              <h3 className="font-semibold text-[#3b2f1c]">{item.question}</h3>
+              <p className="text-sm text-gray-600 mt-1">{item.answer}</p>
 
               {/* Dropdown */}
               <button
@@ -187,22 +160,21 @@ export default function MilestonesPage() {
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -5 }}
-                    className="absolute right-4 top-14 bg-white border rounded-lg shadow-md w-36 bg-red-500 z-50"
+                    className="absolute right-4 top-14 bg-white border rounded-lg shadow-md w-36"
                   >
-                   <div className="bg-white rounded-lg overflow-hidden">
                     <button
-                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50 w-full"
-                      onClick={() => editItem(item)}
+                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50"
+                      onClick={() => editFaq(item)}
                     >
                       <FiEdit size={16} /> Edit
                     </button>
+
                     <button
-                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50 w-full text-red-600"
-                      onClick={() => deleteItem(item._id)}
+                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50 text-red-600"
+                      onClick={() => deleteFaq(item._id)}
                     >
                       <FiTrash2 size={16} /> Delete
                     </button>
-                   </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -227,44 +199,38 @@ export default function MilestonesPage() {
               className="bg-white p-6 rounded-xl w-full max-w-lg shadow-lg"
             >
               <h2 className="text-xl font-semibold mb-4 text-[#3b2f1c]">
-                {editingId ? "Edit Milestone" : "Add Milestone"}
+                {editingId ? "Edit FAQ" : "Add FAQ"}
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-3">
+                
+                {/* Question */}
+                <div>
+                  <label className="text-sm font-medium">Question</label>
+                  <input
+                    required
+                    type="text"
+                    value={formData.question}
+                    onChange={(e) =>
+                      setFormData({ ...formData, question: e.target.value })
+                    }
+                    className="w-full mt-1 p-2 border rounded-md"
+                  />
+                </div>
 
-                {["year", "title", "description", "details", "achievement", "images"].map((field) => (
-                  <div key={field}>
-                    <label className="text-sm font-medium capitalize">{field}</label>
-
-                    {field === "description" || field === "details" ? (
-                      <textarea
-                        required
-                        rows={3}
-                        value={(formData as any)[field]}
-                        onChange={(e) =>
-                          setFormData({ ...formData, [field]: e.target.value })
-                        }
-                        className="w-full mt-1 p-2 border rounded-md"
-                      />
-                    ) : (
-                      <input
-                        required
-                        type="text"
-                        value={(formData as any)[field]}
-                        onChange={(e) =>
-                          setFormData({ ...formData, [field]: e.target.value })
-                        }
-                        className="w-full mt-1 p-2 border rounded-md"
-                      />
-                    )}
-
-                    {field === "images" && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        Add multiple image URLs separated by commas.
-                      </p>
-                    )}
-                  </div>
-                ))}
+                {/* Answer */}
+                <div>
+                  <label className="text-sm font-medium">Answer</label>
+                  <textarea
+                    required
+                    rows={3}
+                    value={formData.answer}
+                    onChange={(e) =>
+                      setFormData({ ...formData, answer: e.target.value })
+                    }
+                    className="w-full mt-1 p-2 border rounded-md"
+                  />
+                </div>
 
                 <div className="flex justify-end gap-3 pt-3">
                   <button
@@ -288,7 +254,6 @@ export default function MilestonesPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   );
 }

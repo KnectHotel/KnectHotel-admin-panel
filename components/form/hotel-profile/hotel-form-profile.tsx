@@ -117,6 +117,23 @@ const HotelFormProfile = ({
       number: '',
       email: '',
       address: '',
+      address2: '',
+      centre: {
+        lat: undefined,
+        lng: undefined
+      },
+      propertyAmenities: [],
+      roomIds: [],
+      pricingAndOccupancy: {
+        defaultOccupancy: 2,
+        maxOccupancy: 3,
+        maxChildren: 1,
+        defaultPrice: 1000,
+        minPrice: 500,
+        extraAdultPrice: 500,
+        childPrice: 300
+      },
+      roomTypeAmenities: [],
       hotelCategory: '5 Star',
       city: '',
       country: 'India',
@@ -289,6 +306,20 @@ const HotelFormProfile = ({
           number: data.phoneNo || '',
           email: data.email || '',
           address: data.address || '',
+          address2: data.address2 || '',
+          centre: data.centre || { lat: undefined, lng: undefined },
+          propertyAmenities: data.propertyAmenities || [],
+          roomIds: data.roomIds || [],
+          pricingAndOccupancy: data.pricingAndOccupancy || {
+            defaultOccupancy: 2,
+            maxOccupancy: 3,
+            maxChildren: 1,
+            defaultPrice: 1000,
+            minPrice: 500,
+            extraAdultPrice: 500,
+            childPrice: 300
+          },
+          roomTypeAmenities: data.roomTypeAmenities || [],
           hotelCategory: data.hotelCategory || '3 Star',
           servingDepartment: data?.servingDepartment || [],
           subscriptionPlanType: data.subscriptionPlanType || '',
@@ -1057,6 +1088,78 @@ const HotelFormProfile = ({
                 />
                 <FormField
                   control={form.control}
+                  name="address2"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Address Line 2
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter additional address"
+                          {...field}
+                          disabled={true}
+                          className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <FormField
+                  control={form.control}
+                  name="centre.lat"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Latitude
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="any"
+                          placeholder="Enter latitude"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                          disabled={true}
+                          className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="centre.lng"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Longitude
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="any"
+                          placeholder="Enter longitude"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                          disabled={true}
+                          className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <FormField
+                  control={form.control}
                   name="hotelCategory"
                   render={({ field }) => (
                     <FormItem className="w-fit">
@@ -1459,6 +1562,384 @@ const HotelFormProfile = ({
                 >
                   <Plus className="w-4 h-4" /> Add Room & Features
                 </button>
+              </div>
+
+              {/* Property Amenities */}
+              <FormField
+                control={form.control}
+                name="propertyAmenities"
+                render={({ field }) => {
+                  const amenities: string[] = Array.isArray(field.value) ? field.value : [];
+                  const propertyAmenityOptions = [
+                    'Currency Exchange',
+                    'Shuttle/Cab Service',
+                    'Hot Tub/Jacuzzi',
+                    'Breakfast',
+                    'Room Service'
+                  ];
+
+                  const toggleAmenity = (value: string) => {
+                    const newValue = amenities.includes(value)
+                      ? amenities.filter((v) => v !== value)
+                      : [...amenities, value];
+                    field.onChange(newValue);
+                  };
+
+                  return (
+                    <FormItem>
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Property Amenities
+                      </FormLabel>
+                      <div className="flex flex-wrap gap-3 text-sm">
+                        {propertyAmenityOptions.map((option) => (
+                          <label
+                            key={option}
+                            className="inline-flex text-gray-700 items-center gap-2"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={amenities.includes(option)}
+                              onChange={() => toggleAmenity(option)}
+                              disabled={isDisabled}
+                            />
+                            <span>{option}</span>
+                          </label>
+                        ))}
+                      </div>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              {/* Room Type Amenities */}
+              <FormField
+                control={form.control}
+                name="roomTypeAmenities"
+                render={({ field }) => {
+                  const amenities: string[] = Array.isArray(field.value) ? field.value : [];
+                  const [pending, setPending] = React.useState('');
+
+                  const add = () => {
+                    const v = pending.trim();
+                    if (!v) return;
+                    const next = Array.from(new Set([...(amenities || []), v]));
+                    field.onChange(next);
+                    setPending('');
+                  };
+
+                  const removeAt = (i: number) => {
+                    const next = (amenities || []).filter((_, idx) => idx !== i);
+                    field.onChange(next);
+                  };
+
+                  const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+                    if (e.key === 'Enter' || e.key === ',') {
+                      e.preventDefault();
+                      add();
+                    }
+                  };
+
+                  return (
+                    <FormItem>
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Room Type Amenities
+                      </FormLabel>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {amenities?.map((f, i) => (
+                          <span
+                            key={`${f}-${i}`}
+                            className="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-[#F6EEE0] text-gray-700 text-xs"
+                          >
+                            {f}
+                            {!isDisabled && (
+                              <button
+                                type="button"
+                                className="text-red-600"
+                                onClick={() => removeAt(i)}
+                                aria-label={`remove ${f}`}
+                              >
+                                ×
+                              </button>
+                            )}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Input
+                          type="text"
+                          value={pending}
+                          onChange={(e) => setPending(e.target.value)}
+                          onKeyDown={onKeyDown}
+                          disabled={isDisabled}
+                          placeholder="Type amenity, press Enter (e.g., Wardrobe/Closet, Air conditioning)"
+                          className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-xs 2xl:text-sm"
+                        />
+                        <Button
+                          type="button"
+                          onClick={add}
+                          disabled={isDisabled || !pending.trim()}
+                          className="text-xs 2xl:text-sm"
+                          variant="secondary"
+                        >
+                          Add
+                        </Button>
+                      </div>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              {/* Room IDs */}
+              <FormField
+                control={form.control}
+                name="roomIds"
+                render={({ field }) => {
+                  const roomIds: string[] = Array.isArray(field.value) ? field.value : [];
+                  const [pending, setPending] = React.useState('');
+
+                  const add = () => {
+                    const v = pending.trim();
+                    if (!v) return;
+                    const next = Array.from(new Set([...(roomIds || []), v]));
+                    field.onChange(next);
+                    setPending('');
+                  };
+
+                  const removeAt = (i: number) => {
+                    const next = (roomIds || []).filter((_, idx) => idx !== i);
+                    field.onChange(next);
+                  };
+
+                  const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+                    if (e.key === 'Enter' || e.key === ',') {
+                      e.preventDefault();
+                      add();
+                    }
+                  };
+
+                  return (
+                    <FormItem>
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Room IDs
+                      </FormLabel>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {roomIds?.map((id, i) => (
+                          <span
+                            key={`${id}-${i}`}
+                            className="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-[#F6EEE0] text-gray-700 text-xs"
+                          >
+                            {id}
+                            {!isDisabled && (
+                              <button
+                                type="button"
+                                className="text-red-600"
+                                onClick={() => removeAt(i)}
+                                aria-label={`remove ${id}`}
+                              >
+                                ×
+                              </button>
+                            )}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Input
+                          type="text"
+                          value={pending}
+                          onChange={(e) => setPending(e.target.value)}
+                          onKeyDown={onKeyDown}
+                          disabled={isDisabled}
+                          placeholder="Enter room ID, press Enter"
+                          className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-xs 2xl:text-sm"
+                        />
+                        <Button
+                          type="button"
+                          onClick={add}
+                          disabled={isDisabled || !pending.trim()}
+                          className="text-xs 2xl:text-sm"
+                          variant="secondary"
+                        >
+                          Add
+                        </Button>
+                      </div>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              {/* Pricing and Occupancy */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <FormField
+                  control={form.control}
+                  name="pricingAndOccupancy.defaultOccupancy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Default Occupancy
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="1"
+                          placeholder="Default occupancy"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                          disabled={isDisabled}
+                          className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="pricingAndOccupancy.maxOccupancy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Max Occupancy
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="1"
+                          placeholder="Max occupancy"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                          disabled={isDisabled}
+                          className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="pricingAndOccupancy.maxChildren"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Max Children
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="Max children"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                          disabled={isDisabled}
+                          className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="pricingAndOccupancy.defaultPrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Default Price
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="Default price"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                          disabled={isDisabled}
+                          className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="pricingAndOccupancy.minPrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Min Price
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="Min price"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                          disabled={isDisabled}
+                          className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="pricingAndOccupancy.extraAdultPrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Extra Adult Price
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="Extra adult price"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                          disabled={isDisabled}
+                          className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="pricingAndOccupancy.childPrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Child Price
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="Child price"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                          disabled={isDisabled}
+                          className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[10px]" />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

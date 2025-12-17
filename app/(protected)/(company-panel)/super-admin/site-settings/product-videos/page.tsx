@@ -6,61 +6,54 @@ import {
   FiPlus,
   FiEdit,
   FiTrash2,
-  FiTrendingUp,
+  FiPlayCircle,
   FiArrowLeft
 } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { API_BASE_URL } from '@/lib/api-config';
 
-const API_BASE = `${API_BASE_URL}/recent_updates`;
+const API_BASE = `${API_BASE_URL}/product_videos`;
 
-export default function UpdatesPage() {
+export default function ProductVideosPage() {
   const [items, setItems] = useState<any[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
-
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    title: '',
-    date: '',
-    description: '',
-    category: '',
-    image: ''
+    title: "",
+    description: "",
+    duration: "",
+    thumbnail: "",
   });
 
-  // LOAD DATA FROM BACKEND
-  const fetchUpdates = async () => {
+  // FETCH PRODUCT VIDEOS
+  const fetchVideos = async () => {
     try {
-      const res = await fetch(`${API_BASE}`);
+      const res = await fetch(API_BASE);
       const json = await res.json();
       setItems(json.data || []);
     } catch (err) {
-      console.error("Error fetching updates:", err);
+      console.error("Error loading videos:", err);
     }
   };
 
   useEffect(() => {
-    fetchUpdates();
+    fetchVideos();
   }, []);
 
   const toggleDropdown = (id: string) => {
     setOpenId(openId === id ? null : id);
   };
 
-  // CREATE or UPDATE
+  // CREATE / UPDATE
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     try {
-      let url = `${API_BASE}/create`;
-      let method = "POST";
-
-      if (editingId) {
-        url = `${API_BASE}/${editingId}`;
-        method = "PUT";
-      }
+      const url = editingId ? `${API_BASE}/${editingId}` : API_BASE;
+      const method = editingId ? "PUT" : "POST";
 
       const res = await fetch(url, {
         method,
@@ -71,65 +64,61 @@ export default function UpdatesPage() {
       const json = await res.json();
 
       if (json.success) {
-        fetchUpdates();
+        fetchVideos();
         setShowForm(false);
         setEditingId(null);
         setFormData({
-          title: '',
-          date: '',
-          description: '',
-          category: '',
-          image: ''
+          title: "",
+          description: "",
+          duration: "",
+          thumbnail: "",
         });
       }
     } catch (err) {
-      console.error("Error saving update:", err);
+      console.error("Error saving video:", err);
     }
   };
 
   // DELETE
-  const deleteItem = async (id: string) => {
+  const deleteVideo = async (id: string) => {
     try {
       const res = await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
       const json = await res.json();
-      if (json.success) fetchUpdates();
+      if (json.success) fetchVideos();
     } catch (err) {
-      console.error("Error deleting update:", err);
+      console.error("Error deleting video:", err);
     }
   };
 
   // OPEN EDIT FORM
-  const editItem = (item: any) => {
+  const editVideo = (item: any) => {
     setEditingId(item._id);
     setShowForm(true);
+
     setFormData({
       title: item.title,
-      date: item.date,
       description: item.description,
-      category: item.category,
-      image: item.image
+      duration: item.duration,
+      thumbnail: item.thumbnail,
     });
   };
 
   return (
     <div className="p-6 w-full">
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
         className="flex justify-between items-center mb-6"
       >
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => window.history.back()}
-            className="text-[#3b2f1c] hover:opacity-70"
-          >
+          <button onClick={() => window.history.back()} className="text-[#3b2f1c]">
             <FiArrowLeft size={20} />
           </button>
 
           <h1 className="text-2xl font-semibold text-[#3b2f1c] flex items-center gap-2">
-            <FiTrendingUp className="text-[#9b743f]" /> Updates
+            <FiPlayCircle className="text-[#9b743f]" /> Product Videos
           </h1>
         </div>
 
@@ -138,71 +127,74 @@ export default function UpdatesPage() {
           whileTap={{ scale: 0.97 }}
           onClick={() => {
             setEditingId(null);
+            setFormData({ title: "", description: "", duration: "", thumbnail: "" });
             setShowForm(true);
           }}
-          className="flex items-center gap-2 bg-[#9b743f] text-white px-4 py-2 rounded-md shadow-sm"
+          className="flex items-center gap-2 bg-[#9b743f] text-white px-4 py-2 rounded-md"
         >
-          <FiPlus /> Add Update
+          <FiPlus /> Add Video
         </motion.button>
       </motion.div>
 
-      {/* Empty state */}
+      {/* Empty State */}
       {items.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-gray-500 py-16 text-center flex flex-col items-center gap-3"
-        >
+        <div className="text-center text-gray-500 py-20">
           <img
             src="https://cdn-icons-png.flaticon.com/512/7187/7187948.png"
-            alt="No updates"
-            className="w-20 opacity-70"
+            className="w-20 mx-auto opacity-70"
           />
-          <p className="text-lg font-medium">No updates found</p>
-          <p className="text-sm opacity-70">Add your first update to begin</p>
-        </motion.div>
+          <p className="text-lg font-medium mt-4">No product videos found</p>
+        </div>
       ) : (
         <div className="space-y-4">
           {items.map((item) => (
             <motion.div
               key={item._id}
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25 }}
-              whileHover={{ scale: 1.01 }}
-              className="border bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition relative"
+              className="border bg-white rounded-xl p-5 shadow-sm relative"
             >
               <h3 className="font-semibold text-[#3b2f1c]">{item.title}</h3>
               <p className="text-sm text-gray-600 mt-1">{item.description}</p>
 
-              {/* Dropdown Trigger */}
+              <div className="mt-2 text-xs text-gray-500">
+                Duration: {item.duration}
+              </div>
+
+              {item.thumbnail && (
+                <img
+                  src={item.thumbnail}
+                  alt="Thumbnail"
+                  className="w-32 h-20 object-cover rounded-md mt-3 border"
+                />
+              )}
+
+              {/* Dropdown */}
               <button
                 onClick={() => toggleDropdown(item._id)}
-                className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded transition"
+                className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded"
               >
                 <FiMoreVertical size={18} />
               </button>
 
-              {/* Dropdown */}
               <AnimatePresence>
                 {openId === item._id && (
                   <motion.div
-                    initial={{ opacity: 0, y: -5, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -5, scale: 0.95 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-4 top-14 bg-white border rounded-lg shadow-md w-36 z-50 overflow-hidden"
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="absolute right-4 top-14 bg-white border rounded-lg shadow-md w-36"
                   >
                     <button
-                      onClick={() => editItem(item)}
-                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50 w-full"
+                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50"
+                      onClick={() => editVideo(item)}
                     >
                       <FiEdit size={16} /> Edit
                     </button>
 
                     <button
-                      onClick={() => deleteItem(item._id)}
-                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50 w-full text-red-600"
+                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50 text-red-600"
+                      onClick={() => deleteVideo(item._id)}
                     >
                       <FiTrash2 size={16} /> Delete
                     </button>
@@ -214,7 +206,7 @@ export default function UpdatesPage() {
         </div>
       )}
 
-      {/* Add / Edit Form Modal */}
+      {/* FORM MODAL */}
       <AnimatePresence>
         {showForm && (
           <motion.div
@@ -224,16 +216,16 @@ export default function UpdatesPage() {
             className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white p-6 rounded-xl w-full max-w-md shadow-lg"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              className="bg-white p-6 rounded-xl w-full max-w-lg shadow-lg"
             >
-              <h2 className="text-xl font-semibold text-[#3b2f1c] mb-4">
-                {editingId ? "Edit Update" : "Add Update"}
+              <h2 className="text-xl font-semibold mb-4 text-[#3b2f1c]">
+                {editingId ? "Edit Product Video" : "Add Product Video"}
               </h2>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 {/* Title */}
                 <div>
                   <label className="text-sm font-medium">Title</label>
@@ -244,21 +236,7 @@ export default function UpdatesPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, title: e.target.value })
                     }
-                    className="w-full mt-1 px-3 py-2 border rounded-md"
-                  />
-                </div>
-
-                {/* Date */}
-                <div>
-                  <label className="text-sm font-medium">Date</label>
-                  <input
-                    required
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) =>
-                      setFormData({ ...formData, date: e.target.value })
-                    }
-                    className="w-full mt-1 px-3 py-2 border rounded-md"
+                    className="w-full mt-1 p-2 border rounded-md"
                   />
                 </div>
 
@@ -272,45 +250,43 @@ export default function UpdatesPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, description: e.target.value })
                     }
-                    className="w-full mt-1 px-3 py-2 border rounded-md"
+                    className="w-full mt-1 p-2 border rounded-md"
                   />
                 </div>
 
-                {/* Category */}
+                {/* Duration */}
                 <div>
-                  <label className="text-sm font-medium">Category</label>
+                  <label className="text-sm font-medium">Duration</label>
                   <input
                     required
                     type="text"
-                    value={formData.category}
+                    placeholder="e.g. 02:15"
+                    value={formData.duration}
                     onChange={(e) =>
-                      setFormData({ ...formData, category: e.target.value })
+                      setFormData({ ...formData, duration: e.target.value })
                     }
-                    className="w-full mt-1 px-3 py-2 border rounded-md"
+                    className="w-full mt-1 p-2 border rounded-md"
                   />
                 </div>
 
-                {/* Image */}
+                {/* Thumbnail */}
                 <div>
-                  <label className="text-sm font-medium">Image URL</label>
+                  <label className="text-sm font-medium">Thumbnail URL</label>
                   <input
                     required
                     type="text"
-                    value={formData.image}
+                    value={formData.thumbnail}
                     onChange={(e) =>
-                      setFormData({ ...formData, image: e.target.value })
+                      setFormData({ ...formData, thumbnail: e.target.value })
                     }
-                    className="w-full mt-1 px-3 py-2 border rounded-md"
+                    className="w-full mt-1 p-2 border rounded-md"
                   />
                 </div>
 
-                <div className="flex justify-end gap-3 pt-2">
+                <div className="flex justify-end gap-3 pt-3">
                   <button
                     type="button"
-                    onClick={() => {
-                      setShowForm(false);
-                      setEditingId(null);
-                    }}
+                    onClick={() => setShowForm(false)}
                     className="px-4 py-2 border rounded-md"
                   >
                     Cancel
@@ -323,6 +299,7 @@ export default function UpdatesPage() {
                     {editingId ? "Update" : "Save"}
                   </button>
                 </div>
+
               </form>
             </motion.div>
           </motion.div>

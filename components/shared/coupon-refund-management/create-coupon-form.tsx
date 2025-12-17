@@ -723,6 +723,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDown } from 'lucide-react';
 import { Calendar as ShadCalendar } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon } from 'lucide-react';
+import AnimatedSelect from '@/components/ui/AnimatedSelect';
+import { allServices } from '@/utils/allservices';
 
 interface CreateCouponFormProps {
   mode?: 'create' | 'view' | 'edit';
@@ -742,7 +744,8 @@ const defaultValues = {
   termsAndConditions: '',
   couponImage: undefined as File | undefined,
   discountType: '',
-  perUserLimit: ''
+  perUserLimit: '',
+  services: [] as string[]
 };
 
 export const couponSchema = z.object({
@@ -768,7 +771,8 @@ export const couponSchema = z.object({
     .nonempty('Per user limit is required')
     .refine((v) => /^\d+$/.test(v) && Number(v) > 0, {
       message: 'Enter a positive number'
-    })
+    }),
+  services: z.array(z.string()).optional()
 });
 
 const CreateCouponForm: React.FC<CreateCouponFormProps> = ({
@@ -832,7 +836,8 @@ const CreateCouponForm: React.FC<CreateCouponFormProps> = ({
             createCode: data.code || 'N/A',
             termsAndConditions: data.termsAndConditions || 'N/A',
             couponImage: undefined,
-            perUserLimit: (data.perUserLimit ?? 1).toString()
+            perUserLimit: (data.perUserLimit ?? 1).toString(),
+            services: data.services || []
           });
 
           if (data.imageUrl) {
@@ -897,7 +902,8 @@ const CreateCouponForm: React.FC<CreateCouponFormProps> = ({
         termsAndConditions: data.termsAndConditions,
         status:
           data.couponStatus.charAt(0).toUpperCase() +
-          data.couponStatus.slice(1).toLowerCase()
+          data.couponStatus.slice(1).toLowerCase(),
+        services: data.services || []
       };
       if (isEditMode && couponId) {
         await apiCall('PUT', `api/coupon/${couponId}`, payload);
@@ -1457,6 +1463,91 @@ const CreateCouponForm: React.FC<CreateCouponFormProps> = ({
                     </div>
                   </FormItem>
                 )}
+              />
+
+              {/* Services Selection */}
+              <FormField
+                control={form.control}
+                name="services"
+                render={({ field }) => {
+                  const selectedServices = field.value || [];
+                  const serviceOptions = allServices.map((s) => s.displayName);
+                  const availableServices = serviceOptions.filter(
+                    (s) => !selectedServices.includes(s)
+                  );
+
+                  const handleServiceAdd = (e: any) => {
+                    const newService = e?.target?.value || e;
+                    if (newService && newService !== '' && !selectedServices.includes(newService)) {
+                      field.onChange([...selectedServices, newService]);
+                    }
+                  };
+
+                  const handleServiceRemove = (serviceToRemove: string) => {
+                    field.onChange(
+                      selectedServices.filter((s) => s !== serviceToRemove)
+                    );
+                  };
+
+                  return (
+                    <FormItem className="flex flex-col sm:flex-row gap-2">
+                      <FormLabel className="w-full sm:w-36 2xl:w-40 text-xs 2xl:text-sm font-medium text-gray-700 pt-1 shrink-0">
+                        Applicable Services
+                      </FormLabel>
+                      <div className="w-full">
+                        <FormControl>
+                          <div className="space-y-3">
+                            {/* AnimatedSelect for adding services */}
+                            {!isViewMode && (
+                              <div className="relative z-50">
+                                <AnimatedSelect
+                                  label=""
+                                  name="serviceSelect"
+                                  options={availableServices}
+                                  value=""
+                                  onChange={handleServiceAdd}
+                                  searchable={true}
+                                  dropdownPosition="top"
+                                />
+                              </div>
+                            )}
+                            
+                            {/* Display selected services as chips */}
+                            {selectedServices.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mt-2">
+                                {selectedServices.map((service) => (
+                                  <div
+                                    key={service}
+                                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F6EEE0] text-gray-700 text-xs"
+                                  >
+                                    <span>{service}</span>
+                                    {!isViewMode && (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleServiceRemove(service)}
+                                        className="text-red-600 hover:text-red-800 font-bold"
+                                        aria-label={`Remove ${service}`}
+                                      >
+                                        ×
+                                      </button>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            
+                            {selectedServices.length === 0 && (
+                              <p className="text-xs text-gray-500 mt-2">
+                                No services selected. Coupon will apply to all services.
+                              </p>
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage className="text-red-500 text-xs mt-1" />
+                      </div>
+                    </FormItem>
+                  );
+                }}
               />
             </div>
 

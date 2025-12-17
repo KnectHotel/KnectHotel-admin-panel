@@ -8,16 +8,24 @@ import {
   FiTrendingUp,
   FiFlag,
   FiStar,
-  FiUsers
+  FiUsers,
+  FiBriefcase,
+  FiAward,
+  FiPlayCircle,
+  FiHelpCircle
 } from 'react-icons/fi';
 
 const sections = [
   { name: 'Blogs', path: 'blogs', icon: <FiFileText size={26} /> },
   { name: 'News', path: 'news', icon: <FiBell size={26} /> },
-  { name: 'Updates', path: 'updates', icon: <FiTrendingUp size={26} /> },
+  { name: 'Recent Updates', path: 'updates', icon: <FiTrendingUp size={26} /> },
   { name: 'Milestones', path: 'milestones', icon: <FiFlag size={26} /> },
   { name: 'Reviews', path: 'reviews', icon: <FiStar size={26} /> },
-  { name: 'Collaborations', path: 'collaborations', icon: <FiUsers size={26} /> }
+  { name: 'Collaborations', path: 'collaborations', icon: <FiUsers size={26} /> },
+  { name: 'Company Section', path: 'company-section', icon: <FiBriefcase size={26} /> },
+  { name: 'Milestone', path: 'milestone', icon: <FiAward size={26} /> },
+  { name: 'Product Videos', path: 'product-videos', icon: <FiPlayCircle size={26} /> },
+  { name: 'FAQs', path: 'faqs', icon: <FiHelpCircle size={26} /> }
 ];
 
 export default function ContentManagementPage() {

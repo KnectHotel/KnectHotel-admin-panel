@@ -18,7 +18,8 @@
     "paths": {
       "@/components/*": ["components/*"],
       "@/lib/*": ["lib/*"],
-      "@/data/*": ["app/data/*"]
+      "@/data/*": ["app/data/*"],
+      "@/utils/*": ["utils/*"]
     },
     "plugins": [
       {

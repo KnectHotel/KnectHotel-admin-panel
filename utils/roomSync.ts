@@ -1,0 +1,86 @@
+// utils/roomSync.ts
+// Utility to sync room management data with hotel management form
+
+import { setLocalStorageItem, getLocalStorageItem } from './localstorage';
+
+export interface RoomSyncData {
+  roomType: string;
+  roomCategory?: string;
+  floorNumber?: string;
+  tower?: string;
+  bedType?: string;
+  maxOccupancy?: number;
+  roomSize?: string;
+  baseRate?: number;
+  amenities?: string; // comma separated
+}
+
+const ROOM_SYNC_KEY = 'room_management_sync_data';
+
+/**
+ * Save room management data to sync with hotel form
+ */
+export function saveRoomSyncData(data: RoomSyncData): void {
+  setLocalStorageItem(ROOM_SYNC_KEY, data);
+}
+
+/**
+ * Get room management data for syncing
+ */
+export function getRoomSyncData(): RoomSyncData | null {
+  return getLocalStorageItem<RoomSyncData>(ROOM_SYNC_KEY);
+}
+
+/**
+ * Clear room sync data
+ */
+export function clearRoomSyncData(): void {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(ROOM_SYNC_KEY);
+  }
+}
+
+/**
+ * Convert room sync data to hotel form roomConfigs format
+ */
+export function convertToRoomConfigs(data: RoomSyncData): { roomType: string; features: string[] } {
+  const features: string[] = [];
+  
+  // Convert amenities (comma separated) to features array
+  if (data.amenities) {
+    const amenityList = data.amenities
+      .split(',')
+      .map(a => a.trim())
+      .filter(a => a.length > 0);
+    features.push(...amenityList);
+  }
+  
+  // Add other fields as features if they exist
+  if (data.roomCategory) {
+    features.push(`Category: ${data.roomCategory}`);
+  }
+  if (data.bedType) {
+    features.push(`Bed: ${data.bedType}`);
+  }
+  if (data.maxOccupancy) {
+    features.push(`Max Occupancy: ${data.maxOccupancy}`);
+  }
+  if (data.roomSize) {
+    features.push(`Size: ${data.roomSize} sq. ft`);
+  }
+  if (data.floorNumber) {
+    features.push(`Floor: ${data.floorNumber}`);
+  }
+  if (data.tower) {
+    features.push(`Tower: ${data.tower}`);
+  }
+  if (data.baseRate) {
+    features.push(`Base Rate: ₹${data.baseRate}`);
+  }
+
+  return {
+    roomType: data.roomType || 'Standard',
+    features: features.length > 0 ? features : ['Standard Room']
+  };
+}
+

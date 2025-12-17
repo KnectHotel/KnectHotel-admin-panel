@@ -31,6 +31,15 @@ export function NavItem({
     );
   }
 
+  // Filter out any NavItem components from children to prevent nested anchors
+  const safeChildren = React.Children.toArray(children).filter((child) => {
+    if (React.isValidElement(child) && child.type === NavItem) {
+      console.warn('NavItem cannot contain another NavItem as a child. This will cause nested anchor tags.');
+      return false;
+    }
+    return true;
+  });
+
   return (
     <Link
       href={href}
@@ -42,7 +51,7 @@ export function NavItem({
         }
       )}
     >
-      {children}
+      {safeChildren}
       <span className="text-xs 2xl:text-sm font-medium">{label}</span>
     </Link>
   );

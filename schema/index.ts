@@ -196,6 +196,38 @@ export const guestSchema = z
       amount: z.coerce.number().min(0).optional(),
       reason: z.string().optional(),
     }).optional(),
+    
+    // Payment Details
+    paymentDetails: z.object({
+      sellRate: z.number().default(300).optional(),
+      netRate: z.number().default(0).optional(),
+      paymentMade: z.number().default(0).optional(),
+      currency: z.string().default('INR').optional(),
+      totalTaxes: z.number().default(0).optional(),
+      otaCommission: z.number().default(0).optional(),
+      tcs: z.number().default(0).optional(),
+      tds: z.number().default(0).optional(),
+      payAtHotel: z.boolean().default(false).optional(),
+    }).optional(),
+    
+    // Promo Info
+    promoInfo: z.any().optional().default({}),
+    
+    // Room Type and Rate Plan
+    ratePlanId: z.string().default('41355').optional(),
+    roomTypeId: z.string().default('12353').optional(),
+    roomTypeName: z.string().default('Deluxe room').optional(),
+    payAtHotel: z.boolean().default(false).optional(),
+    
+    // Room Stays
+    roomStays: z.array(z.object({
+      roomTypeId: z.string().default('12353').optional(),
+      ratePlanId: z.string().default('41355').optional(),
+      roomTypeName: z.string().default('Deluxe room').optional(),
+      numAdults: z.number().default(1).optional(),
+      numChildren: z.number().default(0).optional(),
+      roomId: z.string().default('').optional(),
+    })).optional().default([]),
   })
   .superRefine((data, ctx) => {
     const adults = Number(data.adultGuestsCount ?? 0);
@@ -336,6 +368,23 @@ export const hotelSchema = z.object({
   number: z.string().min(10, 'Phone number must be at least 10 digits'),
   email: z.string().email('Invalid email address'),
   address: z.string().min(1, 'Complete address is required'), // maps to "address"
+  address2: z.string().optional(), // Additional address line
+  centre: z.object({
+    lat: z.number().optional(),
+    lng: z.number().optional()
+  }).optional(), // Location coordinates
+  propertyAmenities: z.array(z.string()).optional().default([]), // Property amenities
+  roomIds: z.array(z.string()).optional().default([]), // Room IDs
+  pricingAndOccupancy: z.object({
+    defaultOccupancy: z.number().optional(),
+    maxOccupancy: z.number().optional(),
+    maxChildren: z.number().optional(),
+    defaultPrice: z.number().optional(),
+    minPrice: z.number().optional(),
+    extraAdultPrice: z.number().optional(),
+    childPrice: z.number().optional()
+  }).optional(),
+  roomTypeAmenities: z.array(z.string()).optional().default([]), // Room type amenities
   hotelCategory: z.enum(['3 Star', '4 Star', '5 Star', '7 Star']),
   city: z.string().min(1, 'City is required'),
   country: z.string().min(1, 'Country is required'),

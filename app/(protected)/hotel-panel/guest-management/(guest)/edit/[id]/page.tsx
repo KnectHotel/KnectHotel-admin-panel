@@ -38,7 +38,7 @@ const EditGuestPage = async ({
   return (
     <>
       <Navbar />
-      <div className="flex justify-center items-center min-h-screen w-full pt-8 mt-16">
+      <div className="flex  justify-center items-center min-h-screen w-full pt-8 mt-16">
         <div className="h-full w-full container">
           <GuestForm
             isEnabled={true}

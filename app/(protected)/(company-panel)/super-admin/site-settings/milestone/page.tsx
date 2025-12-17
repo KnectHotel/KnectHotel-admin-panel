@@ -10,9 +10,8 @@ import {
   FiArrowLeft
 } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
-import { API_BASE_URL } from '@/lib/api-config';
 
-const API_BASE = `${API_BASE_URL}/milestones`;
+const API_BASE = "http://localhost:3001/api/milestones";
 
 export default function MilestonesPage() {
   const [items, setItems] = useState<any[]>([]);
@@ -108,7 +107,7 @@ export default function MilestonesPage() {
       description: item.description,
       details: item.details,
       achievement: item.achievement,
-      images: item.images ? item.images.join(", ") : ""
+      images: item.images.join(", ")
     });
   };
 
@@ -187,22 +186,20 @@ export default function MilestonesPage() {
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -5 }}
-                    className="absolute right-4 top-14 bg-white border rounded-lg shadow-md w-36 bg-red-500 z-50"
+                    className="absolute right-4 top-14 bg-white border rounded-lg shadow-md w-36"
                   >
-                   <div className="bg-white rounded-lg overflow-hidden">
                     <button
-                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50 w-full"
+                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50"
                       onClick={() => editItem(item)}
                     >
                       <FiEdit size={16} /> Edit
                     </button>
                     <button
-                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50 w-full text-red-600"
+                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-50 text-red-600"
                       onClick={() => deleteItem(item._id)}
                     >
                       <FiTrash2 size={16} /> Delete
                     </button>
-                   </div>
                   </motion.div>
                 )}
               </AnimatePresence>

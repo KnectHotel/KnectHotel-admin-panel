@@ -28,6 +28,8 @@ import {
 } from '@/components/ui/select';
 // import { Checkbox } from '@/components/ui/checkbox';
 import { ToastAtTopRight } from '@/lib/sweetalert';
+import { saveRoomSyncData } from '@/utils/roomSync';
+import { usePathname } from 'next/navigation';
 
 const formSchema = z.object({
   roomNumber: z.string().min(1, 'Room number is required'),
@@ -51,6 +53,7 @@ interface RoomFormProps {
 export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
   const params = useParams();
   const router = useRouter();
+  const pathname = usePathname();
   const [loading, setLoading] = useState(false);
 
   const title = initialData ? 'Edit Room' : 'Create Room';
@@ -79,6 +82,18 @@ export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
   const onSubmit = async (data: RoomFormValues) => {
     try {
       setLoading(true);
+      // Save room data for syncing with hotel management form
+      saveRoomSyncData({
+        roomType: data.roomType,
+        roomCategory: data.roomCategory,
+        floorNumber: data.floorNumber,
+        tower: data.tower,
+        bedType: data.bedType,
+        maxOccupancy: data.maxOccupancy,
+        roomSize: data.roomSize,
+        baseRate: data.baseRate,
+        amenities: data.amenities,
+      });
       // Simulate API call
       console.log('Room Data Submitted:', data);
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -87,7 +102,11 @@ export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
           title: toastMessage,
       });
       router.refresh();
-      router.push('/super-admin/hotel-management/rooms');
+      // Determine redirect path based on current route
+      const redirectPath = pathname?.startsWith('/hotel-panel')
+        ? '/hotel-panel/room-management'
+        : '/super-admin/hotel-management/rooms';
+      router.push(redirectPath);
     } catch (error: any) {
         ToastAtTopRight.fire({
             icon: 'error',
@@ -108,7 +127,11 @@ export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
         title: 'Room deleted.',
     });
       router.refresh();
-      router.push('/super-admin/hotel-management/rooms');
+      // Determine redirect path based on current route
+      const redirectPath = pathname?.startsWith('/hotel-panel')
+        ? '/hotel-panel/room-management'
+        : '/super-admin/hotel-management/rooms';
+      router.push(redirectPath);
     } catch (error: any) {
         ToastAtTopRight.fire({
             icon: 'error',
@@ -312,7 +335,7 @@ export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
               )}
             />
           </div>
-          <Button disabled={loading} className="ml-auto" type="submit">
+          <Button disabled={loading} className="ml-auto bg-[#9e793b] hover:bg-[#4a391b] text-white" type="submit">
             {action}
           </Button>
         </form>

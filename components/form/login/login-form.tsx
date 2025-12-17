@@ -284,6 +284,7 @@ const LoginForm = () => {
                           {...field}
                           className="bg-transparent text-black border-black border-opacity-20 placeholder:text-black placeholder:text-xs 2xl:text-sm placeholder:opacity-25 pr-10"
                           autoComplete="current-password"
+                          suppressHydrationWarning
                         />
                         <button
                           type="button"
@@ -292,6 +293,7 @@ const LoginForm = () => {
                           aria-label={
                             showPassword ? 'Hide password' : 'Show password'
                           }
+                          suppressHydrationWarning
                         >
                           {showPassword ? (
                             <EyeOff className="h-4 w-4 text-gray-400" />
@@ -348,6 +350,7 @@ const LoginForm = () => {
               type="submit"
               className="w-full btn-primary"
               disabled={isLoading}
+              suppressHydrationWarning
             >
               {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>

@@ -1447,42 +1447,43 @@ function SuperAdminPanelSideNav() {
                   href="/super-admin/hotel-management/rooms"
                   label="Room Management"
                 >
-                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
+                   {/* <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
                 <NavItem
                   href="/super-admin/hotel-management/room-upgrade"
                   label="Room Upgrade"
-                >
+                > */}
                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
                 <NavItem
                   href="/super-admin/hotel-management/food-plans"
                   label="Food Plans"
                 >
-                  <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
+                  {/* <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
                 <NavItem
                   href="/super-admin/hotel-management/coupons"
                   label="Coupons"
-                >
-                  <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
+                > */}
+                  {/* <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
                 <NavItem
                   href="/super-admin/hotel-management/room-categories"
                   label="Room Categories"
-                >
-                  <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
+                > */}
+                  {/* <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
                 <NavItem
                   href="/super-admin/hotel-management/floors"
                   label="Floors"
-                >
-                  <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
+                > */}
+                  {/* <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
                 <NavItem
                   href="/super-admin/hotel-management/services"
                   label="Services"
-                >
+                > */}
+             
                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
               </div>
@@ -1603,7 +1604,7 @@ function HotelPanelSideNav() {
                   openGuestSubMenu ? 'max-h-screen' : 'max-h-0'
                 }`}
               >
-                <NavItem
+                {/* <NavItem
                   href="/hotel-panel/guest-management/room-upgrade"
                   label="Room Upgrade"
                 >
@@ -1615,7 +1616,7 @@ function HotelPanelSideNav() {
                   label="Room Categories"
                 >
                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
-                </NavItem>
+                </NavItem> */}
 
                 <NavItem
                   href="/hotel-panel/guest-management/food-plans"
@@ -1624,12 +1625,12 @@ function HotelPanelSideNav() {
                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
 
-                <NavItem
+                {/* <NavItem
                   href="/hotel-panel/guest-management/services"
                   label="Services"
                 >
                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
-                </NavItem>
+                </NavItem> */}
               </div>
             </div>
           )}
