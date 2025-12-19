@@ -10,10 +10,8 @@ import {
   FiArrowLeft
 } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
-
-import { API_BASE_URL } from '@/lib/api-config';
-
-const API_BASE = `${API_BASE_URL}/product_videos`;
+import apiCall from '@/lib/axios';
+import { ENDPOINTS } from '@/lib/api-config';
 
 export default function ProductVideosPage() {
   const [items, setItems] = useState<any[]>([]);
@@ -22,20 +20,20 @@ export default function ProductVideosPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    duration: "",
-    thumbnail: "",
+    title: '',
+    description: '',
+    duration: '',
+    thumbnail: ''
   });
 
   // FETCH PRODUCT VIDEOS
   const fetchVideos = async () => {
     try {
-      const res = await fetch(API_BASE);
-      const json = await res.json();
-      setItems(json.data || []);
+      const json = await apiCall('GET', ENDPOINTS.PRODUCT_VIDEOS);
+      setItems(json.data || json || []);
     } catch (err) {
-      console.error("Error loading videos:", err);
+      console.error('Error loading videos:', err);
+      setItems([]);
     }
   };
 
@@ -52,41 +50,33 @@ export default function ProductVideosPage() {
     e.preventDefault();
 
     try {
-      const url = editingId ? `${API_BASE}/${editingId}` : API_BASE;
-      const method = editingId ? "PUT" : "POST";
+      const url = editingId
+        ? `${ENDPOINTS.PRODUCT_VIDEOS}/${editingId}`
+        : ENDPOINTS.PRODUCT_VIDEOS;
+      const method = editingId ? 'PUT' : 'POST';
 
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      await apiCall(method, url, formData);
+      fetchVideos();
+      setShowForm(false);
+      setEditingId(null);
+      setFormData({
+        title: '',
+        description: '',
+        duration: '',
+        thumbnail: ''
       });
-
-      const json = await res.json();
-
-      if (json.success) {
-        fetchVideos();
-        setShowForm(false);
-        setEditingId(null);
-        setFormData({
-          title: "",
-          description: "",
-          duration: "",
-          thumbnail: "",
-        });
-      }
     } catch (err) {
-      console.error("Error saving video:", err);
+      console.error('Error saving video:', err);
     }
   };
 
   // DELETE
   const deleteVideo = async (id: string) => {
     try {
-      const res = await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
-      const json = await res.json();
-      if (json.success) fetchVideos();
+      await apiCall('DELETE', `${ENDPOINTS.PRODUCT_VIDEOS}/${id}`);
+      fetchVideos();
     } catch (err) {
-      console.error("Error deleting video:", err);
+      console.error('Error deleting video:', err);
     }
   };
 
@@ -99,13 +89,12 @@ export default function ProductVideosPage() {
       title: item.title,
       description: item.description,
       duration: item.duration,
-      thumbnail: item.thumbnail,
+      thumbnail: item.thumbnail
     });
   };
 
   return (
     <div className="p-6 w-full">
-
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
@@ -113,7 +102,10 @@ export default function ProductVideosPage() {
         className="flex justify-between items-center mb-6"
       >
         <div className="flex items-center gap-3">
-          <button onClick={() => window.history.back()} className="text-[#3b2f1c]">
+          <button
+            onClick={() => window.history.back()}
+            className="text-[#3b2f1c]"
+          >
             <FiArrowLeft size={20} />
           </button>
 
@@ -127,7 +119,12 @@ export default function ProductVideosPage() {
           whileTap={{ scale: 0.97 }}
           onClick={() => {
             setEditingId(null);
-            setFormData({ title: "", description: "", duration: "", thumbnail: "" });
+            setFormData({
+              title: '',
+              description: '',
+              duration: '',
+              thumbnail: ''
+            });
             setShowForm(true);
           }}
           className="flex items-center gap-2 bg-[#9b743f] text-white px-4 py-2 rounded-md"
@@ -222,7 +219,7 @@ export default function ProductVideosPage() {
               className="bg-white p-6 rounded-xl w-full max-w-lg shadow-lg"
             >
               <h2 className="text-xl font-semibold mb-4 text-[#3b2f1c]">
-                {editingId ? "Edit Product Video" : "Add Product Video"}
+                {editingId ? 'Edit Product Video' : 'Add Product Video'}
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-3">
@@ -296,10 +293,9 @@ export default function ProductVideosPage() {
                     type="submit"
                     className="px-4 py-2 bg-[#9b743f] text-white rounded-md"
                   >
-                    {editingId ? "Update" : "Save"}
+                    {editingId ? 'Update' : 'Save'}
                   </button>
                 </div>
-
               </form>
             </motion.div>
           </motion.div>

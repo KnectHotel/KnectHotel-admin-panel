@@ -10,10 +10,8 @@ import {
   FiArrowLeft
 } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
-
-import { API_BASE_URL } from '@/lib/api-config';
-
-const API_BASE = `${API_BASE_URL}/faqs`;
+import apiCall from '@/lib/axios';
+import { ENDPOINTS } from '@/lib/api-config';
 
 export default function FaqsPage() {
   const [items, setItems] = useState<any[]>([]);
@@ -22,18 +20,18 @@ export default function FaqsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    question: "",
-    answer: "",
+    question: '',
+    answer: ''
   });
 
   // FETCH FAQ LIST
   const fetchFaqs = async () => {
     try {
-      const res = await fetch(API_BASE);
-      const json = await res.json();
-      setItems(json.data || []);
+      const json = await apiCall('GET', ENDPOINTS.FAQS);
+      setItems(json.data || json || []);
     } catch (err) {
-      console.error("Error loading FAQs:", err);
+      console.error('Error loading FAQs:', err);
+      setItems([]);
     }
   };
 
@@ -50,35 +48,26 @@ export default function FaqsPage() {
     e.preventDefault();
 
     try {
-      const url = editingId ? `${API_BASE}/${editingId}` : API_BASE;
-      const method = editingId ? "PUT" : "POST";
+      const url = editingId ? `${ENDPOINTS.FAQS}/${editingId}` : ENDPOINTS.FAQS;
+      const method = editingId ? 'PUT' : 'POST';
 
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const json = await res.json();
-      if (json.success) {
-        fetchFaqs();
-        setShowForm(false);
-        setEditingId(null);
-        setFormData({ question: "", answer: "" });
-      }
+      await apiCall(method, url, formData);
+      fetchFaqs();
+      setShowForm(false);
+      setEditingId(null);
+      setFormData({ question: '', answer: '' });
     } catch (err) {
-      console.error("Error saving FAQ:", err);
+      console.error('Error saving FAQ:', err);
     }
   };
 
   // DELETE FAQ
   const deleteFaq = async (id: string) => {
     try {
-      const res = await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
-      const json = await res.json();
-      if (json.success) fetchFaqs();
+      await apiCall('DELETE', `${ENDPOINTS.FAQS}/${id}`);
+      fetchFaqs();
     } catch (err) {
-      console.error("Error deleting FAQ:", err);
+      console.error('Error deleting FAQ:', err);
     }
   };
 
@@ -88,13 +77,12 @@ export default function FaqsPage() {
     setShowForm(true);
     setFormData({
       question: item.question,
-      answer: item.answer,
+      answer: item.answer
     });
   };
 
   return (
     <div className="p-6 w-full">
-
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
@@ -102,7 +90,10 @@ export default function FaqsPage() {
         className="flex justify-between items-center mb-6"
       >
         <div className="flex items-center gap-3">
-          <button onClick={() => window.history.back()} className="text-[#3b2f1c]">
+          <button
+            onClick={() => window.history.back()}
+            className="text-[#3b2f1c]"
+          >
             <FiArrowLeft size={20} />
           </button>
 
@@ -116,7 +107,7 @@ export default function FaqsPage() {
           whileTap={{ scale: 0.97 }}
           onClick={() => {
             setEditingId(null);
-            setFormData({ question: "", answer: "" });
+            setFormData({ question: '', answer: '' });
             setShowForm(true);
           }}
           className="flex items-center gap-2 bg-[#9b743f] text-white px-4 py-2 rounded-md"
@@ -199,11 +190,10 @@ export default function FaqsPage() {
               className="bg-white p-6 rounded-xl w-full max-w-lg shadow-lg"
             >
               <h2 className="text-xl font-semibold mb-4 text-[#3b2f1c]">
-                {editingId ? "Edit FAQ" : "Add FAQ"}
+                {editingId ? 'Edit FAQ' : 'Add FAQ'}
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-3">
-                
                 {/* Question */}
                 <div>
                   <label className="text-sm font-medium">Question</label>
@@ -245,10 +235,9 @@ export default function FaqsPage() {
                     type="submit"
                     className="px-4 py-2 bg-[#9b743f] text-white rounded-md"
                   >
-                    {editingId ? "Update" : "Save"}
+                    {editingId ? 'Update' : 'Save'}
                   </button>
                 </div>
-
               </form>
             </motion.div>
           </motion.div>
