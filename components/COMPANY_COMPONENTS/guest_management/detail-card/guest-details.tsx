@@ -209,6 +209,30 @@ type GuestDetailsApiResponse = {
   gender?: string;
   address?: string;
   email?: string;
+  paymentDetails?: {
+    sellRate?: number;
+    netRate?: number;
+    paymentMade?: number;
+    currency?: string;
+    totalTaxes?: number;
+    otaCommission?: number;
+    tcs?: number;
+    tds?: number;
+    payAtHotel?: boolean;
+  };
+  promoInfo?: any;
+  ratePlanId?: string;
+  roomTypeId?: string;
+  roomTypeName?: string;
+  payAtHotel?: boolean;
+  roomStays?: Array<{
+    roomTypeId?: string;
+    ratePlanId?: string;
+    roomTypeName?: string;
+    numAdults?: number;
+    numChildren?: number;
+    roomId?: string;
+  }>;
 };
 
 const GuestDetails: React.FC<Props> = ({ guestID }) => {
@@ -250,6 +274,31 @@ const GuestDetails: React.FC<Props> = ({ guestID }) => {
     return <div className="text-center py-10 text-red-500">{error}</div>;
 
   const guestDetails = guest?.guests ? guest.guests[0] : null;
+
+  // Collect all identification documents from all guests
+  const allIdProofs: Array<{ url: string; type: string; verification?: { status: string } }> = [];
+  
+  // Add idProofs from primary guest
+  if (guestDetails?.idProofs && guestDetails.idProofs.length > 0) {
+    guestDetails.idProofs.forEach((proof) => {
+      if (proof.url) {
+        allIdProofs.push(proof);
+      }
+    });
+  }
+  
+  // Add idProofs from secondary guests
+  if (guest?.guests && guest.guests.length > 1) {
+    guest.guests.slice(1).forEach((secondaryGuest) => {
+      if (secondaryGuest.idProofs && secondaryGuest.idProofs.length > 0) {
+        secondaryGuest.idProofs.forEach((proof) => {
+          if (proof.url) {
+            allIdProofs.push(proof);
+          }
+        });
+      }
+    });
+  }
 
   return (
     <div className="flex flex-col items-center gap-6 w-full">
@@ -300,6 +349,101 @@ const GuestDetails: React.FC<Props> = ({ guestID }) => {
           </div>
         </div>
       </CardWrapper>
+
+      {/* Payment Details Section */}
+      {guest?.paymentDetails && (
+        <div className="flex flex-col items-start w-full md:px-5">
+          <Heading title="Payment Details" className="mt-2" />
+          <CardWrapper title="">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+              {[
+                ['Sell Rate', guest.paymentDetails.sellRate ? `₹${guest.paymentDetails.sellRate}` : 'N/A'],
+                ['Net Rate', guest.paymentDetails.netRate ? `₹${guest.paymentDetails.netRate}` : 'N/A'],
+                ['Payment Made', guest.paymentDetails.paymentMade ? `₹${guest.paymentDetails.paymentMade}` : 'N/A'],
+                ['Currency', guest.paymentDetails.currency || 'N/A'],
+                ['Total Taxes', guest.paymentDetails.totalTaxes ? `₹${guest.paymentDetails.totalTaxes}` : 'N/A'],
+                ['OTA Commission', guest.paymentDetails.otaCommission ? `₹${guest.paymentDetails.otaCommission}` : 'N/A'],
+                ['TCS', guest.paymentDetails.tcs ? `₹${guest.paymentDetails.tcs}` : 'N/A'],
+                ['TDS', guest.paymentDetails.tds ? `₹${guest.paymentDetails.tds}` : 'N/A'],
+                ['Pay At Hotel', guest.paymentDetails.payAtHotel ? 'Yes' : 'No']
+              ].map(([label, value]) => (
+                <div key={label} className="flex flex-col gap-2">
+                  <span className="text-sm font-semibold">{label}</span>
+                  <span className="text-sm py-1 h-8 text-center rounded-lg bg-lightbrown group-hover:bg-coffee group-hover:text-white transition-all duration-100 group-hover:shadow-xl">
+                    {value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardWrapper>
+        </div>
+      )}
+
+      {/* Room Information Section */}
+      {(guest?.ratePlanId || guest?.roomTypeId || guest?.roomTypeName || guest?.payAtHotel !== undefined) && (
+        <div className="flex flex-col items-start w-full md:px-5">
+          <Heading title="Room Information" className="mt-2" />
+          <CardWrapper title="">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+              {[
+                ['Rate Plan ID', guest?.ratePlanId || 'N/A'],
+                ['Room Type ID', guest?.roomTypeId || 'N/A'],
+                ['Room Type Name', guest?.roomTypeName || 'N/A'],
+                ['Pay At Hotel', guest?.payAtHotel ? 'Yes' : 'No']
+              ].map(([label, value]) => (
+                <div key={label} className="flex flex-col gap-2">
+                  <span className="text-sm font-semibold">{label}</span>
+                  <span className="text-sm py-1 h-8 text-center rounded-lg bg-lightbrown group-hover:bg-coffee group-hover:text-white transition-all duration-100 group-hover:shadow-xl">
+                    {value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardWrapper>
+        </div>
+      )}
+
+      {/* Room Stays Section */}
+      {guest?.roomStays && guest.roomStays.length > 0 && (
+        <div className="flex flex-col items-start w-full md:px-5">
+          <Heading title="Room Stays" className="mt-2" />
+          {guest.roomStays.map((roomStay, index) => (
+            <CardWrapper key={index} title={`Room Stay ${index + 1}`}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                {[
+                  ['Room Type ID', roomStay.roomTypeId || 'N/A'],
+                  ['Rate Plan ID', roomStay.ratePlanId || 'N/A'],
+                  ['Room Type Name', roomStay.roomTypeName || 'N/A'],
+                  ['Number of Adults', roomStay.numAdults?.toString() || 'N/A'],
+                  ['Number of Children', roomStay.numChildren?.toString() || 'N/A'],
+                  ['Room ID', roomStay.roomId || 'N/A']
+                ].map(([label, value]) => (
+                  <div key={label} className="flex flex-col gap-2">
+                    <span className="text-sm font-semibold">{label}</span>
+                    <span className="text-sm py-1 h-8 text-center rounded-lg bg-lightbrown group-hover:bg-coffee group-hover:text-white transition-all duration-100 group-hover:shadow-xl">
+                      {value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </CardWrapper>
+          ))}
+        </div>
+      )}
+
+      {/* Promo Info Section */}
+      {guest?.promoInfo && Object.keys(guest.promoInfo).length > 0 && (
+        <div className="flex flex-col items-start w-full md:px-5">
+          <Heading title="Promo Information" className="mt-2" />
+          <CardWrapper title="">
+            <div className="w-full p-4">
+              <pre className="text-sm bg-lightbrown p-4 rounded-lg overflow-auto">
+                {JSON.stringify(guest.promoInfo, null, 2)}
+              </pre>
+            </div>
+          </CardWrapper>
+        </div>
+      )}
 
       <div className="flex flex-col items-start w-full md:px-5">
         <Heading title="Secondary Guests" className="mt-2" />
@@ -360,32 +504,43 @@ const GuestDetails: React.FC<Props> = ({ guestID }) => {
         )}
       </div>
 
-      <div className="flex flex-col items-start w-full md:px-5">
-        <Heading title="Identification" className="mt-2" />
-        <CardWrapper title="">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
-            {[
-              '/aadar.png',
-              '/pancard.png',
-              '/passport.png',
-              '/guest-id.png'
-            ].map((src, index) => (
-              <div
-                key={index}
-                className="rounded-sm w-full h-40 md:h-56 bg-[#D9D9D9]"
-              >
-                <Image
-                  src={src}
-                  alt="Guest ID"
-                  width={100}
-                  height={100}
-                  className="object-cover h-full w-full"
-                />
-              </div>
-            ))}
-          </div>
-        </CardWrapper>
-      </div>
+      {/* Identification Section - Only show if there are actual idProofs */}
+      {allIdProofs.length > 0 && (
+        <div className="flex flex-col items-start w-full md:px-5">
+          <Heading title="Identification" className="mt-2" />
+          <CardWrapper title="">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+              {allIdProofs.map((proof, index) => (
+                <div
+                  key={index}
+                  className="rounded-sm w-full h-40 md:h-56 bg-[#D9D9D9] overflow-hidden"
+                >
+                  {proof.url.endsWith('.pdf') ? (
+                    <iframe
+                      src={proof.url}
+                      title={`${proof.type || 'Document'} ${index + 1}`}
+                      className="w-full h-full"
+                    />
+                  ) : (
+                    <Image
+                      src={proof.url}
+                      alt={proof.type || `Guest ID ${index + 1}`}
+                      width={100}
+                      height={100}
+                      className="object-cover h-full w-full"
+                    />
+                  )}
+                  {proof.type && (
+                    <div className="mt-1 text-xs text-center text-gray-600">
+                      {proof.type}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardWrapper>
+        </div>
+      )}
     </div>
   );
 };
