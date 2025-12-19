@@ -31,7 +31,7 @@ export default function MilestonesPage() {
   // FETCH MILESTONES
   const fetchMilestones = async () => {
     try {
-      const json = await apiCall('GET', ENDPOINTS.MILESTONE);
+      const json = await apiCall('GET', ENDPOINTS.MILESTONES);
       setItems(json.data || json || []);
     } catch (err) {
       console.error('Error loading milestones:', err);
@@ -53,8 +53,8 @@ export default function MilestonesPage() {
 
     try {
       const url = editingId
-        ? `${ENDPOINTS.MILESTONE}/${editingId}`
-        : ENDPOINTS.MILESTONE;
+        ? `${ENDPOINTS.MILESTONES}/${editingId}`
+        : ENDPOINTS.MILESTONES;
       const method = editingId ? 'PUT' : 'POST';
 
       const payload = {
@@ -82,7 +82,7 @@ export default function MilestonesPage() {
   // DELETE
   const deleteItem = async (id: string) => {
     try {
-      await apiCall('DELETE', `${ENDPOINTS.MILESTONE}/${id}`);
+      await apiCall('DELETE', `${ENDPOINTS.MILESTONES}/${id}`);
       fetchMilestones();
     } catch (err) {
       console.error('Error deleting milestone:', err);

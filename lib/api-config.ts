@@ -7,7 +7,7 @@ export const ENDPOINTS = {
   COLLABORATIONS: '/api/collaborations',
   COMPANY_SECTION: '/api/company-section',
   FAQS: '/api/faqs',
-  MILESTONE: '/api/milestone',
+  MILESTONES: '/api/milestones',
   NEWS: '/api/news',
   PRODUCT_VIDEOS: '/api/product-videos',
   REVIEWS: '/api/reviews',
