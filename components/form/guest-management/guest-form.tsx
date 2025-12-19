@@ -232,12 +232,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
             lastName: '',
             phoneNumber: '',
             countryCode: '+91',
-            gender: 'male',
-            idProof: {
-              url: '',
-              type: 'PASSPORT',
-              verification: { status: 'PENDING' }
-            }
+            gender: 'male'
+            // idProof removed
           };
           // ensure array long enough
           while (currentGuests.length <= index) currentGuests.push(blank);
@@ -245,11 +241,23 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         }
 
         // ✅ set url for this guest
-        addGuestForm.setValue(`guests.${index}.idProof.url` as any, url, {
-          shouldDirty: true,
-          shouldTouch: true,
-          shouldValidate: true
-        });
+        // ✅ ensure idProof object exists
+        const currentGuest = addGuestForm.getValues(`guests.${index}`);
+        if (!currentGuest?.idProof?.type) {
+          // Initialize idProof if missing or incomplete
+          addGuestForm.setValue(`guests.${index}.idProof`, {
+            type: 'PASSPORT', // Default when user uploads
+            url: url,
+            verification: { status: 'PENDING' }
+          }, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+        } else {
+          // Just update URL
+          addGuestForm.setValue(`guests.${index}.idProof.url` as any, url, {
+            shouldDirty: true,
+            shouldTouch: true,
+            shouldValidate: true
+          });
+        }
 
         ToastAtTopRight.fire('Document uploaded', 'success');
       } catch (err: any) {
@@ -540,7 +548,10 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       roomTypeName: 'Deluxe room',
       payAtHotel: false,
       // Room Stays
-      roomStays: []
+      roomStays: [],
+      externalRatePlanId: '',
+      externalRoomTypeId: '',
+      externalRoomIds: []
     }
   });
 
@@ -700,8 +711,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         // show user-friendly message if available
         ToastAtTopRight.fire(
           error?.response?.data?.message ||
-            error?.message ||
-            'Failed to fetch guest by phone',
+          error?.message ||
+          'Failed to fetch guest by phone',
           'error'
         );
       } else {
@@ -840,7 +851,11 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
             roomTypeName: guest?.roomTypeName || 'Deluxe room',
             payAtHotel: guest?.payAtHotel || false,
             // Room Stays
-            roomStays: guest?.roomStays || []
+            roomStays: guest?.roomStays || [],
+            // Stayflexi External Fields
+            externalRatePlanId: guest?.externalRatePlanId || '',
+            externalRoomTypeId: guest?.externalRoomTypeId || '',
+            externalRoomIds: guest?.externalRoomIds || []
           });
 
           if (guest?.idProof?.url) {
@@ -975,8 +990,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           g.lastName,
           g.gender,
           g.guestType,
-          g.phoneNumber,
-          g.idProof?.url
+          g.phoneNumber
+          // g.idProof?.url // idProof is strictly optional
         ].some((v) => (typeof v === 'string' ? v.trim() !== '' : !!v))
       );
 
@@ -1085,7 +1100,11 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         roomTypeName: data.roomTypeName || 'Deluxe room',
         payAtHotel: data.payAtHotel || false,
         // Room Stays
-        roomStays: data.roomStays || []
+        roomStays: data.roomStays || [],
+        // Stayflexi External Fields
+        externalRatePlanId: data.externalRatePlanId,
+        externalRoomTypeId: data.externalRoomTypeId,
+        externalRoomIds: data.externalRoomIds
       };
 
       if (mode === 'edit' && id) {
@@ -1113,7 +1132,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           phoneNumber: g.phoneNumber
             ? String(g.phoneNumber).replace(/\D/g, '').slice(-10)
             : undefined,
-          countryCode: g.countryCode || '+91'
+          countryCode: g.countryCode || '+91',
+          idProof: g.idProof?.type ? g.idProof : undefined // Sanitize idProof
         }));
         const payload = {
           phoneNumber: data.phoneNumber,
@@ -1165,12 +1185,17 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           roomTypeId: data.roomTypeId || '12353',
           roomTypeName: data.roomTypeName || 'Deluxe room',
           payAtHotel: data.payAtHotel || false,
+
           // Room Stays
           roomStays: data.roomStays || [],
           // gender: data.gender,
           countryCode: data.countryCode || '+91',
           idProof: data.idProof?.type ? data.idProof : undefined,
-          guests: guestsFromForm // 👈 use RHF array
+          guests: guestsFromForm, // 👈 use RHF array
+          // Stayflexi External Fields
+          externalRatePlanId: data.externalRatePlanId,
+          externalRoomTypeId: data.externalRoomTypeId,
+          externalRoomIds: data.externalRoomIds
         };
 
         console.log('Submit data', data);
@@ -1210,8 +1235,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       g?.lastName,
       g?.gender,
       g?.guestType,
-      g?.phoneNumber,
-      g?.idProof?.url
+      g?.phoneNumber
+      // g?.idProof?.url // idProof is strictly optional
     ].some((v) => (typeof v === 'string' ? v.trim() !== '' : !!v));
 
   const isGuestRowComplete = (g: any) =>
@@ -1382,11 +1407,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     phoneNumber: '',
     countryCode: '+91',
     gender: 'male',
-    idProof: {
-      url: '',
-      type: 'PASSPORT', // must be valid, not empty
-      verification: { status: 'PENDING' }
-    }
+    // idProof removed, defaults to undefined due to optional type
   };
   // helpers (put near top of file)
   const selectAllOnFocus = (e: React.FocusEvent<HTMLInputElement>) =>
@@ -2584,152 +2605,152 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                 <div className="grid grid-cols-1 md:grid-cols-1 gap-4 w-full">
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-                  {/* Check-in */}
-                  <FormField
-                    control={addGuestForm.control}
-                    name="checkInDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Check-in Date&Time{' '}
-                          <span className="text-red-600">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <DateTimeField
-                            value={field.value}
-                            disabled={!isEnabled}
-                            onChange={(iso) => field.onChange(iso)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Check-out */}
-                  <FormField
-                    control={addGuestForm.control}
-                    name="checkOutDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Check-out Date&Time{' '}
-                          <span className="text-red-600">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <DateTimeField
-                            value={field.value}
-                            disabled={!isEnabled}
-                            onChange={(iso) => field.onChange(iso)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Room Category (kept as-is) */}
-                  <div className="flex flex-col gap-4">
+                    {/* Check-in */}
                     <FormField
                       control={addGuestForm.control}
-                      name="roomCategory"
+                      name="checkInDate"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-black text-[0.8rem]">
-                            Room Category{' '}
+                            Check-in Date&Time{' '}
                             <span className="text-red-600">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input
-                              {...field}
-                              type="text"
-                              placeholder="Enter Room Category"
+                            <DateTimeField
+                              value={field.value}
                               disabled={!isEnabled}
-                              className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-sm  focus:outline-none focus:ring-2 focus:ring-primary"
+                              onChange={(iso) => field.onChange(iso)}
                             />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  {/* Assign Room Number */}
-                  <FormField
-                    control={addGuestForm.control}
-                    name="assignedRoomNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Assign Room Number
-                        </FormLabel>
-                        <FormControl>
-                          <AnimatedSelect
-                            label=""
-                            name="assignedRoomNumber"
-                            options={DUMMY_ROOMS.map((room) => room.roomNumber)}
-                            value={field.value || ''}
-                            onChange={(e) => {
-                              field.onChange(e.target.value);
-                            }}
-                            searchable={true}
-                            dropdownPosition="auto"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="md:col-span-1">
-                    <FormLabel className="text-black text-[0.8rem]">
-                      Discount
-                    </FormLabel>
-                    <div className="flex gap-2">
-                      <FormField
-                        control={addGuestForm.control}
-                        name="discountType"
-                        render={({ field }) => (
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value}
-                            disabled={!isEnabled}
-                          >
-                            <FormControl>
-                              <SelectTrigger className="bg-[#F6EEE0] w-[110px] text-xs">
-                                <SelectValue placeholder="Type" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="percentage">%</SelectItem>
-                              <SelectItem value="flat">Flat</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                      <FormField
-                        control={addGuestForm.control}
-                        name="discountAmount"
-                        render={({ field }) => (
+                    {/* Check-out */}
+                    <FormField
+                      control={addGuestForm.control}
+                      name="checkOutDate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-black text-[0.8rem]">
+                            Check-out Date&Time{' '}
+                            <span className="text-red-600">*</span>
+                          </FormLabel>
                           <FormControl>
-                            <Input
-                              type="number"
-                              placeholder="Amt"
+                            <DateTimeField
+                              value={field.value}
                               disabled={!isEnabled}
-                              className="bg-[#F6EEE0] text-xs p-2 rounded-md"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(toNum(e.target.value))
-                              }
+                              onChange={(iso) => field.onChange(iso)}
                             />
                           </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Room Category (kept as-is) */}
+                    <div className="flex flex-col gap-4">
+                      <FormField
+                        control={addGuestForm.control}
+                        name="roomCategory"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-black text-[0.8rem]">
+                              Room Category{' '}
+                              <span className="text-red-600">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                type="text"
+                                placeholder="Enter Room Category"
+                                disabled={!isEnabled}
+                                className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-sm  focus:outline-none focus:ring-2 focus:ring-primary"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
                         )}
                       />
                     </div>
-                  </div>
 
-                  {/* Room Tariff (kept as-is) */}
-                  {/* <FormField
+                    {/* Assign Room Number */}
+                    <FormField
+                      control={addGuestForm.control}
+                      name="assignedRoomNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-black text-[0.8rem]">
+                            Assign Room Number
+                          </FormLabel>
+                          <FormControl>
+                            <AnimatedSelect
+                              label=""
+                              name="assignedRoomNumber"
+                              options={DUMMY_ROOMS.map((room) => room.roomNumber)}
+                              value={field.value || ''}
+                              onChange={(e) => {
+                                field.onChange(e.target.value);
+                              }}
+                              searchable={true}
+                              dropdownPosition="auto"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="md:col-span-1">
+                      <FormLabel className="text-black text-[0.8rem]">
+                        Discount
+                      </FormLabel>
+                      <div className="flex gap-2">
+                        <FormField
+                          control={addGuestForm.control}
+                          name="discountType"
+                          render={({ field }) => (
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                              disabled={!isEnabled}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="bg-[#F6EEE0] w-[110px] text-xs">
+                                  <SelectValue placeholder="Type" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="percentage">%</SelectItem>
+                                <SelectItem value="flat">Flat</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+                        <FormField
+                          control={addGuestForm.control}
+                          name="discountAmount"
+                          render={({ field }) => (
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="Amt"
+                                disabled={!isEnabled}
+                                className="bg-[#F6EEE0] text-xs p-2 rounded-md"
+                                {...field}
+                                onChange={(e) =>
+                                  field.onChange(toNum(e.target.value))
+                                }
+                              />
+                            </FormControl>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Room Tariff (kept as-is) */}
+                    {/* <FormField
                     control={addGuestForm.control}
                     name="roomTariff"
                     render={({ field }) => (
@@ -2751,59 +2772,59 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                     )}
                   /> */}
 
-                  <FormField
-                    control={addGuestForm.control}
-                    name="roomTariff"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Room Tariff (Including GST){' '}
-                          <span className="text-red-600">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text" // or "number" with step="0.01"
-                            inputMode="decimal"
-                            placeholder="Room Tariff"
-                            disabled={!isEnabled}
-                            value={
-                              field.value === undefined
-                                ? ''
-                                : String(field.value)
-                            }
-                            onChange={(e) =>
-                              field.onChange(toNum(e.target.value))
-                            }
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      control={addGuestForm.control}
+                      name="roomTariff"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-black text-[0.8rem]">
+                            Room Tariff (Including GST){' '}
+                            <span className="text-red-600">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="text" // or "number" with step="0.01"
+                              inputMode="decimal"
+                              placeholder="Room Tariff"
+                              disabled={!isEnabled}
+                              value={
+                                field.value === undefined
+                                  ? ''
+                                  : String(field.value)
+                              }
+                              onChange={(e) =>
+                                field.onChange(toNum(e.target.value))
+                              }
+                              className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
 
-                  {/* GST (kept as-is) */}
-                  <FormField
-                    control={addGuestForm.control}
-                    name="gst"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          GST %{/* <span className="text-red-600">*</span> */}
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            disabled={!isEnabled} // Disabled based on conditions
-                            placeholder="percent type (e.g., 0, 5, 12, 18)"
-                            {...field} // Bind the form control
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
+                    {/* GST (kept as-is) */}
+                    <FormField
+                      control={addGuestForm.control}
+                      name="gst"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-black text-[0.8rem]">
+                            GST %{/* <span className="text-red-600">*</span> */}
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="text"
+                              disabled={!isEnabled} // Disabled based on conditions
+                              placeholder="percent type (e.g., 0, 5, 12, 18)"
+                              {...field} // Bind the form control
+                              className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
 
-                  {/* <FormField
+                    {/* <FormField
                     className="w-full"
                     control={addGuestForm.control}
                     name="roomTariffDue"
@@ -2828,8 +2849,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                     )}
                   /> */}
 
-                  {/* Received Amount */}
-                  {/* <FormField
+                    {/* Received Amount */}
+                    {/* <FormField
                     control={addGuestForm.control}
                     name="receivedAmt"
                     render={({ field }) => (
@@ -2850,7 +2871,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       </FormItem>
                     )}
                   /> */}
-                  {/* <FormField
+                    {/* <FormField
                     control={addGuestForm.control}
                     name="roomTariffDue"
                     render={({ field }) => (
@@ -2879,35 +2900,35 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       </FormItem>
                     )}
                   /> */}
-                  <FormField
-                    control={addGuestForm.control}
-                    name="roomTariffDue"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Room Tariff Due
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            inputMode="decimal"
-                            placeholder="0"
-                            disabled={!isEnabled}
-                            readOnly
-                            value={
-                              field.value === undefined
-                                ? ''
-                                : String(field.value)
-                            }
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      control={addGuestForm.control}
+                      name="roomTariffDue"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-black text-[0.8rem]">
+                            Room Tariff Due
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="text"
+                              inputMode="decimal"
+                              placeholder="0"
+                              disabled={!isEnabled}
+                              readOnly
+                              value={
+                                field.value === undefined
+                                  ? ''
+                                  : String(field.value)
+                              }
+                              className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  {/* <FormField
+                    {/* <FormField
                     control={addGuestForm.control}
                     name="roomTariffDue"
                     render={({ field }) => (
@@ -2938,7 +2959,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                     )}
                   /> */}
 
-                  {/* <FormField
+                    {/* <FormField
                     control={addGuestForm.control}
                     name="receivedAmt"
                     render={({ field }) => (
@@ -2964,37 +2985,37 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       </FormItem>
                     )}
                   /> */}
-                  <FormField
-                    control={addGuestForm.control}
-                    name="receivedAmt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Received Amount
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            inputMode="decimal"
-                            placeholder="0"
-                            disabled={!isEnabled}
-                            value={
-                              field.value === undefined
-                                ? ''
-                                : String(field.value)
-                            }
-                            onChange={(e) =>
-                              field.onChange(toNum(e.target.value))
-                            }
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      control={addGuestForm.control}
+                      name="receivedAmt"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-black text-[0.8rem]">
+                            Received Amount
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="text"
+                              inputMode="decimal"
+                              placeholder="0"
+                              disabled={!isEnabled}
+                              value={
+                                field.value === undefined
+                                  ? ''
+                                  : String(field.value)
+                              }
+                              onChange={(e) =>
+                                field.onChange(toNum(e.target.value))
+                              }
+                              className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  {/* <FormField
+                    {/* <FormField
                     className="w-full"
                     control={addGuestForm.control}
                     name="serviceDue"
@@ -3019,291 +3040,29 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       </FormItem>
                     )}
                   /> */}
-                  <FormField
-                    className="w-full"
-                    control={addGuestForm.control}
-                    name="serviceDue"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Service Due
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            inputMode="decimal"
-                            placeholder="0"
-                            disabled={!isEnabled}
-                            value={
-                              field.value === undefined
-                                ? ''
-                                : String(field.value)
-                            }
-                            onChange={(e) =>
-                              field.onChange(toNum(e.target.value))
-                            } // 👈 converts to number
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Payment Mode */}
-                  <FormField
-                    className="w-full"
-                    control={addGuestForm.control}
-                    name="paymentMode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Payment Mode
-                        </FormLabel>
-                        <FormControl>
-                          <Select
-                            value={field.value}
-                            onValueChange={field.onChange}
-                            disabled={!isEnabled}
-                          >
-                            <SelectTrigger className="relative bg-[#F6EEE0] text-gray-700 p-2 rounded-md border border-gray-300 text-xs 2xl:text-sm">
-                              <SelectValue placeholder="Select Payment Mode" />
-                              <ChevronDown
-                                size={14}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                              />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-64">
-                              <SelectItem value="cash">Cash</SelectItem>
-                              <SelectItem value="PayLater">
-                                Pay Later
-                              </SelectItem>
-                              <SelectItem value="Cashfree">Online</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Payment Status */}
-                  <FormField
-                    control={addGuestForm.control}
-                    name="paymentStatus"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Payment Status
-                        </FormLabel>
-                        <FormControl>
-                          <Select
-                            value={field.value}
-                            onValueChange={field.onChange}
-                            disabled={!isEnabled}
-                          >
-                            <SelectTrigger className="relative bg-[#F6EEE0] text-gray-700 p-2 rounded-md border border-gray-300 text-xs 2xl:text-sm">
-                              <SelectValue placeholder="Select Payment Status" />
-                              <ChevronDown
-                                size={14}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                              />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="paid">Paid</SelectItem>
-                              <SelectItem value="unpaid">Unpaid</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-
-
-              </div>
-              <div className='w-full flex gap-4'>             
-              
-              {/* Payment Details Section - Top Row */}
-              <div className="w-full mt-4 border-t pt-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <FormField
-                    control={addGuestForm.control}
-                    name="paymentDetails.currency"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Currency
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            placeholder="INR"
-                            disabled={!isEnabled}
-                            {...field}
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={addGuestForm.control}
-                    name="paymentDetails.totalTaxes"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Total Taxes
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="0"
-                            disabled={!isEnabled}
-                            {...field}
-                            value={field.value ?? ''}
-                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={addGuestForm.control}
-                    name="paymentDetails.otaCommission"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          OTA Commission
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="0"
-                            disabled={!isEnabled}
-                            {...field}
-                            value={field.value ?? ''}
-                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={addGuestForm.control}
-                    name="paymentDetails.tcs"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          TCS
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="0"
-                            disabled={!isEnabled}
-                            {...field}
-                            value={field.value ?? ''}
-                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={addGuestForm.control}
-                    name="paymentDetails.tds"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          TDS
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="0"
-                            disabled={!isEnabled}
-                            {...field}
-                            value={field.value ?? ''}
-                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={addGuestForm.control}
-                    name="paymentDetails.payAtHotel"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center gap-2">
-                        <FormControl>
-                          <input
-                            type="checkbox"
-                            checked={field.value || false}
-                            onChange={(e) => field.onChange(e.target.checked)}
-                            disabled={!isEnabled}
-                            className="form-checkbox"
-                          />
-                        </FormControl>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Pay At Hotel
-                        </FormLabel>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Hidden fields for sellRate, netRate, paymentMade - still in form but not shown in UI */}
-                  <FormField
-                    control={addGuestForm.control}
-                    name="paymentDetails.sellRate"
-                    render={({ field }) => (
-                      <input type="hidden" {...field} value={field.value ?? 300} />
-                    )}
-                  />
-                  <FormField
-                    control={addGuestForm.control}
-                    name="paymentDetails.netRate"
-                    render={({ field }) => (
-                      <input type="hidden" {...field} value={field.value ?? 0} />
-                    )}
-                  />
-                  <FormField
-                    control={addGuestForm.control}
-                    name="paymentDetails.paymentMade"
-                    render={({ field }) => (
-                      <input type="hidden" {...field} value={field.value ?? 0} />
-                    )}
-                  />
-                </div>
-              </div>
-              {/* Room Type and Rate Plan Section */}
-              <div className="w-full mt-4 border-t pt-4">
-                <FormWrapper title="Room Type & Rate Plan">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <FormField
+                      className="w-full"
                       control={addGuestForm.control}
-                      name="ratePlanId"
+                      name="serviceDue"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-black text-[0.8rem]">
-                            Rate Plan ID
+                            Service Due
                           </FormLabel>
                           <FormControl>
                             <Input
                               type="text"
-                              placeholder="41355"
+                              inputMode="decimal"
+                              placeholder="0"
                               disabled={!isEnabled}
-                              {...field}
+                              value={
+                                field.value === undefined
+                                  ? ''
+                                  : String(field.value)
+                              }
+                              onChange={(e) =>
+                                field.onChange(toNum(e.target.value))
+                              } // 👈 converts to number
                               className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
                             />
                           </FormControl>
@@ -3311,143 +3070,250 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                         </FormItem>
                       )}
                     />
+
+                    {/* Payment Mode */}
                     <FormField
+                      className="w-full"
                       control={addGuestForm.control}
-                      name="roomTypeId"
+                      name="paymentMode"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-black text-[0.8rem]">
-                            Room Type ID
+                            Payment Mode
                           </FormLabel>
                           <FormControl>
-                            <Input
-                              type="text"
-                              placeholder="12353"
-                              disabled={!isEnabled}
-                              {...field}
-                              className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={addGuestForm.control}
-                      name="roomTypeName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-black text-[0.8rem]">
-                            Room Type Name
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="text"
-                              placeholder="Deluxe room"
-                              disabled={!isEnabled}
-                              {...field}
-                              className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={addGuestForm.control}
-                      name="payAtHotel"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center gap-2">
-                          <FormControl>
-                            <input
-                              type="checkbox"
-                              checked={field.value || false}
-                              onChange={(e) => field.onChange(e.target.checked)}
-                              disabled={!isEnabled}
-                              className="form-checkbox"
-                            />
-                          </FormControl>
-                          <FormLabel className="text-black text-[0.8rem]">
-                            Pay At Hotel
-                          </FormLabel>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </FormWrapper>
-              </div>
-              </div>  
-              {/* Room Stays Section */}
-              <div className="w-full mt-4 border-t pt-4">
-                <FormWrapper title="Room Stays">
-                  <div className="flex justify-between items-center mb-2">
-                    <FormLabel className="text-sm font-semibold text-gray-700">
-                      Room Stays
-                    </FormLabel>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      onClick={() =>
-                        appendRoomStay({
-                          roomTypeId: '12353',
-                          ratePlanId: '41355',
-                          roomTypeName: 'Deluxe room',
-                          numAdults: 1,
-                          numChildren: 0,
-                          roomId: ''
-                        })
-                      }
-                      className="h-7 text-xs"
-                      disabled={!isEnabled}
-                    >
-                      <Plus className="h-3 w-3 mr-1" /> Add Room Stay
-                    </Button>
-                  </div>
-                  <div className="w-[100%] gap-4">
-                    {roomStaysFields.map((field, index) => (
-                      <div key={field.id} className="border border-gray-200 rounded-lg p-4 bg-white">
-                        <div className="flex justify-between items-center mb-3">
-                          <h4 className="text-sm font-semibold text-gray-700">Room Stay {index + 1}</h4>
-                          {roomStaysFields.length > 1 && (
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="outline"
-                              onClick={() => removeRoomStay(index)}
-                              className="h-7 text-xs text-red-600"
+                            <Select
+                              value={field.value}
+                              onValueChange={field.onChange}
                               disabled={!isEnabled}
                             >
-                              <Trash className="h-3 w-3 mr-1" /> Remove
-                            </Button>
+                              <SelectTrigger className="relative bg-[#F6EEE0] text-gray-700 p-2 rounded-md border border-gray-300 text-xs 2xl:text-sm">
+                                <SelectValue placeholder="Select Payment Mode" />
+                                <ChevronDown
+                                  size={14}
+                                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                                />
+                              </SelectTrigger>
+                              <SelectContent className="max-h-64">
+                                <SelectItem value="cash">Cash</SelectItem>
+                                <SelectItem value="PayLater">
+                                  Pay Later
+                                </SelectItem>
+                                <SelectItem value="Cashfree">Online</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Payment Status */}
+                    <FormField
+                      control={addGuestForm.control}
+                      name="paymentStatus"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-black text-[0.8rem]">
+                            Payment Status
+                          </FormLabel>
+                          <FormControl>
+                            <Select
+                              value={field.value}
+                              onValueChange={field.onChange}
+                              disabled={!isEnabled}
+                            >
+                              <SelectTrigger className="relative bg-[#F6EEE0] text-gray-700 p-2 rounded-md border border-gray-300 text-xs 2xl:text-sm">
+                                <SelectValue placeholder="Select Payment Status" />
+                                <ChevronDown
+                                  size={14}
+                                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                                />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="paid">Paid</SelectItem>
+                                <SelectItem value="unpaid">Unpaid</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+
+
+                  </div>
+                  <div className='w-full flex gap-4'>
+
+                    {/* Payment Details Section - Top Row */}
+                    <div className="w-full mt-4 border-t pt-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <FormField
+                          control={addGuestForm.control}
+                          name="paymentDetails.currency"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-black text-[0.8rem]">
+                                Currency
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="text"
+                                  placeholder="INR"
+                                  disabled={!isEnabled}
+                                  {...field}
+                                  className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
                           )}
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        />
+                        <FormField
+                          control={addGuestForm.control}
+                          name="paymentDetails.totalTaxes"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-black text-[0.8rem]">
+                                Total Taxes
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  placeholder="0"
+                                  disabled={!isEnabled}
+                                  {...field}
+                                  value={field.value ?? ''}
+                                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
+                                  className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={addGuestForm.control}
+                          name="paymentDetails.otaCommission"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-black text-[0.8rem]">
+                                OTA Commission
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  placeholder="0"
+                                  disabled={!isEnabled}
+                                  {...field}
+                                  value={field.value ?? ''}
+                                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
+                                  className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={addGuestForm.control}
+                          name="paymentDetails.tcs"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-black text-[0.8rem]">
+                                TCS
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  placeholder="0"
+                                  disabled={!isEnabled}
+                                  {...field}
+                                  value={field.value ?? ''}
+                                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
+                                  className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={addGuestForm.control}
+                          name="paymentDetails.tds"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-black text-[0.8rem]">
+                                TDS
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  placeholder="0"
+                                  disabled={!isEnabled}
+                                  {...field}
+                                  value={field.value ?? ''}
+                                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
+                                  className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={addGuestForm.control}
+                          name="paymentDetails.payAtHotel"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center gap-2">
+                              <FormControl>
+                                <input
+                                  type="checkbox"
+                                  checked={field.value || false}
+                                  onChange={(e) => field.onChange(e.target.checked)}
+                                  disabled={!isEnabled}
+                                  className="form-checkbox"
+                                />
+                              </FormControl>
+                              <FormLabel className="text-black text-[0.8rem]">
+                                Pay At Hotel
+                              </FormLabel>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        {/* Hidden fields for sellRate, netRate, paymentMade - still in form but not shown in UI */}
+                        <FormField
+                          control={addGuestForm.control}
+                          name="paymentDetails.sellRate"
+                          render={({ field }) => (
+                            <input type="hidden" {...field} value={field.value ?? 300} />
+                          )}
+                        />
+                        <FormField
+                          control={addGuestForm.control}
+                          name="paymentDetails.netRate"
+                          render={({ field }) => (
+                            <input type="hidden" {...field} value={field.value ?? 0} />
+                          )}
+                        />
+                        <FormField
+                          control={addGuestForm.control}
+                          name="paymentDetails.paymentMade"
+                          render={({ field }) => (
+                            <input type="hidden" {...field} value={field.value ?? 0} />
+                          )}
+                        />
+                      </div>
+                    </div>
+                    {/* Room Type and Rate Plan Section */}
+                    <div className="w-full mt-4 border-t pt-4">
+                      <FormWrapper title="Room Type & Rate Plan">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                           <FormField
                             control={addGuestForm.control}
-                            name={`roomStays.${index}.roomTypeId`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-black text-[0.8rem]">
-                                  Room Type ID
-                                </FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="text"
-                                    placeholder="12353"
-                                    disabled={!isEnabled}
-                                    {...field}
-                                    className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={addGuestForm.control}
-                            name={`roomStays.${index}.ratePlanId`}
+                            name="ratePlanId"
                             render={({ field }) => (
                               <FormItem>
                                 <FormLabel className="text-black text-[0.8rem]">
@@ -3468,7 +3334,28 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                           />
                           <FormField
                             control={addGuestForm.control}
-                            name={`roomStays.${index}.roomTypeName`}
+                            name="roomTypeId"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-black text-[0.8rem]">
+                                  Room Type ID
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="text"
+                                    placeholder="12353"
+                                    disabled={!isEnabled}
+                                    {...field}
+                                    className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={addGuestForm.control}
+                            name="roomTypeName"
                             render={({ field }) => (
                               <FormItem>
                                 <FormLabel className="text-black text-[0.8rem]">
@@ -3489,1013 +3376,203 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                           />
                           <FormField
                             control={addGuestForm.control}
-                            name={`roomStays.${index}.numAdults`}
+                            name="payAtHotel"
                             render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-black text-[0.8rem]">
-                                  Number of Adults
-                                </FormLabel>
+                              <FormItem className="flex items-center gap-2">
                                 <FormControl>
-                                  <Input
-                                    type="number"
-                                    min="1"
-                                    placeholder="1"
+                                  <input
+                                    type="checkbox"
+                                    checked={field.value || false}
+                                    onChange={(e) => field.onChange(e.target.checked)}
                                     disabled={!isEnabled}
-                                    {...field}
-                                    value={field.value ?? ''}
-                                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 1)}
-                                    className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                                    className="form-checkbox"
                                   />
                                 </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={addGuestForm.control}
-                            name={`roomStays.${index}.numChildren`}
-                            render={({ field }) => (
-                              <FormItem>
                                 <FormLabel className="text-black text-[0.8rem]">
-                                  Number of Children
+                                  Pay At Hotel
                                 </FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="number"
-                                    min="0"
-                                    placeholder="0"
-                                    disabled={!isEnabled}
-                                    {...field}
-                                    value={field.value ?? ''}
-                                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
-                                    className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={addGuestForm.control}
-                            name={`roomStays.${index}.roomId`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-black text-[0.8rem]">
-                                  Room ID
-                                </FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="text"
-                                    placeholder=""
-                                    disabled={!isEnabled}
-                                    {...field}
-                                    className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                                  />
-                                </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
                         </div>
-                      </div>
-                    ))}
-                    {roomStaysFields.length === 0 && (
-                      <div className="text-center text-gray-500 py-4">
-                        No room stays added. Click "Add Room Stay" to add one.
-                      </div>
-                    )}
-                  </div>
-                </FormWrapper>
-              </div>
-              {/* Reorganized Layout: flex-col with specific sections */}
-              <div className="w-full mt-4 border-t pt-4 flex flex-col gap-6">
-                {/* Wrapper for Extra Charges, Late Checkout, and Billing Breakdown with grid-cols-3 */}
-                <div className="w-full grid grid-cols-3 gap-6">
-                  {/* Extra Charges Section - Full Width (spans all 3 columns) */}
-                  <div className="col-span-3">
-                    <div className="flex justify-between items-center mb-2">
-                      <FormLabel className="text-sm font-semibold text-gray-700">
-                        Extra Charges
-                      </FormLabel>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          appendExtraCharge({
-                            title: '',
-                            amount: 0,
-                            reason: ''
-                          })
-                        }
-                        className="h-7 text-xs"
-                        disabled={!isEnabled}
-                      >
-                        <Plus className="h-3 w-3 mr-1" /> Add Charge
-                      </Button>
-                    </div>
-                    <div className="grid grid-cols-1 gap-2">
-                      {extraChargeFields.map((field, index) => (
-                        <div key={field.id} className="flex gap-2 items-center">
-                          <FormField
-                            control={addGuestForm.control}
-                            name={`extraCharges.${index}.title`}
-                            render={({ field }) => (
-                              <Input
-                                placeholder="Title (e.g. Damage)"
-                                {...field}
-                                disabled={!isEnabled}
-                                className="bg-[#F6EEE0] text-xs h-8"
-                              />
-                            )}
-                          />
-                          <FormField
-                            control={addGuestForm.control}
-                            name={`extraCharges.${index}.amount`}
-                            render={({ field }) => (
-                              <Input
-                                type="number"
-                                placeholder="Amount"
-                                {...field}
-                                disabled={!isEnabled}
-                                onChange={(e) =>
-                                  field.onChange(toNum(e.target.value))
-                                }
-                                className="bg-[#F6EEE0] text-xs h-8 w-24"
-                              />
-                            )}
-                          />
-                          <FormField
-                            control={addGuestForm.control}
-                            name={`extraCharges.${index}.reason`}
-                            render={({ field }) => (
-                              <Input
-                                placeholder="Reason"
-                                {...field}
-                                disabled={!isEnabled}
-                                className="bg-[#F6EEE0] text-xs h-8"
-                              />
-                            )}
-                          />
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            className="h-8 w-8 text-red-500"
-                            onClick={() => removeExtraCharge(index)}
-                            disabled={!isEnabled}
-                          >
-                            <Trash className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                      {extraChargeFields.length === 0 && (
-                        <div className="text-center text-gray-500 py-2 text-xs">
-                          No extra charges added
-                        </div>
-                      )}
+                      </FormWrapper>
                     </div>
                   </div>
-
-                  {/* Late Checkout Section - Takes 1 column */}
-                  <div className="col-span-1">
-                    <FormLabel className="text-sm font-semibold text-gray-700 mb-2 block">
-                      Late Checkout
-                    </FormLabel>
-                    <div className="grid grid-cols-1 gap-4">
-                      <FormField
-                        control={addGuestForm.control}
-                        name="lateCheckout.hours"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-[0.7rem] text-gray-600">
-                              Hours Delayed
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                placeholder="Hours"
-                                {...field}
-                                disabled={!isEnabled}
-                                onChange={(e) =>
-                                  field.onChange(toNum(e.target.value))
-                                }
-                                className="bg-[#F6EEE0] text-xs h-9"
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={addGuestForm.control}
-                        name="lateCheckout.amount"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-[0.7rem] text-gray-600">
-                              Charge Amount
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                placeholder="Amount"
-                                {...field}
-                                disabled={!isEnabled}
-                                onChange={(e) =>
-                                  field.onChange(toNum(e.target.value))
-                                }
-                                className="bg-[#F6EEE0] text-xs h-9"
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={addGuestForm.control}
-                        name="lateCheckout.reason"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-[0.7rem] text-gray-600">
-                              Notes/Reason
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Reason"
-                                {...field}
-                                disabled={!isEnabled}
-                                className="bg-[#F6EEE0] text-xs h-9"
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Billing Breakdown Section - Takes 2 columns */}
-                  <div className="col-span-2">
-                    <div className="bg-white p-4 rounded-md border border-gray-200 shadow-sm">
-                      <h3 className="font-semibold text-gray-800 mb-3 text-sm border-b pb-2">
-                        Billing Breakdown
-                      </h3>
-                      <div className="flex flex-col gap-2 text-sm text-gray-600">
-                        <div className="flex justify-between">
-                          <span>Room Tariff</span>
-                          <span>₹{toNum(tariffWatch).toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between text-red-500">
-                          <span>
-                            Discount (
-                            {addGuestForm.watch('discountType') === 'percentage'
-                              ? `${addGuestForm.watch('discountAmount')}%`
-                              : 'Flat'}
-                            )
-                          </span>
-                          <span>
-                            - ₹
-                            {(addGuestForm.watch('discountType') === 'percentage'
-                              ? (toNum(tariffWatch) *
-                                  toNum(addGuestForm.watch('discountAmount'))) /
-                                100
-                              : toNum(addGuestForm.watch('discountAmount'))
-                            ).toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-blue-600">
-                          <span>Extra Charges</span>
-                          <span>
-                            + ₹
-                            {(addGuestForm.watch('extraCharges') || [])
-                              .reduce((acc, curr) => acc + toNum(curr.amount), 0)
-                              .toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-blue-600">
-                          <span>Late Checkout</span>
-                          <span>
-                            + ₹
-                            {toNum(
-                              addGuestForm.watch('lateCheckout.amount')
-                            ).toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-blue-600">
-                          <span>Service Due</span>
-                          <span>
-                            + ₹
-                            {toNum(addGuestForm.watch('serviceDue')).toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="border-t my-1"></div>
-                        <div className="flex justify-between font-bold text-lg text-black">
-                          <span>Total Payable</span>
-                          <span>
-                            ₹
-                            {(
-                              toNum(tariffWatch) -
-                              (addGuestForm.watch('discountType') === 'percentage'
-                                ? (toNum(tariffWatch) *
-                                    toNum(addGuestForm.watch('discountAmount'))) /
-                                  100
-                                : toNum(addGuestForm.watch('discountAmount'))) +
-                              (addGuestForm.watch('extraCharges') || []).reduce(
-                                (acc, curr) => acc + toNum(curr.amount),
-                                0
-                              ) +
-                              toNum(addGuestForm.watch('lateCheckout.amount')) +
-                              toNum(addGuestForm.watch('serviceDue'))
-                            ).toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-green-600 font-medium">
-                          <span>Received Amount</span>
-                          <span>- ₹{toNum(receivedWatch).toFixed(2)}</span>
-                        </div>
-                        <div className="border-t my-1"></div>
-                        <div className="flex justify-between font-bold text-base text-red-600">
-                          <span>Outstanding Balance</span>
-                          <span>
-                            ₹
-                            {toNum(addGuestForm.watch('roomTariffDue')).toFixed(
-                              2
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Booking Status Section - Full Width */}
-                <div className="w-44">
-                  <FormField
-                    control={addGuestForm.control}
-                    name="status"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Booking Status
+                  {/* Room Stays Section */}
+                  <div className="w-full mt-4 border-t pt-4">
+                    <FormWrapper title="Room Stays">
+                      <div className="flex justify-between items-center mb-2">
+                        <FormLabel className="text-sm font-semibold text-gray-700">
+                          Room Stays
                         </FormLabel>
-                        <FormControl>
-                          <Select
-                            value={field.value}
-                            onValueChange={field.onChange}
-                            disabled={!isEnabled}
-                          >
-                            <SelectTrigger className="relative bg-[#F6EEE0] text-gray-700 p-2 rounded-md border border-gray-300 text-xs 2xl:text-sm">
-                              <SelectValue placeholder="Select Booking Status" />
-                              <ChevronDown
-                                size={14}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                              />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Pending">Pending</SelectItem>
-                              <SelectItem value="Confirmed">
-                                Confirmed
-                              </SelectItem>
-                              <SelectItem value="Checked-In">
-                                Checked-In
-                              </SelectItem>
-                              <SelectItem value="Checked-Out">
-                                Checked-Out
-                              </SelectItem>
-                              <SelectItem value="Cancelled">
-                                Cancelled
-                              </SelectItem>
-                              <SelectItem value="No-Show">No Show</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Pay Later Service Requests - Full Width */}
-                <div className="w-full p-4 border-t border-dashed border-gray-400 pt-4">
-                {(mode === 'view' || mode === 'edit') &&
-                  (() => {
-                    // compute once
-                    const servicesList = Array.isArray(services)
-                      ? services
-                      : [];
-
-                    // treat null/undefined/'' as "no linked request"
-                    const payLaterServices = servicesList.filter(
-                      (srv) => !srv?.serviceRequestId
-                    );
-
-                    const withRequest = servicesList.filter(
-                      (srv) => !!srv?.serviceRequestId
-                    );
-
-                    // Get payment mode and booking charges
-                    const paymentMode = addGuestForm.watch('paymentMode');
-                    const roomTariff = toNum(addGuestForm.watch('roomTariff') || 0);
-                    const serviceDue = toNum(addGuestForm.watch('serviceDue') || 0);
-                    const extraCharges = addGuestForm.watch('extraCharges') || [];
-                    const lateCheckout = addGuestForm.watch('lateCheckout') || {};
-                    const lateCheckoutAmount = toNum(lateCheckout?.amount || 0);
-
-                    // Create pay-later items from booking charges when payment mode is "PayLater"
-                    const payLaterItems: Array<{ _id: string; requestName: string; amount: number }> = [];
-
-                    // Add services without linked requests
-                    payLaterServices.forEach((srv) => {
-                      payLaterItems.push({
-                        _id: srv._id || `service-${Date.now()}-${Math.random()}`,
-                        requestName: srv.requestName || 'Service',
-                        amount: Number(srv.amount || 0)
-                      });
-                    });
-
-                    // If payment mode is "PayLater", add booking charges as pay-later items
-                    if (paymentMode === 'PayLater') {
-                      // Add Room Tariff
-                      if (roomTariff > 0) {
-                        payLaterItems.push({
-                          _id: `room-tariff-${Date.now()}`,
-                          requestName: 'Room Tariff',
-                          amount: roomTariff
-                        });
-                      }
-
-                      // Add Service Due
-                      if (serviceDue > 0) {
-                        payLaterItems.push({
-                          _id: `service-due-${Date.now()}`,
-                          requestName: 'Service Due',
-                          amount: serviceDue
-                        });
-                      }
-
-                      // Add Extra Charges
-                      extraCharges.forEach((charge: any, index: number) => {
-                        const chargeAmount = toNum(charge?.amount || 0);
-                        if (chargeAmount > 0) {
-                          payLaterItems.push({
-                            _id: `extra-charge-${index}-${Date.now()}`,
-                            requestName: charge?.title || `Extra Charge ${index + 1}`,
-                            amount: chargeAmount
-                          });
-                        }
-                      });
-
-                      // Add Late Checkout
-                      if (lateCheckoutAmount > 0) {
-                        payLaterItems.push({
-                          _id: `late-checkout-${Date.now()}`,
-                          requestName: 'Late Checkout',
-                          amount: lateCheckoutAmount
-                        });
-                      }
-                    }
-
-                    return (
-                      <>
-                        {/* --- Pay Later (no linked request) --- */}
-                        <h2 className="text-2xl font-semibold text-gray-700 mb-6">
-                          Pay later
-                        </h2>
-
-                        {payLaterItems.length > 0 ? (
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {payLaterItems.map((item) => (
-                              <div
-                                key={item._id}
-                                className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all"
-                              >
-                                <div className="flex flex-col">
-                                  <div className="mb-4">
-                                    <h3 className="text-lg font-semibold text-gray-800">
-                                      {item.requestName}
-                                    </h3>
-                                  </div>
-                                  <div className="mb-2">
-                                    <p className="text-lg text-gray-900 font-semibold">
-                                      Amount: ₹
-                                      {Number(item.amount).toFixed(2)}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="text-center text-gray-500 py-4">
-                            No pay-later items.
-                          </div>
-                        )}
-
-                        {/* --- Linked Service Requests (have requestId) --- */}
-                        {withRequest.length > 0 && (
-                          <>
-                            <h2 className="text-2xl font-semibold text-gray-700 mt-10 mb-6">
-                              Linked service requests
-                            </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                              {withRequest.map((srv) => (
-                                <div
-                                  key={srv._id}
-                                  className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all"
-                                >
-                                  <div className="flex flex-col">
-                                    <div className="mb-2">
-                                      <h3 className="text-lg font-semibold text-gray-800">
-                                        {srv.requestName ||
-                                          srv?.serviceRequestId?.__t ||
-                                          'Service'}
-                                      </h3>
-                                      {srv?.serviceRequestId?.uniqueId && (
-                                        <p className="text-xs text-gray-500">
-                                          ID: {srv.serviceRequestId.uniqueId}
-                                        </p>
-                                      )}
-                                    </div>
-                                    <p className="text-lg text-gray-900 font-semibold">
-                                      Amount: ₹
-                                      {Number(srv.amount ?? 0).toFixed(2)}
-                                    </p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </>
-                          )}
-                      </>
-                    );
-                  })()}
-                </div>
-
-                {/* Upload Documents Section - Full Width */}
-                <div className="w-full flex flex-col items-start pb-4">
-                <FormWrapper
-                  title={
-                    mode === 'edit'
-                      ? 'Upload Document'
-                      : 'Identification Document'
-                  }
-                >
-                  <h2 className="text-3xl text-gray-700 font-semibold mb-4">
-                    {mode === 'edit'
-                      ? 'Upload Document'
-                      : 'Identification Document'}
-                  </h2>
-
-                  {idProofDetails?.url ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                      {/* Existing Uploaded Document */}
-                      <div className="w-full flex flex-col">
-                        <a
-                          href={idProofDetails.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`relative rounded-sm w-full h-40 md:h-56 overflow-hidden ${getBorderColorClass(idProofDetails.status)}`}
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            appendRoomStay({
+                              roomTypeId: '12353',
+                              ratePlanId: '41355',
+                              roomTypeName: 'Deluxe room',
+                              numAdults: 1,
+                              numChildren: 0,
+                              roomId: ''
+                            })
+                          }
+                          className="h-7 text-xs"
+                          disabled={!isEnabled}
                         >
-                          {idProofDetails.url.endsWith('.pdf') ? (
-                            <iframe
-                              src={idProofDetails.url}
-                              title="Uploaded PDF"
-                              className="w-full h-full object-cover pointer-events-none"
-                            />
-                          ) : (
-                            <Image
-                              src={idProofDetails.url}
-                              alt="Uploaded Document"
-                              fill
-                              className="object-cover"
-                            />
-                          )}
-                        </a>
-                        <div className="mt-1 text-sm text-gray-700 font-medium text-center">
-                          Status: {idProofDetails.status}
-                        </div>
+                          <Plus className="h-3 w-3 mr-1" /> Add Room Stay
+                        </Button>
                       </div>
-
-                      {/* Upload New (Only in edit mode) */}
-                      {mode === 'edit' && (
-                        <div className="relative rounded-sm w-full h-40 md:h-56 overflow-hidden border border-gray-300">
-                          <label className="w-full h-full block cursor-pointer">
-                            <input
-                              type="file"
-                              disabled={!isEnabled}
-                              accept="image/*,application/pdf"
-                              className="hidden"
-                              onChange={(e) => handleImageChange(e, 1)}
-                            />
-                            {images[1] ? (
-                              typeof images[1] === 'string' &&
-                              images[1].endsWith('.pdf') ? (
-                                <iframe
-                                  src={images[1]}
-                                  title="PDF Preview"
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <Image
-                                  src={images[1] as string}
-                                  alt="Uploaded"
-                                  fill
-                                  className="object-cover"
-                                />
-                              )
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-sm text-gray-600">
-                                Upload Image
-                              </div>
-                            )}
-                          </label>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    // No fetched image – fallback to 3 upload slots
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                      {[0, 1, 2].map((index) => (
-                        <div
-                          key={index}
-                          className="relative rounded-sm w-full h-40 md:h-56 overflow-hidden border border-gray-300"
-                        >
-                          <label className="w-full h-full block cursor-pointer">
-                            <input
-                              type="file"
-                              disabled={!isEnabled}
-                              accept="image/*,application/pdf"
-                              className="hidden"
-                              onChange={(e) => handleImageChange(e, index)}
-                            />
-                            {images[index] ? (
-                              typeof images[index] === 'string' &&
-                              (images[index] as string)
-                                .toLowerCase()
-                                .endsWith('.pdf') ? (
-                                <iframe
-                                  src={images[index] as string}
-                                  title={`PDF ${index + 1}`}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <Image
-                                  src={images[index] as string}
-                                  alt={`Uploaded ${index + 1}`}
-                                  fill
-                                  className="object-cover"
-                                />
-                              )
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-sm text-gray-600">
-                                Upload Image
-                              </div>
-                            )}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Show schema error for guests array if any */}
-                  {addGuestForm.formState.errors.guests && (
-                    <p className="text-red-600 text-sm mt-3">
-                      {(addGuestForm.formState.errors.guests as any)?.message ??
-                        'Please complete additional guest details.'}
-                    </p>
-                  )}
-
-                  {/* ---- Secondary Guests Inline ---- */}
-                  <div className="mt-8">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="text-sm text-gray-700"></div>
-                      <button
-                        type="button"
-                        aria-disabled={!canAddMoreGuests}
-                        onClick={handleAddGuestClick}
-                        className={`px-3 py-1.5 text-sm rounded-md border transition
-                          ${
-                            canAddMoreGuests
-                              ? 'border-[#8B5E3C] bg-[#A67B5B] hover:bg-[#8B5E3C] text-white cursor-pointer'
-                              : 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
-                          }`}
-                      >
-                        Add Guest
-                      </button>
-                    </div>
-
-                    {fields.length > 0 && (
-                      <div className="space-y-4">
-                        {fields.map((f, index) => (
-                          <div
-                            key={f.id}
-                            className="relative border rounded-lg p-4 bg-[#FAF6EF] shadow-sm"
-                          >
-                            {/* Delete Guest Button */}
-                            <button
-                              type="button"
-                              onClick={() => !mustKeep && remove(index)}
-                              disabled={mustKeep}
-                              className={`absolute top-2 right-2 bg-white border rounded-full w-6 h-6 text-xs flex items-center justify-center shadow
-                                ${
-                                  mustKeep
-                                    ? 'border-gray-200 text-gray-300 cursor-not-allowed'
-                                    : 'border-gray-300 text-gray-500 hover:text-red-600 hover:border-red-600'
-                                }`}
-                              aria-label="Remove guest"
-                            >
-                              ✕
-                            </button>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              {/* First Name */}
+                      <div className="w-[100%] gap-4">
+                        {roomStaysFields.map((field, index) => (
+                          <div key={field.id} className="border border-gray-200 rounded-lg p-4 bg-white">
+                            <div className="flex justify-between items-center mb-3">
+                              <h4 className="text-sm font-semibold text-gray-700">Room Stay {index + 1}</h4>
+                              {roomStaysFields.length > 1 && (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => removeRoomStay(index)}
+                                  className="h-7 text-xs text-red-600"
+                                  disabled={!isEnabled}
+                                >
+                                  <Trash className="h-3 w-3 mr-1" /> Remove
+                                </Button>
+                              )}
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                               <FormField
                                 control={addGuestForm.control}
-                                name={`guests.${index}.firstName`}
+                                name={`roomStays.${index}.roomTypeId`}
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel className="text-sm text-gray-700">
-                                      First Name{' '}
-                                      <span className="text-red-600">*</span>
+                                    <FormLabel className="text-black text-[0.8rem]">
+                                      Room Type ID
                                     </FormLabel>
                                     <FormControl>
                                       <Input
-                                        {...field}
-                                        placeholder="Enter first name"
+                                        type="text"
+                                        placeholder="12353"
                                         disabled={!isEnabled}
-                                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-sm border border-gray-300"
+                                        {...field}
+                                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
                                       />
                                     </FormControl>
                                     <FormMessage />
                                   </FormItem>
                                 )}
                               />
-
-                              {/* Last Name */}
                               <FormField
                                 control={addGuestForm.control}
-                                name={`guests.${index}.lastName`}
+                                name={`roomStays.${index}.ratePlanId`}
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel className="text-sm text-gray-700">
-                                      Last Name{' '}
-                                      <span className="text-red-600">*</span>
+                                    <FormLabel className="text-black text-[0.8rem]">
+                                      Rate Plan ID
                                     </FormLabel>
                                     <FormControl>
                                       <Input
+                                        type="text"
+                                        placeholder="41355"
+                                        disabled={!isEnabled}
                                         {...field}
-                                        placeholder="Enter last name"
-                                        disabled={!isEnabled}
-                                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-sm border border-gray-300"
+                                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
                                       />
                                     </FormControl>
                                     <FormMessage />
                                   </FormItem>
                                 )}
                               />
-
-                              {/* Phone (secondary) */}
-                              <Controller
+                              <FormField
                                 control={addGuestForm.control}
-                                name={`guests.${index}.phoneNumber`}
+                                name={`roomStays.${index}.roomTypeName`}
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel className="text-sm text-gray-700">
-                                      Phone Number
+                                    <FormLabel className="text-black text-[0.8rem]">
+                                      Room Type Name
                                     </FormLabel>
                                     <FormControl>
-                                      <PhoneInput
-                                        defaultCountry="in"
+                                      <Input
+                                        type="text"
+                                        placeholder="Deluxe room"
                                         disabled={!isEnabled}
-                                        value={
-                                          field.value
-                                            ? `+91${String(field.value).replace(/\D/g, '').slice(-10)}`
-                                            : ''
-                                        }
-                                        onChange={(val) => {
-                                          const digits = val.replace(/\D/g, '');
-                                          const withoutCountry =
-                                            digits.startsWith('91')
-                                              ? digits.slice(2)
-                                              : digits;
-                                          field.onChange(
-                                            withoutCountry.slice(0, 10)
-                                          );
-                                          addGuestForm.setValue(
-                                            `guests.${index}.countryCode` as const,
-                                            '+91'
-                                          );
-                                        }}
-                                        inputClassName="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-sm border border-gray-300 w-full"
+                                        {...field}
+                                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
                                       />
                                     </FormControl>
                                     <FormMessage />
                                   </FormItem>
                                 )}
                               />
-
-                              {/* Gender */}
                               <FormField
                                 control={addGuestForm.control}
-                                name={`guests.${index}.gender`}
+                                name={`roomStays.${index}.numAdults`}
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel className="text-sm text-gray-700">
-                                      Gender{' '}
-                                      <span className="text-red-600">*</span>
+                                    <FormLabel className="text-black text-[0.8rem]">
+                                      Number of Adults
                                     </FormLabel>
                                     <FormControl>
-                                      <Select
-                                        value={field.value}
+                                      <Input
+                                        type="number"
+                                        min="1"
+                                        placeholder="1"
                                         disabled={!isEnabled}
-                                        onValueChange={(v) =>
-                                          field.onChange(v as any)
-                                        }
-                                      >
-                                        <SelectTrigger className="relative bg-[#F6EEE0] text-gray-700 p-2 rounded-md border border-gray-300 text-sm">
-                                          <SelectValue placeholder="Select gender" />
-                                          <ChevronDown
-                                            size={14}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2"
-                                          />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                          <SelectItem value="male">
-                                            Male
-                                          </SelectItem>
-                                          <SelectItem value="female">
-                                            Female
-                                          </SelectItem>
-                                          <SelectItem value="others">
-                                            Others
-                                          </SelectItem>
-                                          <SelectItem value="prefer not to say">
-                                            Prefer not to say
-                                          </SelectItem>
-                                        </SelectContent>
-                                      </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-
-                              {/* Guest Type */}
-                              <FormField
-                                control={addGuestForm.control}
-                                name={`guests.${index}.guestType`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-sm text-gray-700">
-                                      Guest Type{' '}
-                                      <span className="text-red-600">*</span>
-                                    </FormLabel>
-                                    <FormControl>
-                                      <Select
-                                        value={field.value}
-                                        disabled={!isEnabled}
-                                        onValueChange={(v) =>
-                                          field.onChange(v as any)
-                                        }
-                                      >
-                                        <SelectTrigger className="relative bg-[#F6EEE0] text-gray-700 p-2 rounded-md border border-gray-300 text-sm">
-                                          <SelectValue placeholder="Select guest type" />
-                                          <ChevronDown
-                                            size={14}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2"
-                                          />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                          <SelectItem value="adult">
-                                            Adult
-                                          </SelectItem>
-                                          <SelectItem value="children">
-                                            Children
-                                          </SelectItem>
-                                          <SelectItem value="infant">
-                                            Infant
-                                          </SelectItem>
-                                        </SelectContent>
-                                      </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-
-                              {/* ID Proof Type */}
-                              <FormField
-                                control={addGuestForm.control}
-                                name={`guests.${index}.idProof.type`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-sm text-gray-700">
-                                      ID Proof Type
-                                    </FormLabel>
-                                    <FormControl>
-                                      <Select
-                                        value={field.value}
-                                        disabled={!isEnabled}
-                                        onValueChange={(v) =>
-                                          field.onChange(
-                                            v as
-                                              | 'PASSPORT'
-                                              | 'AADHAAR'
-                                              | 'DRIVING_LICENSE'
-                                              | 'VOTER_ID'
-                                          )
-                                        }
-                                      >
-                                        <SelectTrigger className="relative bg-[#F6EEE0] text-gray-700 p-2 rounded-md border border-gray-300 text-sm">
-                                          <SelectValue placeholder="Select ID Proof type" />
-                                          <ChevronDown
-                                            size={14}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2"
-                                          />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                          <SelectItem value="PASSPORT">
-                                            Passport
-                                          </SelectItem>
-                                          <SelectItem value="AADHAAR">
-                                            Aadhaar
-                                          </SelectItem>
-                                          <SelectItem value="DRIVING_LICENSE">
-                                            Driving License
-                                          </SelectItem>
-                                          <SelectItem value="VOTER_ID">
-                                            Voter ID
-                                          </SelectItem>
-                                        </SelectContent>
-                                      </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-
-                              {/* ID Proof Upload */}
-                              <FormField
-                                control={addGuestForm.control}
-                                name={`guests.${index}.idProof.url`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-sm text-gray-700">
-                                      ID Proof Document
-                                    </FormLabel>
-
-                                    <div className="flex items-center gap-3">
-                                      <div
-                                        className={[
-                                          'w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center rounded-md border',
-                                          'border-gray-300',
-                                          !isEnabled
-                                            ? 'cursor-not-allowed opacity-50'
-                                            : 'cursor-pointer'
-                                        ].join(' ')}
-                                        onClick={() => {
-                                          if (!isEnabled) return;
-                                          const el = document.getElementById(
-                                            `guest-id-file-${index}`
-                                          ) as HTMLInputElement | null;
-                                          el?.click();
-                                        }}
-                                      >
-                                        {field.value ? (
-                                          (field.value as string)
-                                            .toLowerCase()
-                                            .endsWith('.pdf') ? (
-                                            <span className="text-xs">
-                                              PDF Uploaded
-                                            </span>
-                                          ) : (
-                                            <img
-                                              src={field.value as string}
-                                              alt="ID Proof"
-                                              className="w-full h-full object-cover rounded-md"
-                                            />
-                                          )
-                                        ) : (
-                                          <span className="text-xs text-black">
-                                            Upload
-                                          </span>
-                                        )}
-                                      </div>
-
-                                      <input
-                                        id={`guest-id-file-${index}`}
-                                        type="file"
-                                        accept="image/*,application/pdf"
-                                        className="hidden"
-                                        disabled={!isEnabled}
-                                        onChange={(e) => {
-                                          // mark field touched so RHF knows it changed
-                                          field.onChange(field.value);
-                                          // upload & set url into guests.${index}.idProof.url
-                                          handleSecondaryIdProofUpload(index)(
-                                            e
-                                          );
-                                        }}
+                                        {...field}
+                                        value={field.value ?? ''}
+                                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 1)}
+                                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
                                       />
-                                    </div>
-
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={addGuestForm.control}
+                                name={`roomStays.${index}.numChildren`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-black text-[0.8rem]">
+                                      Number of Children
+                                    </FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        type="number"
+                                        min="0"
+                                        placeholder="0"
+                                        disabled={!isEnabled}
+                                        {...field}
+                                        value={field.value ?? ''}
+                                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
+                                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={addGuestForm.control}
+                                name={`roomStays.${index}.roomId`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-black text-[0.8rem]">
+                                      Room ID
+                                    </FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        type="text"
+                                        placeholder=""
+                                        disabled={!isEnabled}
+                                        {...field}
+                                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                                      />
+                                    </FormControl>
                                     <FormMessage />
                                   </FormItem>
                                 )}
@@ -4503,212 +3580,1154 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                             </div>
                           </div>
                         ))}
+                        {roomStaysFields.length === 0 && (
+                          <div className="text-center text-gray-500 py-4">
+                            No room stays added. Click "Add Room Stay" to add one.
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </FormWrapper>
                   </div>
-                  {/* ---- /Secondary Guests Inline ---- */}
-                </FormWrapper>
+                  {/* Reorganized Layout: flex-col with specific sections */}
+                  <div className="w-full mt-4 border-t pt-4 flex flex-col gap-6">
+                    {/* Wrapper for Extra Charges, Late Checkout, and Billing Breakdown with grid-cols-3 */}
+                    <div className="w-full grid grid-cols-3 gap-6">
+                      {/* Extra Charges Section - Full Width (spans all 3 columns) */}
+                      <div className="col-span-3">
+                        <div className="flex justify-between items-center mb-2">
+                          <FormLabel className="text-sm font-semibold text-gray-700">
+                            Extra Charges
+                          </FormLabel>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() =>
+                              appendExtraCharge({
+                                title: '',
+                                amount: 0,
+                                reason: ''
+                              })
+                            }
+                            className="h-7 text-xs"
+                            disabled={!isEnabled}
+                          >
+                            <Plus className="h-3 w-3 mr-1" /> Add Charge
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-1 gap-2">
+                          {extraChargeFields.map((field, index) => (
+                            <div key={field.id} className="flex gap-2 items-center">
+                              <FormField
+                                control={addGuestForm.control}
+                                name={`extraCharges.${index}.title`}
+                                render={({ field }) => (
+                                  <Input
+                                    placeholder="Title (e.g. Damage)"
+                                    {...field}
+                                    disabled={!isEnabled}
+                                    className="bg-[#F6EEE0] text-xs h-8"
+                                  />
+                                )}
+                              />
+                              <FormField
+                                control={addGuestForm.control}
+                                name={`extraCharges.${index}.amount`}
+                                render={({ field }) => (
+                                  <Input
+                                    type="number"
+                                    placeholder="Amount"
+                                    {...field}
+                                    disabled={!isEnabled}
+                                    onChange={(e) =>
+                                      field.onChange(toNum(e.target.value))
+                                    }
+                                    className="bg-[#F6EEE0] text-xs h-8 w-24"
+                                  />
+                                )}
+                              />
+                              <FormField
+                                control={addGuestForm.control}
+                                name={`extraCharges.${index}.reason`}
+                                render={({ field }) => (
+                                  <Input
+                                    placeholder="Reason"
+                                    {...field}
+                                    disabled={!isEnabled}
+                                    className="bg-[#F6EEE0] text-xs h-8"
+                                  />
+                                )}
+                              />
+                              <Button
+                                type="button"
+                                size="icon"
+                                variant="ghost"
+                                className="h-8 w-8 text-red-500"
+                                onClick={() => removeExtraCharge(index)}
+                                disabled={!isEnabled}
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ))}
+                          {extraChargeFields.length === 0 && (
+                            <div className="text-center text-gray-500 py-2 text-xs">
+                              No extra charges added
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Late Checkout Section - Takes 1 column */}
+                      <div className="col-span-1">
+                        <FormLabel className="text-sm font-semibold text-gray-700 mb-2 block">
+                          Late Checkout
+                        </FormLabel>
+                        <div className="grid grid-cols-1 gap-4">
+                          <FormField
+                            control={addGuestForm.control}
+                            name="lateCheckout.hours"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-[0.7rem] text-gray-600">
+                                  Hours Delayed
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    placeholder="Hours"
+                                    {...field}
+                                    disabled={!isEnabled}
+                                    onChange={(e) =>
+                                      field.onChange(toNum(e.target.value))
+                                    }
+                                    className="bg-[#F6EEE0] text-xs h-9"
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={addGuestForm.control}
+                            name="lateCheckout.amount"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-[0.7rem] text-gray-600">
+                                  Charge Amount
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    placeholder="Amount"
+                                    {...field}
+                                    disabled={!isEnabled}
+                                    onChange={(e) =>
+                                      field.onChange(toNum(e.target.value))
+                                    }
+                                    className="bg-[#F6EEE0] text-xs h-9"
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={addGuestForm.control}
+                            name="lateCheckout.reason"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-[0.7rem] text-gray-600">
+                                  Notes/Reason
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Reason"
+                                    {...field}
+                                    disabled={!isEnabled}
+                                    className="bg-[#F6EEE0] text-xs h-9"
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Billing Breakdown Section - Takes 2 columns */}
+                      <div className="col-span-2">
+                        <div className="bg-white p-4 rounded-md border border-gray-200 shadow-sm">
+                          <h3 className="font-semibold text-gray-800 mb-3 text-sm border-b pb-2">
+                            Billing Breakdown
+                          </h3>
+                          <div className="flex flex-col gap-2 text-sm text-gray-600">
+                            <div className="flex justify-between">
+                              <span>Room Tariff</span>
+                              <span>₹{toNum(tariffWatch).toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between text-red-500">
+                              <span>
+                                Discount (
+                                {addGuestForm.watch('discountType') === 'percentage'
+                                  ? `${addGuestForm.watch('discountAmount')}%`
+                                  : 'Flat'}
+                                )
+                              </span>
+                              <span>
+                                - ₹
+                                {(addGuestForm.watch('discountType') === 'percentage'
+                                  ? (toNum(tariffWatch) *
+                                    toNum(addGuestForm.watch('discountAmount'))) /
+                                  100
+                                  : toNum(addGuestForm.watch('discountAmount'))
+                                ).toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-blue-600">
+                              <span>Extra Charges</span>
+                              <span>
+                                + ₹
+                                {(addGuestForm.watch('extraCharges') || [])
+                                  .reduce((acc, curr) => acc + toNum(curr.amount), 0)
+                                  .toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-blue-600">
+                              <span>Late Checkout</span>
+                              <span>
+                                + ₹
+                                {toNum(
+                                  addGuestForm.watch('lateCheckout.amount')
+                                ).toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-blue-600">
+                              <span>Service Due</span>
+                              <span>
+                                + ₹
+                                {toNum(addGuestForm.watch('serviceDue')).toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="border-t my-1"></div>
+                            <div className="flex justify-between font-bold text-lg text-black">
+                              <span>Total Payable</span>
+                              <span>
+                                ₹
+                                {(
+                                  toNum(tariffWatch) -
+                                  (addGuestForm.watch('discountType') === 'percentage'
+                                    ? (toNum(tariffWatch) *
+                                      toNum(addGuestForm.watch('discountAmount'))) /
+                                    100
+                                    : toNum(addGuestForm.watch('discountAmount'))) +
+                                  (addGuestForm.watch('extraCharges') || []).reduce(
+                                    (acc, curr) => acc + toNum(curr.amount),
+                                    0
+                                  ) +
+                                  toNum(addGuestForm.watch('lateCheckout.amount')) +
+                                  toNum(addGuestForm.watch('serviceDue'))
+                                ).toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-green-600 font-medium">
+                              <span>Received Amount</span>
+                              <span>- ₹{toNum(receivedWatch).toFixed(2)}</span>
+                            </div>
+                            <div className="border-t my-1"></div>
+                            <div className="flex justify-between font-bold text-base text-red-600">
+                              <span>Outstanding Balance</span>
+                              <span>
+                                ₹
+                                {toNum(addGuestForm.watch('roomTariffDue')).toFixed(
+                                  2
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Booking Status Section - Full Width */}
+                    <div className="w-44">
+                      <FormField
+                        control={addGuestForm.control}
+                        name="status"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-black text-[0.8rem]">
+                              Booking Status
+                            </FormLabel>
+                            <FormControl>
+                              <Select
+                                value={field.value}
+                                onValueChange={field.onChange}
+                                disabled={!isEnabled}
+                              >
+                                <SelectTrigger className="relative bg-[#F6EEE0] text-gray-700 p-2 rounded-md border border-gray-300 text-xs 2xl:text-sm">
+                                  <SelectValue placeholder="Select Booking Status" />
+                                  <ChevronDown
+                                    size={14}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                                  />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="Pending">Pending</SelectItem>
+                                  <SelectItem value="Confirmed">
+                                    Confirmed
+                                  </SelectItem>
+                                  <SelectItem value="Checked-In">
+                                    Checked-In
+                                  </SelectItem>
+                                  <SelectItem value="Checked-Out">
+                                    Checked-Out
+                                  </SelectItem>
+                                  <SelectItem value="Cancelled">
+                                    Cancelled
+                                  </SelectItem>
+                                  <SelectItem value="No-Show">No Show</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {/* Pay Later Service Requests - Full Width */}
+                    <div className="w-full p-4 border-t border-dashed border-gray-400 pt-4">
+                      {(mode === 'view' || mode === 'edit') &&
+                        (() => {
+                          // compute once
+                          const servicesList = Array.isArray(services)
+                            ? services
+                            : [];
+
+                          // treat null/undefined/'' as "no linked request"
+                          const payLaterServices = servicesList.filter(
+                            (srv) => !srv?.serviceRequestId
+                          );
+
+                          const withRequest = servicesList.filter(
+                            (srv) => !!srv?.serviceRequestId
+                          );
+
+                          // Get payment mode and booking charges
+                          const paymentMode = addGuestForm.watch('paymentMode');
+                          const roomTariff = toNum(addGuestForm.watch('roomTariff') || 0);
+                          const serviceDue = toNum(addGuestForm.watch('serviceDue') || 0);
+                          const extraCharges = addGuestForm.watch('extraCharges') || [];
+                          const lateCheckout = addGuestForm.watch('lateCheckout') || {};
+                          const lateCheckoutAmount = toNum(lateCheckout?.amount || 0);
+
+                          // Create pay-later items from booking charges when payment mode is "PayLater"
+                          const payLaterItems: Array<{ _id: string; requestName: string; amount: number }> = [];
+
+                          // Add services without linked requests
+                          payLaterServices.forEach((srv) => {
+                            payLaterItems.push({
+                              _id: srv._id || `service-${Date.now()}-${Math.random()}`,
+                              requestName: srv.requestName || 'Service',
+                              amount: Number(srv.amount || 0)
+                            });
+                          });
+
+                          // If payment mode is "PayLater", add booking charges as pay-later items
+                          if (paymentMode === 'PayLater') {
+                            // Add Room Tariff
+                            if (roomTariff > 0) {
+                              payLaterItems.push({
+                                _id: `room-tariff-${Date.now()}`,
+                                requestName: 'Room Tariff',
+                                amount: roomTariff
+                              });
+                            }
+
+                            // Add Service Due
+                            if (serviceDue > 0) {
+                              payLaterItems.push({
+                                _id: `service-due-${Date.now()}`,
+                                requestName: 'Service Due',
+                                amount: serviceDue
+                              });
+                            }
+
+                            // Add Extra Charges
+                            extraCharges.forEach((charge: any, index: number) => {
+                              const chargeAmount = toNum(charge?.amount || 0);
+                              if (chargeAmount > 0) {
+                                payLaterItems.push({
+                                  _id: `extra-charge-${index}-${Date.now()}`,
+                                  requestName: charge?.title || `Extra Charge ${index + 1}`,
+                                  amount: chargeAmount
+                                });
+                              }
+                            });
+
+                            // Add Late Checkout
+                            if (lateCheckoutAmount > 0) {
+                              payLaterItems.push({
+                                _id: `late-checkout-${Date.now()}`,
+                                requestName: 'Late Checkout',
+                                amount: lateCheckoutAmount
+                              });
+                            }
+                          }
+
+                          return (
+                            <>
+                              {/* --- Pay Later (no linked request) --- */}
+                              <h2 className="text-2xl font-semibold text-gray-700 mb-6">
+                                Pay later
+                              </h2>
+
+                              {payLaterItems.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                  {payLaterItems.map((item) => (
+                                    <div
+                                      key={item._id}
+                                      className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all"
+                                    >
+                                      <div className="flex flex-col">
+                                        <div className="mb-4">
+                                          <h3 className="text-lg font-semibold text-gray-800">
+                                            {item.requestName}
+                                          </h3>
+                                        </div>
+                                        <div className="mb-2">
+                                          <p className="text-lg text-gray-900 font-semibold">
+                                            Amount: ₹
+                                            {Number(item.amount).toFixed(2)}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="text-center text-gray-500 py-4">
+                                  No pay-later items.
+                                </div>
+                              )}
+
+                              {/* --- Linked Service Requests (have requestId) --- */}
+                              {withRequest.length > 0 && (
+                                <>
+                                  <h2 className="text-2xl font-semibold text-gray-700 mt-10 mb-6">
+                                    Linked service requests
+                                  </h2>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {withRequest.map((srv) => (
+                                      <div
+                                        key={srv._id}
+                                        className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all"
+                                      >
+                                        <div className="flex flex-col">
+                                          <div className="mb-2">
+                                            <h3 className="text-lg font-semibold text-gray-800">
+                                              {srv.requestName ||
+                                                srv?.serviceRequestId?.__t ||
+                                                'Service'}
+                                            </h3>
+                                            {srv?.serviceRequestId?.uniqueId && (
+                                              <p className="text-xs text-gray-500">
+                                                ID: {srv.serviceRequestId.uniqueId}
+                                              </p>
+                                            )}
+                                          </div>
+                                          <p className="text-lg text-gray-900 font-semibold">
+                                            Amount: ₹
+                                            {Number(srv.amount ?? 0).toFixed(2)}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+                            </>
+                          );
+                        })()}
+                    </div>
+
+                    {/* Upload Documents Section - Full Width */}
+                    <div className="w-full flex flex-col items-start pb-4">
+                      <FormWrapper
+                        title={
+                          mode === 'edit'
+                            ? 'Upload Document'
+                            : 'Identification Document'
+                        }
+                      >
+                        <h2 className="text-3xl text-gray-700 font-semibold mb-4">
+                          {mode === 'edit'
+                            ? 'Upload Document'
+                            : 'Identification Document'}
+                        </h2>
+
+                        {idProofDetails?.url ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            {/* Existing Uploaded Document */}
+                            <div className="w-full flex flex-col">
+                              <a
+                                href={idProofDetails.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`relative rounded-sm w-full h-40 md:h-56 overflow-hidden ${getBorderColorClass(idProofDetails.status)}`}
+                              >
+                                {idProofDetails.url.endsWith('.pdf') ? (
+                                  <iframe
+                                    src={idProofDetails.url}
+                                    title="Uploaded PDF"
+                                    className="w-full h-full object-cover pointer-events-none"
+                                  />
+                                ) : (
+                                  <Image
+                                    src={idProofDetails.url}
+                                    alt="Uploaded Document"
+                                    fill
+                                    className="object-cover"
+                                  />
+                                )}
+                              </a>
+                              <div className="mt-1 text-sm text-gray-700 font-medium text-center">
+                                Status: {idProofDetails.status}
+                              </div>
+                            </div>
+
+                            {/* Upload New (Only in edit mode) */}
+                            {mode === 'edit' && (
+                              <div className="relative rounded-sm w-full h-40 md:h-56 overflow-hidden border border-gray-300">
+                                <label className="w-full h-full block cursor-pointer">
+                                  <input
+                                    type="file"
+                                    disabled={!isEnabled}
+                                    accept="image/*,application/pdf"
+                                    className="hidden"
+                                    onChange={(e) => handleImageChange(e, 1)}
+                                  />
+                                  {images[1] ? (
+                                    typeof images[1] === 'string' &&
+                                      images[1].endsWith('.pdf') ? (
+                                      <iframe
+                                        src={images[1]}
+                                        title="PDF Preview"
+                                        className="w-full h-full object-cover"
+                                      />
+                                    ) : (
+                                      <Image
+                                        src={images[1] as string}
+                                        alt="Uploaded"
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    )
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-sm text-gray-600">
+                                      Upload Image
+                                    </div>
+                                  )}
+                                </label>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          // No fetched image – fallback to 3 upload slots
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            {[0, 1, 2].map((index) => (
+                              <div
+                                key={index}
+                                className="relative rounded-sm w-full h-40 md:h-56 overflow-hidden border border-gray-300"
+                              >
+                                <label className="w-full h-full block cursor-pointer">
+                                  <input
+                                    type="file"
+                                    disabled={!isEnabled}
+                                    accept="image/*,application/pdf"
+                                    className="hidden"
+                                    onChange={(e) => handleImageChange(e, index)}
+                                  />
+                                  {images[index] ? (
+                                    typeof images[index] === 'string' &&
+                                      (images[index] as string)
+                                        .toLowerCase()
+                                        .endsWith('.pdf') ? (
+                                      <iframe
+                                        src={images[index] as string}
+                                        title={`PDF ${index + 1}`}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    ) : (
+                                      <Image
+                                        src={images[index] as string}
+                                        alt={`Uploaded ${index + 1}`}
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    )
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-sm text-gray-600">
+                                      Upload Image
+                                    </div>
+                                  )}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Show schema error for guests array if any */}
+                        {addGuestForm.formState.errors.guests && (
+                          <p className="text-red-600 text-sm mt-3">
+                            {(addGuestForm.formState.errors.guests as any)?.message ??
+                              'Please complete additional guest details.'}
+                          </p>
+                        )}
+
+                        {/* ---- Secondary Guests Inline ---- */}
+                        <div className="mt-8">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="text-sm text-gray-700"></div>
+                            <button
+                              type="button"
+                              aria-disabled={!canAddMoreGuests}
+                              onClick={handleAddGuestClick}
+                              className={`px-3 py-1.5 text-sm rounded-md border transition
+                          ${canAddMoreGuests
+                                  ? 'border-[#8B5E3C] bg-[#A67B5B] hover:bg-[#8B5E3C] text-white cursor-pointer'
+                                  : 'border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed'
+                                }`}
+                            >
+                              Add Guest
+                            </button>
+                          </div>
+
+                          {fields.length > 0 && (
+                            <div className="space-y-4">
+                              {fields.map((f, index) => (
+                                <div
+                                  key={f.id}
+                                  className="relative border rounded-lg p-4 bg-[#FAF6EF] shadow-sm"
+                                >
+                                  {/* Delete Guest Button */}
+                                  <button
+                                    type="button"
+                                    onClick={() => !mustKeep && remove(index)}
+                                    disabled={mustKeep}
+                                    className={`absolute top-2 right-2 bg-white border rounded-full w-6 h-6 text-xs flex items-center justify-center shadow
+                                ${mustKeep
+                                        ? 'border-gray-200 text-gray-300 cursor-not-allowed'
+                                        : 'border-gray-300 text-gray-500 hover:text-red-600 hover:border-red-600'
+                                      }`}
+                                    aria-label="Remove guest"
+                                  >
+                                    ✕
+                                  </button>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {/* First Name */}
+                                    <FormField
+                                      control={addGuestForm.control}
+                                      name={`guests.${index}.firstName`}
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormLabel className="text-sm text-gray-700">
+                                            First Name{' '}
+                                            <span className="text-red-600">*</span>
+                                          </FormLabel>
+                                          <FormControl>
+                                            <Input
+                                              {...field}
+                                              placeholder="Enter first name"
+                                              disabled={!isEnabled}
+                                              className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-sm border border-gray-300"
+                                            />
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+
+                                    {/* Last Name */}
+                                    <FormField
+                                      control={addGuestForm.control}
+                                      name={`guests.${index}.lastName`}
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormLabel className="text-sm text-gray-700">
+                                            Last Name{' '}
+                                            <span className="text-red-600">*</span>
+                                          </FormLabel>
+                                          <FormControl>
+                                            <Input
+                                              {...field}
+                                              placeholder="Enter last name"
+                                              disabled={!isEnabled}
+                                              className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-sm border border-gray-300"
+                                            />
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+
+                                    {/* Phone (secondary) */}
+                                    <Controller
+                                      control={addGuestForm.control}
+                                      name={`guests.${index}.phoneNumber`}
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormLabel className="text-sm text-gray-700">
+                                            Phone Number
+                                          </FormLabel>
+                                          <FormControl>
+                                            <PhoneInput
+                                              defaultCountry="in"
+                                              disabled={!isEnabled}
+                                              value={
+                                                field.value
+                                                  ? `+91${String(field.value).replace(/\D/g, '').slice(-10)}`
+                                                  : ''
+                                              }
+                                              onChange={(val) => {
+                                                const digits = val.replace(/\D/g, '');
+                                                const withoutCountry =
+                                                  digits.startsWith('91')
+                                                    ? digits.slice(2)
+                                                    : digits;
+                                                field.onChange(
+                                                  withoutCountry.slice(0, 10)
+                                                );
+                                                addGuestForm.setValue(
+                                                  `guests.${index}.countryCode` as const,
+                                                  '+91'
+                                                );
+                                              }}
+                                              inputClassName="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-sm border border-gray-300 w-full"
+                                            />
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+
+                                    {/* Gender */}
+                                    <FormField
+                                      control={addGuestForm.control}
+                                      name={`guests.${index}.gender`}
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormLabel className="text-sm text-gray-700">
+                                            Gender{' '}
+                                            <span className="text-red-600">*</span>
+                                          </FormLabel>
+                                          <FormControl>
+                                            <Select
+                                              value={field.value}
+                                              disabled={!isEnabled}
+                                              onValueChange={(v) =>
+                                                field.onChange(v as any)
+                                              }
+                                            >
+                                              <SelectTrigger className="relative bg-[#F6EEE0] text-gray-700 p-2 rounded-md border border-gray-300 text-sm">
+                                                <SelectValue placeholder="Select gender" />
+                                                <ChevronDown
+                                                  size={14}
+                                                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                                                />
+                                              </SelectTrigger>
+                                              <SelectContent>
+                                                <SelectItem value="male">
+                                                  Male
+                                                </SelectItem>
+                                                <SelectItem value="female">
+                                                  Female
+                                                </SelectItem>
+                                                <SelectItem value="others">
+                                                  Others
+                                                </SelectItem>
+                                                <SelectItem value="prefer not to say">
+                                                  Prefer not to say
+                                                </SelectItem>
+                                              </SelectContent>
+                                            </Select>
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+
+                                    {/* Guest Type */}
+                                    <FormField
+                                      control={addGuestForm.control}
+                                      name={`guests.${index}.guestType`}
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormLabel className="text-sm text-gray-700">
+                                            Guest Type{' '}
+                                            <span className="text-red-600">*</span>
+                                          </FormLabel>
+                                          <FormControl>
+                                            <Select
+                                              value={field.value}
+                                              disabled={!isEnabled}
+                                              onValueChange={(v) =>
+                                                field.onChange(v as any)
+                                              }
+                                            >
+                                              <SelectTrigger className="relative bg-[#F6EEE0] text-gray-700 p-2 rounded-md border border-gray-300 text-sm">
+                                                <SelectValue placeholder="Select guest type" />
+                                                <ChevronDown
+                                                  size={14}
+                                                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                                                />
+                                              </SelectTrigger>
+                                              <SelectContent>
+                                                <SelectItem value="adult">
+                                                  Adult
+                                                </SelectItem>
+                                                <SelectItem value="children">
+                                                  Children
+                                                </SelectItem>
+                                                <SelectItem value="infant">
+                                                  Infant
+                                                </SelectItem>
+                                              </SelectContent>
+                                            </Select>
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+
+                                    {/* ID Proof Type */}
+                                    <FormField
+                                      control={addGuestForm.control}
+                                      name={`guests.${index}.idProof.type`}
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormLabel className="text-sm text-gray-700">
+                                            ID Proof Type
+                                          </FormLabel>
+                                          <FormControl>
+                                            <Select
+                                              value={field.value}
+                                              disabled={!isEnabled}
+                                              onValueChange={(v) =>
+                                                field.onChange(
+                                                  v as
+                                                  | 'PASSPORT'
+                                                  | 'AADHAAR'
+                                                  | 'DRIVING_LICENSE'
+                                                  | 'VOTER_ID'
+                                                )
+                                              }
+                                            >
+                                              <SelectTrigger className="relative bg-[#F6EEE0] text-gray-700 p-2 rounded-md border border-gray-300 text-sm">
+                                                <SelectValue placeholder="Select ID Proof type" />
+                                                <ChevronDown
+                                                  size={14}
+                                                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                                                />
+                                              </SelectTrigger>
+                                              <SelectContent>
+                                                <SelectItem value="PASSPORT">
+                                                  Passport
+                                                </SelectItem>
+                                                <SelectItem value="AADHAAR">
+                                                  Aadhaar
+                                                </SelectItem>
+                                                <SelectItem value="DRIVING_LICENSE">
+                                                  Driving License
+                                                </SelectItem>
+                                                <SelectItem value="VOTER_ID">
+                                                  Voter ID
+                                                </SelectItem>
+                                              </SelectContent>
+                                            </Select>
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+
+                                    {/* ID Proof Upload */}
+                                    <FormField
+                                      control={addGuestForm.control}
+                                      name={`guests.${index}.idProof.url`}
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormLabel className="text-sm text-gray-700">
+                                            ID Proof Document
+                                          </FormLabel>
+
+                                          <div className="flex items-center gap-3">
+                                            <div
+                                              className={[
+                                                'w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center rounded-md border',
+                                                'border-gray-300',
+                                                !isEnabled
+                                                  ? 'cursor-not-allowed opacity-50'
+                                                  : 'cursor-pointer'
+                                              ].join(' ')}
+                                              onClick={() => {
+                                                if (!isEnabled) return;
+                                                const el = document.getElementById(
+                                                  `guest-id-file-${index}`
+                                                ) as HTMLInputElement | null;
+                                                el?.click();
+                                              }}
+                                            >
+                                              {field.value ? (
+                                                (field.value as string)
+                                                  .toLowerCase()
+                                                  .endsWith('.pdf') ? (
+                                                  <span className="text-xs">
+                                                    PDF Uploaded
+                                                  </span>
+                                                ) : (
+                                                  <img
+                                                    src={field.value as string}
+                                                    alt="ID Proof"
+                                                    className="w-full h-full object-cover rounded-md"
+                                                  />
+                                                )
+                                              ) : (
+                                                <span className="text-xs text-black">
+                                                  Upload
+                                                </span>
+                                              )}
+                                            </div>
+
+                                            <input
+                                              id={`guest-id-file-${index}`}
+                                              type="file"
+                                              accept="image/*,application/pdf"
+                                              className="hidden"
+                                              disabled={!isEnabled}
+                                              onChange={(e) => {
+                                                // mark field touched so RHF knows it changed
+                                                field.onChange(field.value);
+                                                // upload & set url into guests.${index}.idProof.url
+                                                handleSecondaryIdProofUpload(index)(
+                                                  e
+                                                );
+                                              }}
+                                            />
+                                          </div>
+
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        {/* ---- /Secondary Guests Inline ---- */}
+                      </FormWrapper>
+                    </div>
+                  </div>
+                  <div className="flex flex-col md:flex-row gap-3">
+                    <FormField
+                      className="w-full"
+                      control={addGuestForm.control}
+                      name="preCheckInRejectionMessage"
+                      render={({ field }) => (
+                        <>
+                          {preCheckInRejectionMessage && (
+                            <FormItem>
+                              <FormLabel className="text-black text-[0.8rem]">
+                                Pre-Check In Rejection Message
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="text"
+                                  placeholder="Rejection message"
+                                  value={preCheckInRejectionMessage ?? ''} // Display the rejection message
+                                  disabled
+                                  className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        </>
+                      )}
+                    />
+                  </div>
+                  <FormField
+                    className="w-full"
+                    control={addGuestForm.control}
+                    name="specialRequests"
+                    render={({ field }) => (
+                      <>
+                        {mode === 'pending' && (
+                          <FormItem>
+                            <FormLabel className="text-black text-[0.8rem]">
+                              Special Requests
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="text"
+                                placeholder="Enter special requests"
+                                value={field.value || ''} // Display the special requests value
+                                onChange={field.onChange}
+                                className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      </>
+                    )}
+                  />
                 </div>
               </div>
-              <div className="flex flex-col md:flex-row gap-3">
-                <FormField
-                  className="w-full"
-                  control={addGuestForm.control}
-                  name="preCheckInRejectionMessage"
-                  render={({ field }) => (
-                    <>
-                      {preCheckInRejectionMessage && (
-                        <FormItem>
-                          <FormLabel className="text-black text-[0.8rem]">
-                            Pre-Check In Rejection Message
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="text"
-                              placeholder="Rejection message"
-                              value={preCheckInRejectionMessage ?? ''} // Display the rejection message
-                              disabled
-                              className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    </>
-                  )}
-                />
-              </div>
-              <FormField
-                className="w-full"
-                control={addGuestForm.control}
-                name="specialRequests"
-                render={({ field }) => (
-                  <>
-                    {mode === 'pending' && (
+
+              <div className="flex flex-col gap-4 2xl:gap-5 bg-[#FAF6EF] shadow-custom p-6 2xl:p-8 rounded-lg">
+                <h2 className="text-base 2xl:text-lg font-semibold text-gray-800">
+                  Wi-Fi Details
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {/* WiFi Name */}
+                  <FormField
+                    control={addGuestForm.control}
+                    name="wifi.wifiName"
+                    render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Special Requests
+                        <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                          WiFi Name
                         </FormLabel>
                         <FormControl>
                           <Input
-                            type="text"
-                            placeholder="Enter special requests"
-                            value={field.value || ''} // Display the special requests value
-                            onChange={field.onChange}
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
+                            placeholder="Enter WiFi name"
+                            disabled={!isEnabled}
+                            {...field}
+                            // disabled={isDisabled}
+                            className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none text-xs 2xl:text-sm"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-[10px]" />
                       </FormItem>
                     )}
-                  </>
-                )}
-              />
-            </div>
-          </div>
+                  />
 
-            <div className="flex flex-col gap-4 2xl:gap-5 bg-[#FAF6EF] shadow-custom p-6 2xl:p-8 rounded-lg">
-              <h2 className="text-base 2xl:text-lg font-semibold text-gray-800">
-                Wi-Fi Details
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {/* WiFi Name */}
-                <FormField
-                  control={addGuestForm.control}
-                  name="wifi.wifiName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                        WiFi Name
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter WiFi name"
-                          disabled={!isEnabled}
-                          {...field}
-                          // disabled={isDisabled}
-                          className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none text-xs 2xl:text-sm"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-[10px]" />
-                    </FormItem>
-                  )}
-                />
+                  {/* WiFi Password */}
+                  <FormField
+                    control={addGuestForm.control}
+                    name="wifi.password"
+                    render={({ field }) => {
+                      const [showWifiPassword, setShowWifiPassword] =
+                        useState(false);
 
-                {/* WiFi Password */}
-                <FormField
-                  control={addGuestForm.control}
-                  name="wifi.password"
-                  render={({ field }) => {
-                    const [showWifiPassword, setShowWifiPassword] =
-                      useState(false);
+                      return (
+                        <FormItem>
+                          <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                            WiFi Password
+                          </FormLabel>
+                          <FormControl>
+                            <div className="relative w-full">
+                              <Input
+                                placeholder="Enter WiFi password"
+                                disabled={!isEnabled}
+                                type={showWifiPassword ? 'text' : 'password'}
+                                {...field}
+                                // disabled={isDisabled}
+                                className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none text-xs 2xl:text-sm pr-10"
+                              />
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setShowWifiPassword((prev) => !prev)
+                                }
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black focus:outline-none"
+                                tabIndex={-1}
+                              >
+                                {showWifiPassword ? (
+                                  <EyeOff size={18} />
+                                ) : (
+                                  <Eye size={18} />
+                                )}
+                              </button>
+                            </div>
+                          </FormControl>
+                          <FormMessage className="text-[10px]" />
+                        </FormItem>
+                      );
+                    }}
+                  />
 
-                    return (
+                  {/* WiFi QR Scanner */}
+                  <FormField
+                    control={addGuestForm.control}
+                    name="wifi.scanner"
+                    render={({ field: { onChange, value, ...rest } }) => (
                       <FormItem>
                         <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                          WiFi Password
+                          Upload WiFi Scanner Image
                         </FormLabel>
                         <FormControl>
-                          <div className="relative w-full">
+                          <div className="flex items-center gap-3">
                             <Input
-                              placeholder="Enter WiFi password"
-                              disabled={!isEnabled}
-                              type={showWifiPassword ? 'text' : 'password'}
-                              {...field}
-                              // disabled={isDisabled}
-                              className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none text-xs 2xl:text-sm pr-10"
+                              type="file"
+                              disabled={!isEnabled || wifiUploading}
+                              accept="image/*,application/pdf"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                try {
+                                  setWifiUploading(true);
+                                  // Upload and get URL string
+                                  const url = await uploadToS3(file);
+                                  // Store URL (string) into the form state so validators expecting string pass
+                                  onChange(url as any);
+                                  ToastAtTopRight.fire(
+                                    'Image uploaded successfully',
+                                    'success'
+                                  );
+                                } catch (err: any) {
+                                  ToastAtTopRight.fire(
+                                    err?.message || 'Failed to upload image',
+                                    'error'
+                                  );
+                                  console.error(
+                                    'WiFi scanner upload failed:',
+                                    err
+                                  );
+                                } finally {
+                                  setWifiUploading(false);
+                                }
+                              }}
+                              className="bg-[#F6EEE0] p-2 rounded-md border-none text-black text-xs 2xl:text-sm w-full"
+                              {...rest}
                             />
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setShowWifiPassword((prev) => !prev)
-                              }
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black focus:outline-none"
-                              tabIndex={-1}
-                            >
-                              {showWifiPassword ? (
-                                <EyeOff size={18} />
-                              ) : (
-                                <Eye size={18} />
-                              )}
-                            </button>
+
+                            {/* Preview: if value is a string (URL) show it, otherwise (older object) create an object URL */}
+                            {value && typeof value === 'string' && (
+                              <img
+                                src={value}
+                                alt="Preview"
+                                className="h-10 w-10 rounded object-cover border"
+                              />
+                            )}
+                            {value && typeof value !== 'string' && (
+                              <img
+                                src={URL.createObjectURL(value)}
+                                alt="Preview"
+                                className="h-10 w-10 rounded object-cover border"
+                              />
+                            )}
                           </div>
                         </FormControl>
                         <FormMessage className="text-[10px]" />
                       </FormItem>
-                    );
-                  }}
-                />
-
-                {/* WiFi QR Scanner */}
-                <FormField
-                  control={addGuestForm.control}
-                  name="wifi.scanner"
-                  render={({ field: { onChange, value, ...rest } }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                        Upload WiFi Scanner Image
-                      </FormLabel>
-                      <FormControl>
-                        <div className="flex items-center gap-3">
-                          <Input
-                            type="file"
-                            disabled={!isEnabled || wifiUploading}
-                            accept="image/*,application/pdf"
-                            onChange={async (e) => {
-                              const file = e.target.files?.[0];
-                              if (!file) return;
-                              try {
-                                setWifiUploading(true);
-                                // Upload and get URL string
-                                const url = await uploadToS3(file);
-                                // Store URL (string) into the form state so validators expecting string pass
-                                onChange(url as any);
-                                ToastAtTopRight.fire(
-                                  'Image uploaded successfully',
-                                  'success'
-                                );
-                              } catch (err: any) {
-                                ToastAtTopRight.fire(
-                                  err?.message || 'Failed to upload image',
-                                  'error'
-                                );
-                                console.error(
-                                  'WiFi scanner upload failed:',
-                                  err
-                                );
-                              } finally {
-                                setWifiUploading(false);
-                              }
-                            }}
-                            className="bg-[#F6EEE0] p-2 rounded-md border-none text-black text-xs 2xl:text-sm w-full"
-                            {...rest}
-                          />
-
-                          {/* Preview: if value is a string (URL) show it, otherwise (older object) create an object URL */}
-                          {value && typeof value === 'string' && (
-                            <img
-                              src={value}
-                              alt="Preview"
-                              className="h-10 w-10 rounded object-cover border"
-                            />
-                          )}
-                          {value && typeof value !== 'string' && (
-                            <img
-                              src={URL.createObjectURL(value)}
-                              alt="Preview"
-                              className="h-10 w-10 rounded object-cover border"
-                            />
-                          )}
-                        </div>
-                      </FormControl>
-                      <FormMessage className="text-[10px]" />
-                    </FormItem>
-                  )}
-                />
+                    )}
+                  />
+                </div>
               </div>
             </div>
-          </div>
             <div className="flex items-center gap-3 py-8 justify-end w-full">
               <Button
                 type="button"
@@ -4730,6 +4749,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         </Form>
       </FormWrapper>
     </>
-  )};
-  export default GuestForm;
- 
+  )
+};
+export default GuestForm;
+

@@ -196,6 +196,7 @@ const HotelForm = ({
         childPrice: 300
       },
       roomTypeAmenities: [],
+      sendToStayflexi: true,
       hotelCategory: '5 Star',
       gstPercentage: undefined,
       city: '',
@@ -504,6 +505,7 @@ const HotelForm = ({
         password: data?.wifi?.password || '',
         scanner: data?.wifi?.scanner || ''
       },
+      sendToStayflexi: data.sendToStayflexi,
       about: data?.about || ''
     };
     console.log('Payload:', payload);
@@ -584,6 +586,8 @@ const HotelForm = ({
             return;
           }
           setFetchedHotelData(res.hotel);
+          setIsBrandedHotelChecked(!!res.hotel.brandedHotel);
+          setIsChainHotelChecked(!!res.hotel.chainHotel);
           console.log('reeeee', res.hotel.subscriptionPlan);
           form.reset({
             name: res.hotel.name || '',
@@ -602,6 +606,7 @@ const HotelForm = ({
               childPrice: 300
             },
             roomTypeAmenities: res.hotel.roomTypeAmenities || [],
+            sendToStayflexi: res.hotel.sendToStayflexi !== false,
             planName: res.hotel.subscriptionPlan.planName || '',
             email: res.hotel.email || '',
             number: res.hotel.phoneNo || '',
@@ -742,6 +747,8 @@ const HotelForm = ({
         }
 
         setFetchedHotelData(d);
+        setIsBrandedHotelChecked(!!d.brandedHotel);
+        setIsChainHotelChecked(!!d.chainHotel);
 
         form.reset({
           name: d.name || '',
@@ -760,6 +767,7 @@ const HotelForm = ({
             childPrice: 300
           },
           roomTypeAmenities: d.roomTypeAmenities || [],
+          sendToStayflexi: d.sendToStayflexi !== false,
           email: d.email || '',
           number: d.phoneNo || '',
           hotelCategory: d.hotelCategory || '',
@@ -995,14 +1003,14 @@ const HotelForm = ({
         if (!roomConfig.roomType || !Array.isArray(roomConfig.features)) {
           return;
         }
-        
+
         const currentRoomConfigs = form.getValues('roomConfigs') || [];
-        
+
         // Check if this room type already exists in roomConfigs
         const existingIndex = currentRoomConfigs.findIndex(
           (rc: any) => rc && rc.roomType === roomConfig.roomType
         );
-        
+
         if (existingIndex >= 0) {
           // Update existing room config - ensure values are defined
           form.setValue(`roomConfigs.${existingIndex}.roomType`, roomConfig.roomType || '');
@@ -1338,8 +1346,8 @@ const HotelForm = ({
                         {/* Clickable tile to add images */}
                         <div
                           className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled
-                              ? 'cursor-not-allowed opacity-50'
-                              : 'cursor-pointer'
+                            ? 'cursor-not-allowed opacity-50'
+                            : 'cursor-pointer'
                             } rounded-md border border-gray-100`}
                           onClick={() =>
                             !isDisabled && triggerFileInput(roomImageRef)
@@ -1378,8 +1386,8 @@ const HotelForm = ({
                         {/* “Add more” icon */}
                         <Upload
                           className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${!isDisabled
-                              ? 'text-black cursor-pointer'
-                              : 'text-gray-400 cursor-not-allowed'
+                            ? 'text-black cursor-pointer'
+                            : 'text-gray-400 cursor-not-allowed'
                             }`}
                           onClick={() =>
                             !isDisabled && triggerFileInput(roomImageRef)
@@ -1484,8 +1492,8 @@ const HotelForm = ({
                           <DropdownMenu.Trigger asChild>
                             <button
                               className={`flex items-center gap-2 px-4 py-2 rounded-md border ${status === 'PENDING'
-                                  ? 'bg-red-100 text-red-700'
-                                  : 'bg-green-100 text-green-700'
+                                ? 'bg-red-100 text-red-700'
+                                : 'bg-green-100 text-green-700'
                                 }`}
                             >
                               {status}
@@ -1890,54 +1898,52 @@ const HotelForm = ({
                 />
               </div>
 
-              {mode == 'add' && (
-                <div className="flex flex-col md:flex-row gap-5 w-fit">
-                  <FormField
-                    control={form.control}
-                    name="brandedHotel"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center gap-4">
-                        <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                          Branded Hotel
-                        </FormLabel>
-                        <FormControl>
-                          <input
-                            type="checkbox"
-                            checked={isBrandedHotelChecked}
-                            onChange={(e) =>
-                              handleBrandedHotelChange(e.target.checked)
-                            }
-                            disabled={isDisabled}
-                            className="form-checkbox"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="chainHotel"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center gap-4">
-                        <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                          Chain Hotel
-                        </FormLabel>
-                        <FormControl>
-                          <input
-                            type="checkbox"
-                            checked={isChainHotelChecked}
-                            onChange={(e) =>
-                              handleChainHotelChange(e.target.checked)
-                            }
-                            disabled={isDisabled || isBrandedHotelChecked}
-                            className="form-checkbox"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              )}
+              <div className="flex flex-col md:flex-row gap-5 w-fit">
+                <FormField
+                  control={form.control}
+                  name="brandedHotel"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-4">
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Branded Hotel
+                      </FormLabel>
+                      <FormControl>
+                        <input
+                          type="checkbox"
+                          checked={isBrandedHotelChecked}
+                          onChange={(e) =>
+                            handleBrandedHotelChange(e.target.checked)
+                          }
+                          disabled={isDisabled}
+                          className="form-checkbox"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="chainHotel"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-4">
+                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                        Chain Hotel
+                      </FormLabel>
+                      <FormControl>
+                        <input
+                          type="checkbox"
+                          checked={isChainHotelChecked}
+                          onChange={(e) =>
+                            handleChainHotelChange(e.target.checked)
+                          }
+                          disabled={isDisabled || isBrandedHotelChecked}
+                          className="form-checkbox"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               {/* Show both fields when either checkbox is checked */}
               {isChainHotelChecked && (
@@ -2182,26 +2188,19 @@ const HotelForm = ({
                 name="roomTypeAmenities"
                 render={({ field }) => {
                   const amenities: string[] = Array.isArray(field.value) ? field.value : [];
+                  const roomTypeAmenityOptions = [
+                    "Wardrobe/Closet",
+                    "Air conditioning",
+                    "Trash cans",
+                    "Dryer",
+                    "Sofa bed"
+                  ];
 
-                  const add = (raw: string) => {
-                    const v = raw.trim();
-                    if (!v) return;
-                    const next = Array.from(new Set([...(amenities || []), v]));
-                    field.onChange(next);
-                  };
-
-                  const removeAt = (i: number) => {
-                    const next = (amenities || []).filter((_, idx) => idx !== i);
-                    field.onChange(next);
-                  };
-
-                  const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
-                    if (e.key === 'Enter' || e.key === ',') {
-                      e.preventDefault();
-                      const input = e.currentTarget as HTMLInputElement;
-                      add(input.value);
-                      input.value = '';
-                    }
+                  const toggleAmenity = (value: string) => {
+                    const newValue = amenities.includes(value)
+                      ? amenities.filter((v) => v !== value)
+                      : [...amenities, value];
+                    field.onChange(newValue);
                   };
 
                   return (
@@ -2209,33 +2208,22 @@ const HotelForm = ({
                       <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
                         Room Type Amenities
                       </FormLabel>
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {amenities?.map((f, i) => (
-                          <span
-                            key={`${f}-${i}`}
-                            className="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-[#F6EEE0] text-gray-700 text-xs"
+                      <div className="flex flex-wrap gap-3 text-sm">
+                        {roomTypeAmenityOptions.map((option) => (
+                          <label
+                            key={option}
+                            className="inline-flex text-gray-700 items-center gap-2"
                           >
-                            {f}
-                            {!isDisabled && (
-                              <button
-                                type="button"
-                                className="text-red-600"
-                                onClick={() => removeAt(i)}
-                                aria-label={`remove ${f}`}
-                              >
-                                ×
-                              </button>
-                            )}
-                          </span>
+                            <input
+                              type="checkbox"
+                              checked={amenities.includes(option)}
+                              onChange={() => toggleAmenity(option)}
+                              disabled={isDisabled}
+                            />
+                            <span>{option}</span>
+                          </label>
                         ))}
                       </div>
-                      <Input
-                        type="text"
-                        onKeyDown={onKeyDown}
-                        disabled={isDisabled}
-                        placeholder="Type amenity, press Enter (e.g., Wardrobe/Closet, Air conditioning)"
-                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-xs 2xl:text-sm"
-                      />
                       <FormMessage className="text-[10px]" />
                     </FormItem>
                   );
@@ -2272,9 +2260,9 @@ const HotelForm = ({
 
                   return (
                     <FormItem>
-                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                      {/* <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
                         Room IDs
-                      </FormLabel>
+                      </FormLabel> */}
                       <div className="flex flex-wrap gap-2 mb-2">
                         {roomIds?.map((id, i) => (
                           <span
@@ -2295,13 +2283,13 @@ const HotelForm = ({
                           </span>
                         ))}
                       </div>
-                      <Input
+                      {/* <Input
                         type="text"
                         onKeyDown={onKeyDown}
                         disabled={isDisabled}
                         placeholder="Enter room ID, press Enter"
                         className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-xs 2xl:text-sm"
-                      />
+                      /> */}
                       <FormMessage className="text-[10px]" />
                     </FormItem>
                   );
@@ -3184,53 +3172,57 @@ const HotelForm = ({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="hotelLicenseImage"
-                render={({ field }) => (
-                  <FormItem className="w-fit relative">
-                    <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                      Hotel License Image{' '}
-                    </FormLabel>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} rounded-md border border-gray-100`}
-                        onClick={
-                          () =>
-                            !isDisabled &&
-                            triggerFileInput(hotelLicenseImageRef) // Trigger file input on click
-                        }
-                      >
-                        {imagePreviews.hotelLicenseImage &&
-                          imagePreviews.hotelLicenseImage.length > 0 ? (
-                          <img
-                            src={imagePreviews.hotelLicenseImage[0]} // Display the uploaded image
-                            alt="Hotel License Preview"
-                            className="w-full h-full object-cover rounded-md"
-                          />
-                        ) : (
-                          <CiCamera className="w-8 h-8 text-coffee opacity-50" />
-                        )}
-                      </div>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          ref={hotelLicenseImageRef}
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              handleImageUpload(file, 'hotelLicenseImage'); // Upload and get the image URL
+              {(!isDisabled ||
+                (imagePreviews.hotelLicenseImage &&
+                  imagePreviews.hotelLicenseImage.length > 0)) && (
+                  <FormField
+                    control={form.control}
+                    name="hotelLicenseImage"
+                    render={({ field }) => (
+                      <FormItem className="w-fit relative">
+                        <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                          Hotel License Image{' '}
+                        </FormLabel>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} rounded-md border border-gray-100`}
+                            onClick={
+                              () =>
+                                !isDisabled &&
+                                triggerFileInput(hotelLicenseImageRef) // Trigger file input on click
                             }
-                          }}
-                          className="hidden"
-                        />
-                      </FormControl>
-                    </div>
-                    <FormMessage className="text-[10px]" />
-                  </FormItem>
+                          >
+                            {imagePreviews.hotelLicenseImage &&
+                              imagePreviews.hotelLicenseImage.length > 0 ? (
+                              <img
+                                src={imagePreviews.hotelLicenseImage[0]} // Display the uploaded image
+                                alt="Hotel License Preview"
+                                className="w-full h-full object-cover rounded-md"
+                              />
+                            ) : (
+                              <CiCamera className="w-8 h-8 text-coffee opacity-50" />
+                            )}
+                          </div>
+                          <FormControl>
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              ref={hotelLicenseImageRef}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  handleImageUpload(file, 'hotelLicenseImage'); // Upload and get the image URL
+                                }
+                              }}
+                              className="hidden"
+                            />
+                          </FormControl>
+                        </div>
+                        <FormMessage className="text-[10px]" />
+                      </FormItem>
+                    )}
+                  />
                 )}
-              />
 
               <FormField
                 control={form.control}
@@ -3310,98 +3302,102 @@ const HotelForm = ({
                   </FormItem>
                 )}
               /> */}
-              <FormField
-                control={form.control}
-                name="legalBusinessLicenseImage"
-                render={({ field }) => (
-                  <FormItem className="w-fit relative">
-                    <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                      Business License Image{' '}
-                    </FormLabel>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} rounded-md border border-gray-100`}
-                        onClick={
-                          () =>
-                            !isDisabled &&
-                            triggerFileInput(legalBusinessLicenseImageRef) // Trigger file input when clicked
-                        }
-                      >
-                        {imagePreviews.legalBusinessLicenseImage &&
-                          imagePreviews.legalBusinessLicenseImage.length > 0 ? (
-                          <img
-                            src={imagePreviews.legalBusinessLicenseImage[0]} // Display the first uploaded image
-                            alt="Business License Preview"
-                            className="w-full h-full object-cover rounded-md"
-                          />
-                        ) : (
-                          <CiCamera className="w-8 h-8 text-coffee opacity-50" />
-                        )}
-                      </div>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          ref={legalBusinessLicenseImageRef}
-                          disabled={isDisabled}
-                          onChange={
-                            (e) =>
-                              handleImageChange(
-                                e,
-                                'legalBusinessLicenseImage',
-                                field.onChange
-                              ) // Handle image change
-                          }
-                          className="hidden"
-                        />
-                      </FormControl>
-                      <Upload
-                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.legalBusinessLicenseImage && !isDisabled
-                            ? 'text-black cursor-pointer'
-                            : 'text-gray-400 cursor-not-allowed'
-                          }`}
-                        onClick={
-                          () =>
-                            imagePreviews.legalBusinessLicenseImage &&
-                            !isDisabled &&
-                            triggerFileInput(legalBusinessLicenseImageRef) // Trigger file input when clicked
-                        }
-                      />
-                    </div>
-                    <FormMessage className="text-[10px]" />
-
-                    {/* Display all selected images in a row, wrapping to the next line if necessary */}
-                    <div className="flex flex-wrap gap-3 mt-4">
-                      {imagePreviews.legalBusinessLicenseImage?.map(
-                        (image, index) => (
+              {(!isDisabled ||
+                (imagePreviews.legalBusinessLicenseImage &&
+                  imagePreviews.legalBusinessLicenseImage.length > 0)) && (
+                  <FormField
+                    control={form.control}
+                    name="legalBusinessLicenseImage"
+                    render={({ field }) => (
+                      <FormItem className="w-fit relative">
+                        <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                          Business License Image{' '}
+                        </FormLabel>
+                        <div className="flex items-center gap-2">
                           <div
-                            key={index}
-                            className="relative w-24 h-24 2xl:w-28 2xl:h-28"
+                            className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} rounded-md border border-gray-100`}
+                            onClick={
+                              () =>
+                                !isDisabled &&
+                                triggerFileInput(legalBusinessLicenseImageRef) // Trigger file input when clicked
+                            }
                           >
-                            <img
-                              src={image}
-                              alt={`Business License Preview ${index + 1}`}
-                              className="w-full h-full object-cover rounded-md"
-                            />
-                            <button
-                              type="button"
-                              className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                              onClick={() =>
-                                handleImageRemove(
-                                  index,
-                                  'legalBusinessLicenseImage'
-                                )
-                              } // Handle image removal
-                            >
-                              X
-                            </button>
+                            {imagePreviews.legalBusinessLicenseImage &&
+                              imagePreviews.legalBusinessLicenseImage.length > 0 ? (
+                              <img
+                                src={imagePreviews.legalBusinessLicenseImage[0]} // Display the first uploaded image
+                                alt="Business License Preview"
+                                className="w-full h-full object-cover rounded-md"
+                              />
+                            ) : (
+                              <CiCamera className="w-8 h-8 text-coffee opacity-50" />
+                            )}
                           </div>
-                        )
-                      )}
-                    </div>
-                  </FormItem>
+                          <FormControl>
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              ref={legalBusinessLicenseImageRef}
+                              disabled={isDisabled}
+                              onChange={
+                                (e) =>
+                                  handleImageChange(
+                                    e,
+                                    'legalBusinessLicenseImage',
+                                    field.onChange
+                                  ) // Handle image change
+                              }
+                              className="hidden"
+                            />
+                          </FormControl>
+                          <Upload
+                            className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.legalBusinessLicenseImage && !isDisabled
+                              ? 'text-black cursor-pointer'
+                              : 'text-gray-400 cursor-not-allowed'
+                              }`}
+                            onClick={
+                              () =>
+                                imagePreviews.legalBusinessLicenseImage &&
+                                !isDisabled &&
+                                triggerFileInput(legalBusinessLicenseImageRef) // Trigger file input when clicked
+                            }
+                          />
+                        </div>
+                        <FormMessage className="text-[10px]" />
+
+                        {/* Display all selected images in a row, wrapping to the next line if necessary */}
+                        <div className="flex flex-wrap gap-3 mt-4">
+                          {imagePreviews.legalBusinessLicenseImage?.map(
+                            (image, index) => (
+                              <div
+                                key={index}
+                                className="relative w-24 h-24 2xl:w-28 2xl:h-28"
+                              >
+                                <img
+                                  src={image}
+                                  alt={`Business License Preview ${index + 1}`}
+                                  className="w-full h-full object-cover rounded-md"
+                                />
+                                <button
+                                  type="button"
+                                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                                  onClick={() =>
+                                    handleImageRemove(
+                                      index,
+                                      'legalBusinessLicenseImage'
+                                    )
+                                  } // Handle image removal
+                                >
+                                  X
+                                </button>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </FormItem>
+                    )}
+                  />
                 )}
-              />
 
               <FormField
                 control={form.control}
@@ -3481,94 +3477,101 @@ const HotelForm = ({
                   </FormItem>
                 )}
               /> */}
-              <FormField
-                control={form.control}
-                name="touristLicenseImage"
-                render={({ field }) => (
-                  <FormItem className="w-fit relative">
-                    <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                      Tourist License Image{' '}
-                    </FormLabel>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} rounded-md border border-gray-100`}
-                        onClick={
-                          () =>
-                            !isDisabled &&
-                            triggerFileInput(touristLicenseImageRef) // Trigger file input when clicked
-                        }
-                      >
-                        {imagePreviews.touristLicenseImage &&
-                          imagePreviews.touristLicenseImage.length > 0 ? (
-                          <img
-                            src={imagePreviews.touristLicenseImage[0]} // Display the first uploaded image
-                            alt="Tourist License Preview"
-                            className="w-full h-full object-cover rounded-md"
-                          />
-                        ) : (
-                          <CiCamera className="w-8 h-8 text-coffee opacity-50" />
-                        )}
-                      </div>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          ref={touristLicenseImageRef}
-                          onChange={
-                            (e) =>
-                              handleImageChange(
-                                e,
-                                'touristLicenseImage',
-                                field.onChange
-                              ) // Handle image change
-                          }
-                          className="hidden"
-                        />
-                      </FormControl>
-                      <Upload
-                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.touristLicenseImage && !isDisabled
-                            ? 'text-black cursor-pointer'
-                            : 'text-gray-400 cursor-not-allowed'
-                          }`}
-                        onClick={
-                          () =>
-                            imagePreviews.touristLicenseImage &&
-                            !isDisabled &&
-                            triggerFileInput(touristLicenseImageRef) // Trigger file input when clicked
-                        }
-                      />
-                    </div>
-                    <FormMessage className="text-[10px]" />
-
-                    {/* Display all selected images in a row, wrapping to the next line if necessary */}
-                    <div className="flex flex-wrap gap-3 mt-4">
-                      {imagePreviews.touristLicenseImage?.map(
-                        (image, index) => (
+              {(!isDisabled ||
+                (imagePreviews.touristLicenseImage &&
+                  imagePreviews.touristLicenseImage.length > 0)) && (
+                  <FormField
+                    control={form.control}
+                    name="touristLicenseImage"
+                    render={({ field }) => (
+                      <FormItem className="w-fit relative">
+                        <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
+                          Tourist License Image{' '}
+                        </FormLabel>
+                        <div className="flex items-center gap-2">
                           <div
-                            key={index}
-                            className="relative w-24 h-24 2xl:w-28 2xl:h-28"
+                            className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} rounded-md border border-gray-100`}
+                            onClick={
+                              () =>
+                                !isDisabled &&
+                                triggerFileInput(touristLicenseImageRef) // Trigger file input when clicked
+                            }
                           >
-                            <img
-                              src={image}
-                              alt={`Tourist License Preview ${index + 1}`}
-                              className="w-full h-full object-cover rounded-md"
-                            />
-                            <button
-                              type="button"
-                              className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                              onClick={() =>
-                                handleImageRemove(index, 'touristLicenseImage')
-                              } // Handle image removal
-                            >
-                              X
-                            </button>
+                            {imagePreviews.touristLicenseImage &&
+                              imagePreviews.touristLicenseImage.length > 0 ? (
+                              <img
+                                src={imagePreviews.touristLicenseImage[0]} // Display the first uploaded image
+                                alt="Tourist License Preview"
+                                className="w-full h-full object-cover rounded-md"
+                              />
+                            ) : (
+                              <CiCamera className="w-8 h-8 text-coffee opacity-50" />
+                            )}
                           </div>
-                        )
-                      )}
-                    </div>
-                  </FormItem>
+                          <FormControl>
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              ref={touristLicenseImageRef}
+                              onChange={
+                                (e) =>
+                                  handleImageChange(
+                                    e,
+                                    'touristLicenseImage',
+                                    field.onChange
+                                  ) // Handle image change
+                              }
+                              className="hidden"
+                            />
+                          </FormControl>
+                          <Upload
+                            className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.touristLicenseImage && !isDisabled
+                              ? 'text-black cursor-pointer'
+                              : 'text-gray-400 cursor-not-allowed'
+                              }`}
+                            onClick={
+                              () =>
+                                imagePreviews.touristLicenseImage &&
+                                !isDisabled &&
+                                triggerFileInput(touristLicenseImageRef) // Trigger file input when clicked
+                            }
+                          />
+                        </div>
+                        <FormMessage className="text-[10px]" />
+
+                        {/* Display all selected images in a row, wrapping to the next line if necessary */}
+                        <div className="flex flex-wrap gap-3 mt-4">
+                          {imagePreviews.touristLicenseImage?.map(
+                            (image, index) => (
+                              <div
+                                key={index}
+                                className="relative w-24 h-24 2xl:w-28 2xl:h-28"
+                              >
+                                <img
+                                  src={image}
+                                  alt={`Tourist License Preview ${index + 1}`}
+                                  className="w-full h-full object-cover rounded-md"
+                                />
+                                <button
+                                  type="button"
+                                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                                  onClick={() =>
+                                    handleImageRemove(
+                                      index,
+                                      'touristLicenseImage'
+                                    )
+                                  } // Handle image removal
+                                >
+                                  X
+                                </button>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </FormItem>
+                    )}
+                  />
                 )}
-              />
 
               <FormField
                 control={form.control}
@@ -3635,8 +3638,8 @@ const HotelForm = ({
                       </FormControl>
                       <Upload
                         className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.tanNumberImage && !isDisabled
-                            ? 'text-black cursor-pointer'
-                            : 'text-gray-400 cursor-not-allowed'
+                          ? 'text-black cursor-pointer'
+                          : 'text-gray-400 cursor-not-allowed'
                           }`}
                         onClick={
                           () =>
@@ -3800,8 +3803,8 @@ const HotelForm = ({
                       </FormControl>
                       <Upload
                         className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.dataPrivacyGdprImage && !isDisabled
-                            ? 'text-black cursor-pointer'
-                            : 'text-gray-400 cursor-not-allowed'
+                          ? 'text-black cursor-pointer'
+                          : 'text-gray-400 cursor-not-allowed'
                           }`}
                         onClick={
                           () =>
@@ -3895,8 +3898,8 @@ const HotelForm = ({
                     <div className="flex items-center gap-2">
                       <div
                         className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled
-                            ? 'cursor-not-allowed opacity-50'
-                            : 'cursor-pointer'
+                          ? 'cursor-not-allowed opacity-50'
+                          : 'cursor-pointer'
                           } rounded-md border border-gray-100`}
                         onClick={() =>
                           !isDisabled && triggerFileInput(gstImageRef)
@@ -3928,8 +3931,8 @@ const HotelForm = ({
 
                       <Upload
                         className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.gstImage && !isDisabled
-                            ? 'text-black cursor-pointer'
-                            : 'text-gray-400 cursor-not-allowed'
+                          ? 'text-black cursor-pointer'
+                          : 'text-gray-400 cursor-not-allowed'
                           }`}
                         onClick={() =>
                           imagePreviews.gstImage &&
@@ -4106,6 +4109,28 @@ const HotelForm = ({
                   )}
                 /> */}
               {/* </div> */}
+
+              <FormField
+                control={form.control}
+                name="sendToStayflexi"
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-4 sm:col-span-2">
+                    <FormControl>
+                      <input
+                        type="checkbox"
+                        checked={field.value}
+                        onChange={field.onChange}
+                        disabled={isDisabled}
+                        className="form-checkbox"
+                      />
+                    </FormControl>
+                    <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700 m-0">
+                      Send to Stayflexi
+                    </FormLabel>
+                    <FormMessage className="text-[10px]" />
+                  </FormItem>
+                )}
+              />
             </div>
           </div>
           <div className="mt-3 flex flex-col sm:flex-row justify-end gap-4 2x:gap-5">
