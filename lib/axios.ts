@@ -59,6 +59,13 @@ function authRequestInterceptor(config: any) {
   if (adminData && adminData.token) {
     config.headers.authorization = `Bearer ${adminData.token}`;
   }
+
+  // Inject x-api-key for routes that require it (e.g., /addBooking)
+  const apiKey = process.env.NEXT_PUBLIC_STAYFLEXI_API_KEY;
+  if (apiKey) {
+    config.headers["x-api-key"] = apiKey;
+  }
+
   config.headers.Accept = "application/json";
   return config;
 }

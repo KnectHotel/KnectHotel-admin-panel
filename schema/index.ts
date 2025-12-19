@@ -180,23 +180,23 @@ export const guestSchema = z
           .optional()
       })
       .optional(),
-      
+
     // New Booking Fields
     discountType: z.enum(['percentage', 'flat']).optional(),
     discountAmount: z.coerce.number().min(0).optional(),
-    
+
     extraCharges: z.array(z.object({
       title: z.string().min(1),
       amount: z.coerce.number().min(0),
       reason: z.string().optional(),
     })).optional().default([]),
-    
+
     lateCheckout: z.object({
       hours: z.coerce.number().min(0).optional(),
       amount: z.coerce.number().min(0).optional(),
       reason: z.string().optional(),
     }).optional(),
-    
+
     // Payment Details
     paymentDetails: z.object({
       sellRate: z.number().default(300).optional(),
@@ -209,16 +209,16 @@ export const guestSchema = z
       tds: z.number().default(0).optional(),
       payAtHotel: z.boolean().default(false).optional(),
     }).optional(),
-    
+
     // Promo Info
     promoInfo: z.any().optional().default({}),
-    
+
     // Room Type and Rate Plan
     ratePlanId: z.string().default('41355').optional(),
     roomTypeId: z.string().default('12353').optional(),
     roomTypeName: z.string().default('Deluxe room').optional(),
     payAtHotel: z.boolean().default(false).optional(),
-    
+
     // Room Stays
     roomStays: z.array(z.object({
       roomTypeId: z.string().default('12353').optional(),
@@ -228,6 +228,11 @@ export const guestSchema = z
       numChildren: z.number().default(0).optional(),
       roomId: z.string().default('').optional(),
     })).optional().default([]),
+
+    // Stayflexi External Fields
+    externalRatePlanId: z.string().optional(),
+    externalRoomTypeId: z.string().optional(),
+    externalRoomIds: z.array(z.string()).optional(),
   })
   .superRefine((data, ctx) => {
     const adults = Number(data.adultGuestsCount ?? 0);
@@ -240,15 +245,16 @@ export const guestSchema = z
       data.assignedRoomNumber.trim().length > 0;
 
     // Enforce only when room is assigned AND party size > 1
-    if (roomAssigned && total > 1) {
-      if (data.guests.length !== need) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['guests'],
-          message: `Please add details for ${need} additional guest${need > 1 ? 's' : ''}`
-        });
-      }
-    }
+    // Enforce only when room is assigned AND party size > 1
+    // if (roomAssigned && total > 1) {
+    //   if (data.guests.length !== need) {
+    //     ctx.addIssue({
+    //       code: z.ZodIssueCode.custom,
+    //       path: ['guests'],
+    //       message: `Please add details for ${need} additional guest${need > 1 ? 's' : ''}`
+    //     });
+    //   }
+    // }
   });
 // export type guestSchemaType = z.infer<typeof guestSchema>;
 export type GuestSchemaType = z.infer<typeof guestSchema>;
@@ -455,7 +461,8 @@ export const hotelSchema = z.object({
   about: z.string().optional(),
   subscriptionPlanType: z.string().optional(),
   gstPercentage: z.number().min(0).max(100).optional(),
-  serviceDue: z.number().optional()
+  serviceDue: z.number().optional(),
+  sendToStayflexi: z.boolean().optional().default(true)
 });
 // Inferred type
 export type HotelSchemaType = z.infer<typeof hotelSchema>;
