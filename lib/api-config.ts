@@ -9,7 +9,7 @@ export const ENDPOINTS = {
   FAQS: '/api/faqs',
   MILESTONES: '/api/milestones',
   NEWS: '/api/news',
-  PRODUCT_VIDEOS: '/api/product-videos',
+  PRODUCT_VIDEOS: '/api/product_videos',
   REVIEWS: '/api/reviews',
   UPDATES: '/api/updates'
 } as const;
