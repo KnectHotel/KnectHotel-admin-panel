@@ -40,13 +40,14 @@ export type setNewPasswordSchemaType = z.infer<typeof setNewPasswordSchema>;
 
 export const guestSchema = z
   .object({
-    firstName: z.string(),
-    lastName: z.string(),
+    // Required fields with specific error messages
+    firstName: z.string().min(1, { message: 'Please enter guest first name' }),
+    lastName: z.string().min(1, { message: 'Please enter guest last name' }),
     phoneE164: z.string().optional(),
     phoneNumber: z
-      .string()
-      .regex(/^\d{10}$/, 'Phone Number must be exactly 10 digits'),
-    // streetAddress: z.string().min(1, 'Required'),
+      .string({ required_error: 'Please enter phone number' })
+      .min(10, { message: 'Phone number must be at least 10 digits' })
+      .regex(/^\d{10}$/, { message: 'Phone number must be exactly 10 digits' }),
     streetAddress: z.string().optional(),
     guests: z
       .array(
@@ -71,11 +72,11 @@ export const guestSchema = z
       )
       .default([]),
     landmark: z.string().optional(),
-    country: z.string(),
-    email: z.string(),
+    country: z.string().min(1, { message: 'Please select country' }),
+    email: z.string().min(1, { message: 'Please enter email address' }).email({ message: 'Please enter a valid email address' }),
     address: z.string().optional(),
-    city: z.string(),
-    state: z.string(),
+    city: z.string().min(1, { message: 'Please enter city' }),
+    state: z.string().min(1, { message: 'Please select state' }),
     gst: z
       .preprocess((val) => (val === '' ? 0 : Number(val)), z.number())
       .optional(),
@@ -86,9 +87,9 @@ export const guestSchema = z
     }),
     sources: z.string().optional(),
     adultGuestsCount: z
-      .number({ invalid_type_error: 'Must be a number' })
-      .int('Must be an integer'),
-    // .min(1, 'At least 1 adult is required'),
+      .number({ required_error: 'Please enter number of adults', invalid_type_error: 'Must be a number' })
+      .int({ message: 'Must be a whole number' })
+      .min(1, { message: 'At least 1 adult is required' }),
     childrenGuestsCount: z
       .number({ invalid_type_error: 'Must be a number' })
       .int('Must be an integer')
@@ -213,20 +214,20 @@ export const guestSchema = z
     // Promo Info
     promoInfo: z.any().optional().default({}),
 
-    // Room Type and Rate Plan
-    ratePlanId: z.string().default('41355').optional(),
-    roomTypeId: z.string().default('12353').optional(),
-    roomTypeName: z.string().default('Deluxe room').optional(),
+    // Room Type and Rate Plan - nullable to handle null from API on edit
+    ratePlanId: z.string().nullable().optional(),
+    roomTypeId: z.string().nullable().optional(),
+    roomTypeName: z.string().nullable().optional(),
     payAtHotel: z.boolean().default(false).optional(),
 
-    // Room Stays
+    // Room Stays - nullable fields to handle null from API on edit
     roomStays: z.array(z.object({
-      roomTypeId: z.string().default('12353').optional(),
-      ratePlanId: z.string().default('41355').optional(),
-      roomTypeName: z.string().default('Deluxe room').optional(),
+      roomTypeId: z.string().nullable().optional(),
+      ratePlanId: z.string().nullable().optional(),
+      roomTypeName: z.string().nullable().optional(),
       numAdults: z.number().default(1).optional(),
       numChildren: z.number().default(0).optional(),
-      roomId: z.string().default('').optional(),
+      roomId: z.string().nullable().default('').optional(),
     })).optional().default([]),
 
     // Stayflexi External Fields

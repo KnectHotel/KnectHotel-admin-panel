@@ -64,6 +64,7 @@ import { guestSchema, GuestSchemaType } from 'schema';
 import DateTimeField from './DateTimeField';
 import { AxiosError } from 'axios';
 import AnimatedSelect from '@/components/ui/AnimatedSelect';
+import { useHotelRoomTypes } from '@/hooks/useHotelRoomTypes';
 
 interface Props {
   guestId?: string;
@@ -177,6 +178,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     []
   );
 
+  // Fetch hotel-specific room types for dropdown
+  const { roomTypes, loading: roomTypesLoading, error: roomTypesError } = useHotelRoomTypes();
   const uploadToS3 = async (file: File): Promise<string> => {
     // limit to 5 MB
     if (file.size > 5 * 1024 * 1024) throw new Error('File size exceeds 5MB');
@@ -297,6 +300,9 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           const guest = res.booking;
           console.log('aaabbcc', res.booking.paymentStatus);
 
+          // Debug log for Room Stays
+          console.debug('[BOOKING_FETCH] bookingId:', guest?._id, 'roomStaysCount:', guest?.roomStays?.length || 0, 'roomStays:', guest?.roomStays);
+
           if (guest) {
             if (guest.preCheckInRejectionMessage) {
               setPreCheckInRejectionMessage(guest.preCheckInRejectionMessage);
@@ -411,14 +417,17 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
               },
               // Promo Info
               promoInfo: guest?.promoInfo || {},
-              // Room Type and Rate Plan
-              ratePlanId: guest?.ratePlanId || '41355',
-              roomTypeId: guest?.roomTypeId || '12353',
-              roomTypeName: guest?.roomTypeName || 'Deluxe room',
+              // Room Type and Rate Plan - use actual values, no fallbacks
+              ratePlanId: guest?.ratePlanId,
+              roomTypeId: guest?.roomTypeId,
+              roomTypeName: guest?.roomTypeName,
               payAtHotel: guest?.payAtHotel || false,
               // Room Stays
               roomStays: guest?.roomStays || []
             });
+
+            // Debug: Verify roomStays after form reset
+            console.debug('[BOOKING_RESET] roomStays set to form:', guest?.roomStays?.length || 0, 'items');
 
             if (guest.images) {
               setImages(guest.images);
@@ -542,10 +551,10 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       },
       // Promo Info
       promoInfo: {},
-      // Room Type and Rate Plan
-      ratePlanId: '41355',
-      roomTypeId: '12353',
-      roomTypeName: 'Deluxe room',
+      // Room Type and Rate Plan - no hardcoded defaults, selected from hotel's roomTypes
+      ratePlanId: undefined,
+      roomTypeId: undefined,
+      roomTypeName: undefined,
       payAtHotel: false,
       // Room Stays
       roomStays: [],
@@ -645,11 +654,13 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
 
     try {
       setFetchingByPhone(true);
+      console.log("[DEBUG] Fetching guest by phone:", onlyDigits);
 
       const response = await apiCall(
         'GET',
         `api/booking/fetch-guest/${onlyDigits}`
       );
+      console.log("[DEBUG] Fetch Guest Response:", response);
       const guest = response?.guest;
 
       if (!guest) {
@@ -845,10 +856,10 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
             },
             // Promo Info
             promoInfo: guest?.promoInfo || {},
-            // Room Type and Rate Plan
-            ratePlanId: guest?.ratePlanId || '41355',
-            roomTypeId: guest?.roomTypeId || '12353',
-            roomTypeName: guest?.roomTypeName || 'Deluxe room',
+            // Room Type and Rate Plan - use actual values, no fallbacks
+            ratePlanId: guest?.ratePlanId,
+            roomTypeId: guest?.roomTypeId,
+            roomTypeName: guest?.roomTypeName,
             payAtHotel: guest?.payAtHotel || false,
             // Room Stays
             roomStays: guest?.roomStays || [],
@@ -889,6 +900,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
   };
 
   const onSubmit = async (data: GuestSchemaType) => {
+    console.log("[DEBUG] onSubmit called with data:", data);
     if (!data.checkInDate) {
       data.checkInDate = null;
     }
@@ -1094,10 +1106,10 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         },
         // Promo Info
         promoInfo: data.promoInfo || {},
-        // Room Type and Rate Plan
-        ratePlanId: data.ratePlanId || '41355',
-        roomTypeId: data.roomTypeId || '12353',
-        roomTypeName: data.roomTypeName || 'Deluxe room',
+        // Room Type and Rate Plan - use selected values, no fallbacks
+        ratePlanId: data.ratePlanId,
+        roomTypeId: data.roomTypeId,
+        roomTypeName: data.roomTypeName,
         payAtHotel: data.payAtHotel || false,
         // Room Stays
         roomStays: data.roomStays || [],
@@ -1149,6 +1161,28 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           // source: normalizedSource, // <-- add
           sources: normalizedSource, // <-- keep
           pincode: data.pinCode,
+          // hotelId MUST be extracted from correct path in session admin data
+          // Path confirmed from hotel-profile/page.tsx: adminData.user.HotelId
+          hotelId: (function () {
+            try {
+              const item = sessionStorage.getItem('admin');
+              if (item) {
+                const adminData = JSON.parse(item);
+                // CORRECT PATH: adminData.user.HotelId (confirmed from hotel-profile/page.tsx)
+                const hotelId = adminData?.user?.HotelId || adminData?.HotelId || adminData?._id;
+                console.log('[DEBUG] Hotel context (FULL):', {
+                  'adminData.user.HotelId': adminData?.user?.HotelId,
+                  'adminData.HotelId': adminData?.HotelId,
+                  'adminData._id': adminData?._id,
+                  'resolved': hotelId
+                });
+                return hotelId;
+              }
+            } catch (e) {
+              console.error('[DEBUG] Failed to get hotelId from session:', e);
+              return undefined;
+            }
+          })(),
           paymentStatus: data.paymentStatus,
           adultGuestsCount: data.adultGuestsCount,
           childrenGuestsCount: data.childrenGuestsCount,
@@ -1180,10 +1214,10 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           },
           // Promo Info
           promoInfo: data.promoInfo || {},
-          // Room Type and Rate Plan
-          ratePlanId: data.ratePlanId || '41355',
-          roomTypeId: data.roomTypeId || '12353',
-          roomTypeName: data.roomTypeName || 'Deluxe room',
+          // Room Type and Rate Plan - use selected values, no fallbacks
+          // ratePlanId omitted - Stayflexi uses default rate plan
+          roomTypeId: data.roomTypeId,
+          roomTypeName: data.roomTypeName,
           payAtHotel: data.payAtHotel || false,
 
           // Room Stays
@@ -1199,8 +1233,22 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         };
 
         console.log('Submit data', data);
+        console.log('[DEBUG] Sending AddBooking Payload:', JSON.stringify(payload, null, 2));
 
-        const res = await apiCall('POST', '/api/booking/addBooking', payload);
+        // PRE-SUBMIT GUARD: Hard-fail if hotelId is missing
+        if (!payload.hotelId) {
+          console.error('[CRITICAL] hotelId is missing - booking blocked');
+          ToastAtTopRight.fire({
+            icon: 'error',
+            title: 'Hotel context not loaded',
+            text: 'Please refresh the page and try again.'
+          });
+          return;
+        }
+
+        // Use EXTERNAL booking route with x-api-key authentication
+        const res = await apiCall('POST', '/api/booking/external/addBooking', payload);
+        console.log('[DEBUG] AddBooking Response:', res);
 
         ToastAtTopRight.fire({
           icon: 'success',
@@ -1729,11 +1777,26 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
   // 1) put this near your other fns, above the return()
 
   const onInvalid = (errors: FieldErrors<GuestSchemaType>) => {
+    // Debug: Log all validation errors to identify the failing field(s)
+    console.warn('[FORM VALIDATION] Validation errors:', errors);
+    Object.entries(errors).forEach(([key, val]) => {
+      console.warn('[FORM VALIDATION] Field failed:', key, '→', val?.message || val);
+    });
+
+    // Get first error field name for specific message
+    const firstKey = Object.keys(errors)[0];
+    const firstError = firstKey ? errors[firstKey as keyof typeof errors] : null;
+    const errorMessage = firstError?.message
+      ? `Please fix: ${firstError.message}`
+      : firstKey
+        ? `Please fill required field: ${firstKey}`
+        : 'Please fill the required field';
+
     ToastAtTopRight.fire({
       icon: 'error',
-      title: 'Please fill the required field'
+      title: errorMessage
     });
-    const firstKey = Object.keys(errors)[0];
+
     if (firstKey) {
       // focus first invalid field
       // @ts-ignore
@@ -3307,71 +3370,65 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                         />
                       </div>
                     </div>
-                    {/* Room Type and Rate Plan Section */}
+                    {/* Room Type Section */}
                     <div className="w-full mt-4 border-t pt-4">
-                      <FormWrapper title="Room Type & Rate Plan">
+                      <FormWrapper title="Room Type">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                          <FormField
-                            control={addGuestForm.control}
-                            name="ratePlanId"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-black text-[0.8rem]">
-                                  Rate Plan ID
-                                </FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="text"
-                                    placeholder="41355"
-                                    disabled={!isEnabled}
-                                    {...field}
-                                    className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                          {/* Room Type Dropdown - REQUIRED */}
                           <FormField
                             control={addGuestForm.control}
                             name="roomTypeId"
                             render={({ field }) => (
                               <FormItem>
                                 <FormLabel className="text-black text-[0.8rem]">
-                                  Room Type ID
+                                  Room Type *
                                 </FormLabel>
                                 <FormControl>
-                                  <Input
-                                    type="text"
-                                    placeholder="12353"
-                                    disabled={!isEnabled}
-                                    {...field}
-                                    className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                                  />
+                                  {roomTypesLoading ? (
+                                    <div className="bg-[#F6EEE0] text-gray-500 p-2 rounded-md text-xs 2xl:text-sm">
+                                      Loading room types...
+                                    </div>
+                                  ) : roomTypesError ? (
+                                    <div className="bg-red-50 text-red-600 p-2 rounded-md text-xs 2xl:text-sm">
+                                      {roomTypesError}
+                                    </div>
+                                  ) : roomTypes.length === 0 ? (
+                                    <div className="bg-yellow-50 text-yellow-700 p-2 rounded-md text-xs 2xl:text-sm">
+                                      No room types configured for this hotel
+                                    </div>
+                                  ) : (
+                                    <Select
+                                      value={field.value || ''}
+                                      onValueChange={(value) => {
+                                        const selectedRoomType = roomTypes.find(rt => rt.roomTypeId === value);
+                                        field.onChange(value);
+                                        addGuestForm.setValue('roomTypeName', selectedRoomType?.roomTypeName || '');
+                                      }}
+                                      disabled={!isEnabled}
+                                    >
+                                      <SelectTrigger className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm h-auto">
+                                        <SelectValue placeholder="Select a room type" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {roomTypes.map((rt) => (
+                                          <SelectItem key={rt.roomTypeId} value={rt.roomTypeId}>
+                                            {rt.roomTypeName} ({rt.roomCount} rooms)
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  )}
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
-                          <FormField
+                          {/* Hidden roomTypeName field - populated by dropdown selection */}
+                          <Controller
                             control={addGuestForm.control}
                             name="roomTypeName"
                             render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-black text-[0.8rem]">
-                                  Room Type Name
-                                </FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="text"
-                                    placeholder="Deluxe room"
-                                    disabled={!isEnabled}
-                                    {...field}
-                                    className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
+                              <input type="hidden" {...field} value={field.value ?? ''} />
                             )}
                           />
                           <FormField
@@ -3410,18 +3467,20 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                           type="button"
                           size="sm"
                           variant="outline"
-                          onClick={() =>
+                          onClick={() => {
+                            // Use first available room type from hotel, or empty defaults
+                            const defaultRoomType = roomTypes[0];
                             appendRoomStay({
-                              roomTypeId: '12353',
-                              ratePlanId: '41355',
-                              roomTypeName: 'Deluxe room',
+                              roomTypeId: defaultRoomType?.roomTypeId || '',
+                              ratePlanId: '',  // Omitted - Stayflexi uses default
+                              roomTypeName: defaultRoomType?.roomTypeName || '',
                               numAdults: 1,
                               numChildren: 0,
                               roomId: ''
-                            })
-                          }
+                            });
+                          }}
                           className="h-7 text-xs"
-                          disabled={!isEnabled}
+                          disabled={!isEnabled || roomTypes.length === 0}
                         >
                           <Plus className="h-3 w-3 mr-1" /> Add Room Stay
                         </Button>
@@ -3445,67 +3504,61 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                               )}
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              {/* Room Type dropdown for this room stay */}
                               <FormField
                                 control={addGuestForm.control}
                                 name={`roomStays.${index}.roomTypeId`}
                                 render={({ field }) => (
                                   <FormItem>
                                     <FormLabel className="text-black text-[0.8rem]">
-                                      Room Type ID
+                                      Room Type *
                                     </FormLabel>
                                     <FormControl>
-                                      <Input
-                                        type="text"
-                                        placeholder="12353"
-                                        disabled={!isEnabled}
-                                        {...field}
-                                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                                      />
+                                      {roomTypes.length === 0 ? (
+                                        <div className="bg-yellow-50 text-yellow-700 p-2 rounded-md text-xs 2xl:text-sm">
+                                          No room types available
+                                        </div>
+                                      ) : (
+                                        <Select
+                                          value={field.value || ''}
+                                          onValueChange={(value) => {
+                                            const selectedRoomType = roomTypes.find(rt => rt.roomTypeId === value);
+                                            field.onChange(value);
+                                            addGuestForm.setValue(`roomStays.${index}.roomTypeName`, selectedRoomType?.roomTypeName || '');
+                                          }}
+                                          disabled={!isEnabled}
+                                        >
+                                          <SelectTrigger className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm h-auto">
+                                            <SelectValue placeholder="Select room type" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {roomTypes.map((rt) => (
+                                              <SelectItem key={rt.roomTypeId} value={rt.roomTypeId}>
+                                                {rt.roomTypeName} ({rt.roomCount} rooms)
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      )}
                                     </FormControl>
                                     <FormMessage />
                                   </FormItem>
                                 )}
                               />
-                              <FormField
-                                control={addGuestForm.control}
-                                name={`roomStays.${index}.ratePlanId`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-black text-[0.8rem]">
-                                      Rate Plan ID
-                                    </FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        type="text"
-                                        placeholder="41355"
-                                        disabled={!isEnabled}
-                                        {...field}
-                                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              <FormField
+                              {/* Hidden roomTypeName for this room stay */}
+                              <Controller
                                 control={addGuestForm.control}
                                 name={`roomStays.${index}.roomTypeName`}
                                 render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-black text-[0.8rem]">
-                                      Room Type Name
-                                    </FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        type="text"
-                                        placeholder="Deluxe room"
-                                        disabled={!isEnabled}
-                                        {...field}
-                                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
+                                  <input type="hidden" {...field} value={field.value ?? ''} />
+                                )}
+                              />
+                              {/* Hidden ratePlanId - omitted from payload */}
+                              <Controller
+                                control={addGuestForm.control}
+                                name={`roomStays.${index}.ratePlanId`}
+                                render={({ field }) => (
+                                  <input type="hidden" {...field} value={field.value ?? ''} />
                                 )}
                               />
                               <FormField
@@ -3556,25 +3609,12 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                   </FormItem>
                                 )}
                               />
-                              <FormField
+                              {/* Room ID - hidden, assigned at check-in not booking */}
+                              <Controller
                                 control={addGuestForm.control}
                                 name={`roomStays.${index}.roomId`}
                                 render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-black text-[0.8rem]">
-                                      Room ID
-                                    </FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        type="text"
-                                        placeholder=""
-                                        disabled={!isEnabled}
-                                        {...field}
-                                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
+                                  <input type="hidden" {...field} value={''} />
                                 )}
                               />
                             </div>
@@ -4745,9 +4785,9 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                 Save Changes
               </Button>
             </div>
-          </form>
-        </Form>
-      </FormWrapper>
+          </form >
+        </Form >
+      </FormWrapper >
     </>
   )
 };

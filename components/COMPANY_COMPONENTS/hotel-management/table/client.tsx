@@ -244,7 +244,7 @@ export const HotelManagementHome: React.FC = () => {
         setLoading(true);
         const response = await apiCall(
           'GET',
-          `api/hotel/get-hotels?page=${pageNo}&limit=${limit}`
+          `api/hotel/get-hotels?page=${pageNo}&limit=${limit}&_t=${Date.now()}`
         );
         console.log(response);
 
@@ -268,7 +268,7 @@ export const HotelManagementHome: React.FC = () => {
             },
             housekeepingStatus: hotel.housekeepingStatus || 'CLEANED',
             status:
-              hotel.status.toUpperCase() === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE',
+              String(hotel.status).toUpperCase() === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE',
             address: hotel.address || '',
             city: hotel.city || '',
             country: hotel.country || '',
