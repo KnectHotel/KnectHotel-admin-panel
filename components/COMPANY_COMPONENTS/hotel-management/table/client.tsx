@@ -266,7 +266,7 @@ export const HotelManagementHome: React.FC = () => {
               subscriptionPrice: hotel.subscriptionPrice || 'N/A',
               cost: 0
             },
-            housekeepingStatus: hotel.housekeepingStatus || 'CLEANED',
+            // housekeepingStatus: hotel.housekeepingStatus || 'CLEANED',
             status:
               hotel.status.toUpperCase() === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE',
             address: hotel.address || '',

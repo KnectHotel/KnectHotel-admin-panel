@@ -143,24 +143,24 @@ export const columns: ColumnDef<HotelDataType>[] = [
       );
     }
   },
-  {
-    accessorKey: 'housekeepingStatus',
-    header: 'Room Status',
-    cell: ({ row }) => {
-      const status = row.original.housekeepingStatus;
+  // {
+  //   accessorKey: 'housekeepingStatus',
+  //   header: 'Room Status',
+  //   cell: ({ row }) => {
+  //     const status = row.original.housekeepingStatus;
 
-      const color =
-        status === 'CLEANED'
-          ? 'text-green-600'
-          : status === 'DIRTY'
-            ? 'text-red-600'
-            : status === 'INSPECTED'
-              ? 'text-blue-600'
-              :'text-yellow-600';
+  //     const color =
+  //       status === 'CLEANED'
+  //         ? 'text-green-600'
+  //         : status === 'DIRTY'
+  //           ? 'text-red-600'
+  //           : status === 'INSPECTED'
+  //             ? 'text-blue-600'
+  //             :'text-yellow-600';
 
-      return <span className={`${color} font-semibold`}>{status}</span>;
-    }
-  },
+  //     return <span className={`${color} font-semibold`}>{status}</span>;
+  //   }
+  // },
   {
     accessorKey: 'status',
     header: 'Status',
