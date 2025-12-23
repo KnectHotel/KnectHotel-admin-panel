@@ -1,14 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  FiPlus,
-  FiEdit,
-  FiTrash2,
-  FiArrowLeft,
-  FiX
-} from 'react-icons/fi';
+import { FiPlus, FiEdit, FiTrash2, FiArrowLeft, FiX } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import apiCall from '@/lib/axios';
+import { ENDPOINTS } from '@/lib/api-config';
 
 export default function NewsPage() {
   const emptyForm = {
@@ -37,11 +33,16 @@ export default function NewsPage() {
 
   // FETCH NEWS LIST
   useEffect(() => {
-    fetch('https://uat-api.knecthotel.com/api/news')
-      .then((res) => res.json())
-      .then((data) => {
-        setItems(data.data || []);
-      });
+    const fetchNews = async () => {
+      try {
+        const data = await apiCall('GET', ENDPOINTS.NEWS);
+        setItems(data.data || data || []);
+      } catch (err) {
+        console.log('fetch error:', err);
+        setItems([]);
+      }
+    };
+    fetchNews();
   }, []);
 
   // SUBMIT CREATE / EDIT
@@ -49,39 +50,29 @@ export default function NewsPage() {
     e.preventDefault();
 
     const payload = { ...formData };
+    const url = editingId
+      ? `${ENDPOINTS.NEWS}/${editingId}`
+      : `${ENDPOINTS.NEWS}/createnews`;
+    const method = editingId ? 'PUT' : 'POST';
 
-    let url = 'https://uat-api.knecthotel.com/api/news/createnews';
-    let method = 'POST';
+    try {
+      const json = await apiCall(method, url, payload);
 
-    if (editingId) {
-      url = `https://uat-api.knecthotel.com/api/news/${editingId}`;
-      method = 'PUT';
+      if (editingId) {
+        setItems((prev) =>
+          prev.map((n) => (n._id === editingId ? json.data || json : n))
+        );
+      } else {
+        setItems((prev) => [json.data || json, ...prev]);
+      }
+
+      setShowForm(false);
+      setEditingId(null);
+      setFormData(emptyForm);
+    } catch (err: any) {
+      console.log('Error submitting:', err);
+      alert('Validation failed: ' + (err.message || 'Unknown error'));
     }
-
-    const res = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    const json = await res.json();
-
-    if (!json.success) {
-      alert('Validation failed: ' + json.message);
-      return;
-    }
-
-    if (editingId) {
-      setItems((prev) =>
-        prev.map((n) => (n._id === editingId ? json.data : n))
-      );
-    } else {
-      setItems((prev) => [json.data, ...prev]);
-    }
-
-    setShowForm(false);
-    setEditingId(null);
-    setFormData(emptyForm);
   };
 
   const handleDeleteClick = (id: string) => {
@@ -93,29 +84,17 @@ export default function NewsPage() {
     if (!deleteId) return;
 
     try {
-      const res = await fetch(`https://uat-api.knecthotel.com/api/news/${deleteId}`, {
-        method: 'DELETE'
-      });
-
-      const json = await res.json();
-
-      if (!json.success) {
-        alert('Delete failed: ' + json.message);
-        setShowDeleteModal(false);
-        setDeleteId(null);
-        return;
-      }
-
+      await apiCall('DELETE', `${ENDPOINTS.NEWS}/${deleteId}`);
       setItems((prev) => prev.filter((n) => n._id !== deleteId));
       setShowDeleteModal(false);
       setDeleteId(null);
-    } catch (err) {
+    } catch (err: any) {
       console.log('Delete Error:', err);
+      alert('Delete failed: ' + (err.message || 'Unknown error'));
       setShowDeleteModal(false);
       setDeleteId(null);
     }
   };
-
 
   return (
     <div className="p-6 w-full">
@@ -160,17 +139,29 @@ export default function NewsPage() {
                   alt={item.title}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f3f4f6" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+                    e.currentTarget.src =
+                      'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f3f4f6" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
                   }}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-16 w-16"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
                 </div>
               )}
-              
+
               {/* Action Icons - Top Right */}
               <div className="absolute top-3 right-3 flex gap-2">
                 <button
@@ -184,7 +175,7 @@ export default function NewsPage() {
                 >
                   <FiEdit size={16} className="text-[#9b743f]" />
                 </button>
-                
+
                 <button
                   onClick={() => handleDeleteClick(item._id)}
                   className="p-2 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-md transition-all duration-200 hover:scale-110"
@@ -209,7 +200,7 @@ export default function NewsPage() {
               <h3 className="font-semibold text-lg text-[#3b2f1c] mb-2 line-clamp-2">
                 {item.title}
               </h3>
-              
+
               <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                 {item.excerpt}
               </p>
@@ -217,14 +208,30 @@ export default function NewsPage() {
               {/* Meta Info */}
               <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
                 <span className="flex items-center gap-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3.5 w-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
-                  {item.date ? new Date(item.date).toLocaleDateString() : 'No date'}
+                  {item.date
+                    ? new Date(item.date).toLocaleDateString()
+                    : 'No date'}
                 </span>
-                
+
                 {item.source && (
-                  <span className="text-[#9b743f] font-medium truncate max-w-[120px]" title={item.source}>
+                  <span
+                    className="text-[#9b743f] font-medium truncate max-w-[120px]"
+                    title={item.source}
+                  >
                     {item.source}
                   </span>
                 )}
@@ -237,13 +244,13 @@ export default function NewsPage() {
       {/* FORM MODAL */}
       <AnimatePresence>
         {showForm && (
-          <motion.div 
+          <motion.div
             className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div 
+            <motion.div
               className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -270,16 +277,13 @@ export default function NewsPage() {
 
               {/* Modal Body - Scrollable */}
               <div className="overflow-y-auto p-6">
-                <form
-                  onSubmit={handleSubmit}
-                  className="space-y-6"
-                >
+                <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Basic Information Section */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
                       Basic Information
                     </h3>
-                    
+
                     {/* TITLE */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -325,7 +329,10 @@ export default function NewsPage() {
                         value={formData.description}
                         required
                         onChange={(e) =>
-                          setFormData({ ...formData, description: e.target.value })
+                          setFormData({
+                            ...formData,
+                            description: e.target.value
+                          })
                         }
                       />
                     </div>
@@ -352,7 +359,7 @@ export default function NewsPage() {
                     <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
                       Meta Information
                     </h3>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* CONTRIBUTOR */}
                       <div>
@@ -364,7 +371,10 @@ export default function NewsPage() {
                           placeholder="Contributor name"
                           value={formData.contributor}
                           onChange={(e) =>
-                            setFormData({ ...formData, contributor: e.target.value })
+                            setFormData({
+                              ...formData,
+                              contributor: e.target.value
+                            })
                           }
                         />
                       </div>
@@ -396,7 +406,10 @@ export default function NewsPage() {
                           value={formData.category}
                           required
                           onChange={(e) =>
-                            setFormData({ ...formData, category: e.target.value })
+                            setFormData({
+                              ...formData,
+                              category: e.target.value
+                            })
                           }
                         />
                       </div>
@@ -424,7 +437,7 @@ export default function NewsPage() {
                     <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
                       Media
                     </h3>
-                    
+
                     {/* IMAGE URL */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -450,7 +463,10 @@ export default function NewsPage() {
                         placeholder="https://example.com/banner.jpg"
                         value={formData.BannerImage}
                         onChange={(e) =>
-                          setFormData({ ...formData, BannerImage: e.target.value })
+                          setFormData({
+                            ...formData,
+                            BannerImage: e.target.value
+                          })
                         }
                       />
                     </div>
@@ -461,7 +477,7 @@ export default function NewsPage() {
                     <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
                       Article
                     </h3>
-                    
+
                     {/* ARTICLE */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -484,7 +500,7 @@ export default function NewsPage() {
                     <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
                       Social Links
                     </h3>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {/* YOUTUBE */}
                       <div>
@@ -496,7 +512,10 @@ export default function NewsPage() {
                           placeholder="https://youtube.com/..."
                           value={formData.youtubeLink}
                           onChange={(e) =>
-                            setFormData({ ...formData, youtubeLink: e.target.value })
+                            setFormData({
+                              ...formData,
+                              youtubeLink: e.target.value
+                            })
                           }
                         />
                       </div>
@@ -529,7 +548,10 @@ export default function NewsPage() {
                           placeholder="https://linkedin.com/..."
                           value={formData.linkdinLink}
                           onChange={(e) =>
-                            setFormData({ ...formData, linkdinLink: e.target.value })
+                            setFormData({
+                              ...formData,
+                              linkdinLink: e.target.value
+                            })
                           }
                         />
                       </div>
@@ -586,7 +608,8 @@ export default function NewsPage() {
                   Delete News
                 </h3>
                 <p className="text-center text-gray-600 mb-6">
-                  Are you sure you want to delete this news? This action cannot be undone.
+                  Are you sure you want to delete this news? This action cannot
+                  be undone.
                 </p>
                 <div className="flex gap-3">
                   <button

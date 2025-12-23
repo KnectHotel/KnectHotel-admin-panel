@@ -544,7 +544,7 @@ const HotelForm = ({
             : 'Hotel created successfully',
           'success'
         );
-        if (mode === 'add') {
+        if (mode === 'add' || mode === 'edit') {
           router.push('/super-admin/hotel-management');
         }
         console.log('Hotel data:', response);

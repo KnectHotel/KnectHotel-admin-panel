@@ -10,8 +10,8 @@ import {
   FiArrowLeft
 } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const API_BASE = "http://localhost:3001/api/milestones";
+import apiCall from '@/lib/axios';
+import { ENDPOINTS } from '@/lib/api-config';
 
 export default function MilestonesPage() {
   const [items, setItems] = useState<any[]>([]);
@@ -20,22 +20,22 @@ export default function MilestonesPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    year: "",
-    title: "",
-    description: "",
-    details: "",
-    achievement: "",
-    images: ""
+    year: '',
+    title: '',
+    description: '',
+    details: '',
+    achievement: '',
+    images: ''
   });
 
   // FETCH MILESTONES
   const fetchMilestones = async () => {
     try {
-      const res = await fetch(API_BASE);
-      const json = await res.json();
-      setItems(json.data || []);
+      const json = await apiCall('GET', ENDPOINTS.MILESTONES);
+      setItems(json.data || json || []);
     } catch (err) {
-      console.error("Error loading milestones:", err);
+      console.error('Error loading milestones:', err);
+      setItems([]);
     }
   };
 
@@ -52,47 +52,40 @@ export default function MilestonesPage() {
     e.preventDefault();
 
     try {
-      const url = editingId ? `${API_BASE}/${editingId}` : API_BASE;
-      const method = editingId ? "PUT" : "POST";
+      const url = editingId
+        ? `${ENDPOINTS.MILESTONES}/${editingId}`
+        : ENDPOINTS.MILESTONES;
+      const method = editingId ? 'PUT' : 'POST';
 
       const payload = {
         ...formData,
-        images: formData.images.split(",").map((img) => img.trim())
+        images: formData.images.split(',').map((img) => img.trim())
       };
 
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+      await apiCall(method, url, payload);
+      fetchMilestones();
+      setShowForm(false);
+      setEditingId(null);
+      setFormData({
+        year: '',
+        title: '',
+        description: '',
+        details: '',
+        achievement: '',
+        images: ''
       });
-
-      const json = await res.json();
-      if (json.success) {
-        fetchMilestones();
-        setShowForm(false);
-        setEditingId(null);
-        setFormData({
-          year: "",
-          title: "",
-          description: "",
-          details: "",
-          achievement: "",
-          images: ""
-        });
-      }
     } catch (err) {
-      console.error("Error saving milestone:", err);
+      console.error('Error saving milestone:', err);
     }
   };
 
   // DELETE
   const deleteItem = async (id: string) => {
     try {
-      const res = await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
-      const json = await res.json();
-      if (json.success) fetchMilestones();
+      await apiCall('DELETE', `${ENDPOINTS.MILESTONES}/${id}`);
+      fetchMilestones();
     } catch (err) {
-      console.error("Error deleting milestone:", err);
+      console.error('Error deleting milestone:', err);
     }
   };
 
@@ -107,7 +100,7 @@ export default function MilestonesPage() {
       description: item.description,
       details: item.details,
       achievement: item.achievement,
-      images: item.images.join(", ")
+      images: item.images.join(', ')
     });
   };
 
@@ -121,7 +114,10 @@ export default function MilestonesPage() {
         className="flex justify-between items-center mb-6"
       >
         <div className="flex items-center gap-3">
-          <button onClick={() => window.history.back()} className="text-[#3b2f1c]">
+          <button
+            onClick={() => window.history.back()}
+            className="text-[#3b2f1c]"
+          >
             <FiArrowLeft size={20} />
           </button>
 
@@ -136,12 +132,12 @@ export default function MilestonesPage() {
           onClick={() => {
             setEditingId(null);
             setFormData({
-              year: "",
-              title: "",
-              description: "",
-              details: "",
-              achievement: "",
-              images: ""
+              year: '',
+              title: '',
+              description: '',
+              details: '',
+              achievement: '',
+              images: ''
             });
             setShowForm(true);
           }}
@@ -169,7 +165,9 @@ export default function MilestonesPage() {
               animate={{ opacity: 1, y: 0 }}
               className="border bg-white rounded-xl p-5 shadow-sm relative"
             >
-              <h3 className="font-semibold text-[#3b2f1c]">{item.year} – {item.title}</h3>
+              <h3 className="font-semibold text-[#3b2f1c]">
+                {item.year} – {item.title}
+              </h3>
               <p className="text-sm text-gray-600 mt-1">{item.description}</p>
 
               {/* Dropdown */}
@@ -224,16 +222,24 @@ export default function MilestonesPage() {
               className="bg-white p-6 rounded-xl w-full max-w-lg shadow-lg"
             >
               <h2 className="text-xl font-semibold mb-4 text-[#3b2f1c]">
-                {editingId ? "Edit Milestone" : "Add Milestone"}
+                {editingId ? 'Edit Milestone' : 'Add Milestone'}
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-3">
-
-                {["year", "title", "description", "details", "achievement", "images"].map((field) => (
+                {[
+                  'year',
+                  'title',
+                  'description',
+                  'details',
+                  'achievement',
+                  'images'
+                ].map((field) => (
                   <div key={field}>
-                    <label className="text-sm font-medium capitalize">{field}</label>
+                    <label className="text-sm font-medium capitalize">
+                      {field}
+                    </label>
 
-                    {field === "description" || field === "details" ? (
+                    {field === 'description' || field === 'details' ? (
                       <textarea
                         required
                         rows={3}
@@ -255,7 +261,7 @@ export default function MilestonesPage() {
                       />
                     )}
 
-                    {field === "images" && (
+                    {field === 'images' && (
                       <p className="text-xs text-gray-500 mt-1">
                         Add multiple image URLs separated by commas.
                       </p>
@@ -276,16 +282,14 @@ export default function MilestonesPage() {
                     type="submit"
                     className="px-4 py-2 bg-[#9b743f] text-white rounded-md"
                   >
-                    {editingId ? "Update" : "Save"}
+                    {editingId ? 'Update' : 'Save'}
                   </button>
                 </div>
-
               </form>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   );
 }

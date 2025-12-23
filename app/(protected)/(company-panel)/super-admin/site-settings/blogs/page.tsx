@@ -10,6 +10,8 @@ import {
   FiX
 } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import apiCall from '@/lib/axios';
+import { ENDPOINTS } from '@/lib/api-config';
 
 export default function BlogsPage() {
   const emptyForm = {
@@ -36,10 +38,9 @@ export default function BlogsPage() {
   // FETCH BLOGS FROM API
   const fetchBlogs = async () => {
     try {
-      const res = await fetch('https://uat-api.knecthotel.com/api/blogs');
-      const data = await res.json();
-      console.log('Blog API Response:', data); // Debug log
-      
+      const data = await apiCall('GET', ENDPOINTS.BLOGS);
+      console.log('Blog API Response:', data);
+
       // Handle different response structures
       if (data.data) {
         setItems(data.data);
@@ -66,34 +67,20 @@ export default function BlogsPage() {
     e.preventDefault();
 
     const payload = { ...formData };
-    let url = 'https://uat-api.knecthotel.com/api/blogs/createblogs';
-    let method = 'POST';
-
-    if (editingId) {
-      url = `https://uat-api.knecthotel.com/api/blogs/${editingId}`;
-      method = 'PUT';
-    }
+    const url = editingId
+      ? `${ENDPOINTS.BLOGS}/${editingId}`
+      : `${ENDPOINTS.BLOGS}/createblogs`;
+    const method = editingId ? 'PUT' : 'POST';
 
     try {
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        fetchBlogs(); // refresh list
-        setShowForm(false);
-        setEditingId(null);
-        setFormData(emptyForm);
-      } else {
-        alert('Error: ' + (data.message || 'Failed to save blog'));
-      }
-    } catch (err) {
+      const data = await apiCall(method, url, payload);
+      fetchBlogs();
+      setShowForm(false);
+      setEditingId(null);
+      setFormData(emptyForm);
+    } catch (err: any) {
       console.log('Error submitting:', err);
-      alert('Failed to save blog');
+      alert('Error: ' + (err.message || 'Failed to save blog'));
     }
   };
 
@@ -108,23 +95,13 @@ export default function BlogsPage() {
     if (!deleteId) return;
 
     try {
-      const res = await fetch(`https://uat-api.knecthotel.com/api/blogs/${deleteId}`, {
-        method: 'DELETE'
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setItems((prev) => prev.filter((b) => b._id !== deleteId));
-        setShowDeleteModal(false);
-        setDeleteId(null);
-      } else {
-        alert('Delete failed: ' + data.message);
-        setShowDeleteModal(false);
-        setDeleteId(null);
-      }
-    } catch (err) {
+      await apiCall('DELETE', `${ENDPOINTS.BLOGS}/${deleteId}`);
+      setItems((prev) => prev.filter((b) => b._id !== deleteId));
+      setShowDeleteModal(false);
+      setDeleteId(null);
+    } catch (err: any) {
       console.log('Delete Error:', err);
+      alert('Delete failed: ' + (err.message || 'Unknown error'));
       setShowDeleteModal(false);
       setDeleteId(null);
     }
@@ -381,7 +358,10 @@ export default function BlogsPage() {
                         placeholder="Brief description of the blog"
                         value={formData.description}
                         onChange={(e) =>
-                          setFormData({ ...formData, description: e.target.value })
+                          setFormData({
+                            ...formData,
+                            description: e.target.value
+                          })
                         }
                         className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all resize-none"
                       />
@@ -421,7 +401,10 @@ export default function BlogsPage() {
                           placeholder="Contributor name"
                           value={formData.contributor}
                           onChange={(e) =>
-                            setFormData({ ...formData, contributor: e.target.value })
+                            setFormData({
+                              ...formData,
+                              contributor: e.target.value
+                            })
                           }
                           className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
                         />
@@ -477,7 +460,10 @@ export default function BlogsPage() {
                           placeholder="https://example.com/banner.jpg"
                           value={formData.BannerImage}
                           onChange={(e) =>
-                            setFormData({ ...formData, BannerImage: e.target.value })
+                            setFormData({
+                              ...formData,
+                              BannerImage: e.target.value
+                            })
                           }
                           className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
                         />
@@ -525,7 +511,10 @@ export default function BlogsPage() {
                           placeholder="https://youtube.com/..."
                           value={formData.youtubeLink}
                           onChange={(e) =>
-                            setFormData({ ...formData, youtubeLink: e.target.value })
+                            setFormData({
+                              ...formData,
+                              youtubeLink: e.target.value
+                            })
                           }
                           className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
                         />
@@ -560,7 +549,10 @@ export default function BlogsPage() {
                           placeholder="https://linkedin.com/..."
                           value={formData.linkdinLink}
                           onChange={(e) =>
-                            setFormData({ ...formData, linkdinLink: e.target.value })
+                            setFormData({
+                              ...formData,
+                              linkdinLink: e.target.value
+                            })
                           }
                           className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all"
                         />
@@ -618,7 +610,8 @@ export default function BlogsPage() {
                   Delete Blog
                 </h3>
                 <p className="text-center text-gray-600 mb-6">
-                  Are you sure you want to delete this blog? This action cannot be undone.
+                  Are you sure you want to delete this blog? This action cannot
+                  be undone.
                 </p>
                 <div className="flex gap-3">
                   <button

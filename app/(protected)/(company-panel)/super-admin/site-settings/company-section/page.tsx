@@ -10,10 +10,8 @@ import {
   FiArrowLeft
 } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
-
-import { API_BASE_URL } from '@/lib/api-config';
-
-const API_BASE = `${API_BASE_URL}/company`;
+import apiCall from '@/lib/axios';
+import { ENDPOINTS } from '@/lib/api-config';
 
 export default function CompanyPage() {
   const [company, setCompany] = useState<any>(null);
@@ -26,25 +24,28 @@ export default function CompanyPage() {
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
 
   // Form data
-  const [mission, setMission] = useState("");
-  const [leaderForm, setLeaderForm] = useState({ name: "", img: "", role: "", tagline: "" });
-  const [valueForm, setValueForm] = useState({ title: "", description: "" });
+  const [mission, setMission] = useState('');
+  const [leaderForm, setLeaderForm] = useState({
+    name: '',
+    img: '',
+    role: '',
+    tagline: ''
+  });
+  const [valueForm, setValueForm] = useState({ title: '', description: '' });
 
   // LOAD DATA
   const fetchCompany = async () => {
     try {
-      const res = await fetch(API_BASE);
-      const json = await res.json();
-      if (json.success) {
-        // If data is null/undefined, use default empty object so UI renders
-        const data = json.data || { mission: "", leadership: [], values: [] };
-        setCompany(data);
-        setMission(data.mission || "");
-      }
+      const json = await apiCall('GET', ENDPOINTS.COMPANY_SECTION);
+      // If data is null/undefined, use default empty object so UI renders
+      const data = json.data ||
+        json || { mission: '', leadership: [], values: [] };
+      setCompany(data);
+      setMission(data.mission || '');
     } catch (err) {
-      console.error("Error loading company:", err);
+      console.error('Error loading company:', err);
       // Initialize with empty data on error so user can try to create
-      setCompany({ mission: "", leadership: [], values: [] });
+      setCompany({ mission: '', leadership: [], values: [] });
     }
   };
 
@@ -55,15 +56,10 @@ export default function CompanyPage() {
   // UPSERT COMPANY
   const saveCompany = async (payload: any) => {
     try {
-      const res = await fetch(API_BASE, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const json = await res.json();
-      if (json.success) fetchCompany();
+      await apiCall('PUT', ENDPOINTS.COMPANY_SECTION, payload);
+      fetchCompany();
     } catch (err) {
-      console.error("Error saving company:", err);
+      console.error('Error saving company:', err);
     }
   };
 
@@ -81,13 +77,15 @@ export default function CompanyPage() {
 
     saveCompany({ ...company, leadership: updated });
 
-    setLeaderForm({ name: "", img: "", role: "", tagline: "" });
+    setLeaderForm({ name: '', img: '', role: '', tagline: '' });
     setEditIndex(null);
     setShowLeadersForm(false);
   };
 
   const deleteLeader = (index: number) => {
-    const updated = company.leadership.filter((_: any, i: number) => i !== index);
+    const updated = company.leadership.filter(
+      (_: any, i: number) => i !== index
+    );
     saveCompany({ ...company, leadership: updated });
   };
 
@@ -99,7 +97,7 @@ export default function CompanyPage() {
 
     saveCompany({ ...company, values: updated });
 
-    setValueForm({ title: "", description: "" });
+    setValueForm({ title: '', description: '' });
     setEditIndex(null);
     setShowValuesForm(false);
   };
@@ -126,7 +124,10 @@ export default function CompanyPage() {
         className="flex justify-between items-center mb-6"
       >
         <div className="flex items-center gap-3">
-          <button onClick={() => window.history.back()} className="text-[#3b2f1c] hover:opacity-70">
+          <button
+            onClick={() => window.history.back()}
+            className="text-[#3b2f1c] hover:opacity-70"
+          >
             <FiArrowLeft size={20} />
           </button>
 
@@ -139,7 +140,9 @@ export default function CompanyPage() {
       {/* MISSION */}
       <section className="mb-8">
         <div className="flex justify-between items-center mb-2">
-          <h2 className="font-semibold text-lg text-[#3b2f1c]">Mission Statement</h2>
+          <h2 className="font-semibold text-lg text-[#3b2f1c]">
+            Mission Statement
+          </h2>
 
           <button
             onClick={() => setShowMissionForm(true)}
@@ -155,12 +158,14 @@ export default function CompanyPage() {
       {/* LEADERSHIP */}
       <section className="mb-10">
         <div className="flex justify-between items-center">
-          <h2 className="font-semibold text-lg text-[#3b2f1c]">Leadership Team</h2>
+          <h2 className="font-semibold text-lg text-[#3b2f1c]">
+            Leadership Team
+          </h2>
 
           <button
             onClick={() => {
               setEditIndex(null);
-              setLeaderForm({ name: "", img: "", role: "", tagline: "" });
+              setLeaderForm({ name: '', img: '', role: '', tagline: '' });
               setShowLeadersForm(true);
             }}
             className="flex items-center gap-2 bg-[#9b743f] text-white px-3 py-1 rounded-md"
@@ -224,12 +229,14 @@ export default function CompanyPage() {
       {/* VALUES */}
       <section>
         <div className="flex justify-between items-center">
-          <h2 className="font-semibold text-lg text-[#3b2f1c]">Company Values</h2>
+          <h2 className="font-semibold text-lg text-[#3b2f1c]">
+            Company Values
+          </h2>
 
           <button
             onClick={() => {
               setEditIndex(null);
-              setValueForm({ title: "", description: "" });
+              setValueForm({ title: '', description: '' });
               setShowValuesForm(true);
             }}
             className="flex items-center gap-2 bg-[#9b743f] text-white px-3 py-1 rounded-md"
@@ -290,7 +297,10 @@ export default function CompanyPage() {
       </section>
 
       {/* MISSION MODAL */}
-      <Modal visible={showMissionForm} onClose={() => setShowMissionForm(false)}>
+      <Modal
+        visible={showMissionForm}
+        onClose={() => setShowMissionForm(false)}
+      >
         <h2 className="text-lg font-semibold mb-3">Edit Mission</h2>
         <textarea
           rows={4}
@@ -298,45 +308,62 @@ export default function CompanyPage() {
           onChange={(e) => setMission(e.target.value)}
           className="w-full border rounded p-2"
         />
-        <button onClick={saveMission} className="mt-4 bg-[#9b743f] text-white px-4 py-2 rounded">
+        <button
+          onClick={saveMission}
+          className="mt-4 bg-[#9b743f] text-white px-4 py-2 rounded"
+        >
           Save
         </button>
       </Modal>
 
       {/* LEADER MODAL */}
-      <Modal visible={showLeadersForm} onClose={() => setShowLeadersForm(false)}>
-        <h2 className="text-lg font-semibold mb-3">{editIndex !== null ? "Edit Leader" : "Add Leader"}</h2>
+      <Modal
+        visible={showLeadersForm}
+        onClose={() => setShowLeadersForm(false)}
+      >
+        <h2 className="text-lg font-semibold mb-3">
+          {editIndex !== null ? 'Edit Leader' : 'Add Leader'}
+        </h2>
 
-        {["name", "img", "role", "tagline"].map((field) => (
+        {['name', 'img', 'role', 'tagline'].map((field) => (
           <div key={field} className="mb-2">
             <label className="text-sm font-medium capitalize">{field}</label>
             <input
               type="text"
               value={(leaderForm as any)[field]}
-              onChange={(e) => setLeaderForm({ ...leaderForm, [field]: e.target.value })}
+              onChange={(e) =>
+                setLeaderForm({ ...leaderForm, [field]: e.target.value })
+              }
               className="w-full border rounded p-2 mt-1"
               required
             />
           </div>
         ))}
 
-        <button onClick={saveLeader} className="mt-4 bg-[#9b743f] text-white px-4 py-2 rounded">
+        <button
+          onClick={saveLeader}
+          className="mt-4 bg-[#9b743f] text-white px-4 py-2 rounded"
+        >
           Save
         </button>
       </Modal>
 
       {/* VALUE MODAL */}
       <Modal visible={showValuesForm} onClose={() => setShowValuesForm(false)}>
-        <h2 className="text-lg font-semibold mb-3">{editIndex !== null ? "Edit Value" : "Add Value"}</h2>
+        <h2 className="text-lg font-semibold mb-3">
+          {editIndex !== null ? 'Edit Value' : 'Add Value'}
+        </h2>
 
-        {["title", "description"].map((field) => (
+        {['title', 'description'].map((field) => (
           <div key={field} className="mb-2">
             <label className="text-sm font-medium capitalize">{field}</label>
-            {field === "description" ? (
+            {field === 'description' ? (
               <textarea
                 rows={3}
                 value={(valueForm as any)[field]}
-                onChange={(e) => setValueForm({ ...valueForm, [field]: e.target.value })}
+                onChange={(e) =>
+                  setValueForm({ ...valueForm, [field]: e.target.value })
+                }
                 className="w-full border rounded p-2 mt-1"
                 required
               />
@@ -344,7 +371,9 @@ export default function CompanyPage() {
               <input
                 type="text"
                 value={(valueForm as any)[field]}
-                onChange={(e) => setValueForm({ ...valueForm, [field]: e.target.value })}
+                onChange={(e) =>
+                  setValueForm({ ...valueForm, [field]: e.target.value })
+                }
                 className="w-full border rounded p-2 mt-1"
                 required
               />
@@ -352,7 +381,10 @@ export default function CompanyPage() {
           </div>
         ))}
 
-        <button onClick={saveValue} className="mt-4 bg-[#9b743f] text-white px-4 py-2 rounded">
+        <button
+          onClick={saveValue}
+          className="mt-4 bg-[#9b743f] text-white px-4 py-2 rounded"
+        >
           Save
         </button>
       </Modal>
