@@ -1,14 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  FiPlus,
-  FiEdit,
-  FiTrash2,
-  FiArrowLeft,
-  FiX
-} from 'react-icons/fi';
+import { FiPlus, FiEdit, FiTrash2, FiArrowLeft, FiX } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import apiCall from '@/lib/axios';
+import { ENDPOINTS } from '@/lib/api-config';
 
 export default function CollaborationPage() {
   const emptyForm = {
@@ -28,10 +24,9 @@ export default function CollaborationPage() {
   // FETCH COLLABORATIONS FROM API
   const fetchCollaborations = async () => {
     try {
-      const res = await fetch('https://uat-api.knecthotel.com/api/collaborations');
-      const data = await res.json();
+      const data = await apiCall('GET', ENDPOINTS.COLLABORATIONS);
       console.log('Collaboration API Response:', data);
-      
+
       if (data.data) {
         setItems(data.data);
       } else if (data.collaborations) {
@@ -57,34 +52,20 @@ export default function CollaborationPage() {
     e.preventDefault();
 
     const payload = { ...formData };
-    let url = 'https://uat-api.knecthotel.com/api/collaborations';
-    let method = 'POST';
-
-    if (editingId) {
-      url = `https://uat-api.knecthotel.com/api/collaborations/${editingId}`;
-      method = 'PUT';
-    }
+    const url = editingId
+      ? `${ENDPOINTS.COLLABORATIONS}/${editingId}`
+      : ENDPOINTS.COLLABORATIONS;
+    const method = editingId ? 'PUT' : 'POST';
 
     try {
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        fetchCollaborations();
-        setShowForm(false);
-        setEditingId(null);
-        setFormData(emptyForm);
-      } else {
-        alert('Error: ' + (data.message || 'Failed to save collaboration'));
-      }
-    } catch (err) {
+      await apiCall(method, url, payload);
+      fetchCollaborations();
+      setShowForm(false);
+      setEditingId(null);
+      setFormData(emptyForm);
+    } catch (err: any) {
       console.log('Error submitting:', err);
-      alert('Failed to save collaboration');
+      alert('Error: ' + (err.message || 'Failed to save collaboration'));
     }
   };
 
@@ -99,23 +80,13 @@ export default function CollaborationPage() {
     if (!deleteId) return;
 
     try {
-      const res = await fetch(`https://uat-api.knecthotel.com/api/collaborations/${deleteId}`, {
-        method: 'DELETE'
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setItems((prev) => prev.filter((c) => c._id !== deleteId));
-        setShowDeleteModal(false);
-        setDeleteId(null);
-      } else {
-        alert('Delete failed: ' + data.message);
-        setShowDeleteModal(false);
-        setDeleteId(null);
-      }
-    } catch (err) {
+      await apiCall('DELETE', `${ENDPOINTS.COLLABORATIONS}/${deleteId}`);
+      setItems((prev) => prev.filter((c) => c._id !== deleteId));
+      setShowDeleteModal(false);
+      setDeleteId(null);
+    } catch (err: any) {
       console.log('Delete Error:', err);
+      alert('Delete failed: ' + (err.message || 'Unknown error'));
       setShowDeleteModal(false);
       setDeleteId(null);
     }
@@ -144,7 +115,9 @@ export default function CollaborationPage() {
           >
             <FiArrowLeft size={20} />
           </button>
-          <h1 className="text-2xl font-semibold text-[#3b2f1c]">Collaborations</h1>
+          <h1 className="text-2xl font-semibold text-[#3b2f1c]">
+            Collaborations
+          </h1>
         </div>
 
         <button
@@ -176,7 +149,9 @@ export default function CollaborationPage() {
             />
           </svg>
           <p className="text-lg font-medium">No collaborations found</p>
-          <p className="text-sm opacity-70">Start by adding a new collaboration</p>
+          <p className="text-sm opacity-70">
+            Start by adding a new collaboration
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -355,7 +330,10 @@ export default function CollaborationPage() {
                         placeholder="Brief description of the collaboration"
                         value={formData.description}
                         onChange={(e) =>
-                          setFormData({ ...formData, description: e.target.value })
+                          setFormData({
+                            ...formData,
+                            description: e.target.value
+                          })
                         }
                         className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#9b743f] focus:border-transparent transition-all resize-none"
                       />
@@ -419,7 +397,9 @@ export default function CollaborationPage() {
                       type="submit"
                       className="px-6 py-2.5 bg-gradient-to-r from-[#9b743f] to-[#c49a5a] text-white rounded-lg font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
                     >
-                      {editingId ? 'Update Collaboration' : 'Create Collaboration'}
+                      {editingId
+                        ? 'Update Collaboration'
+                        : 'Create Collaboration'}
                     </button>
                   </div>
                 </form>
@@ -452,7 +432,8 @@ export default function CollaborationPage() {
                   Delete Collaboration
                 </h3>
                 <p className="text-center text-gray-600 mb-6">
-                  Are you sure you want to delete this collaboration? This action cannot be undone.
+                  Are you sure you want to delete this collaboration? This
+                  action cannot be undone.
                 </p>
                 <div className="flex gap-3">
                   <button

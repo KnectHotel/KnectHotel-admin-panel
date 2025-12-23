@@ -10,10 +10,8 @@ import {
   FiArrowLeft
 } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
-
-import { API_BASE_URL } from '@/lib/api-config';
-
-const API_BASE = `${API_BASE_URL}/recent_updates`;
+import apiCall from '@/lib/axios';
+import { ENDPOINTS } from '@/lib/api-config';
 
 export default function UpdatesPage() {
   const [items, setItems] = useState<any[]>([]);
@@ -33,11 +31,11 @@ export default function UpdatesPage() {
   // LOAD DATA FROM BACKEND
   const fetchUpdates = async () => {
     try {
-      const res = await fetch(`${API_BASE}`);
-      const json = await res.json();
-      setItems(json.data || []);
+      const json = await apiCall('GET', ENDPOINTS.UPDATES);
+      setItems(json.data || json || []);
     } catch (err) {
-      console.error("Error fetching updates:", err);
+      console.error('Error fetching updates:', err);
+      setItems([]);
     }
   };
 
@@ -54,47 +52,34 @@ export default function UpdatesPage() {
     e.preventDefault();
 
     try {
-      let url = `${API_BASE}/create`;
-      let method = "POST";
+      const url = editingId
+        ? `${ENDPOINTS.UPDATES}/${editingId}`
+        : `${ENDPOINTS.UPDATES}/create`;
+      const method = editingId ? 'PUT' : 'POST';
 
-      if (editingId) {
-        url = `${API_BASE}/${editingId}`;
-        method = "PUT";
-      }
-
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      await apiCall(method, url, formData);
+      fetchUpdates();
+      setShowForm(false);
+      setEditingId(null);
+      setFormData({
+        title: '',
+        date: '',
+        description: '',
+        category: '',
+        image: ''
       });
-
-      const json = await res.json();
-
-      if (json.success) {
-        fetchUpdates();
-        setShowForm(false);
-        setEditingId(null);
-        setFormData({
-          title: '',
-          date: '',
-          description: '',
-          category: '',
-          image: ''
-        });
-      }
     } catch (err) {
-      console.error("Error saving update:", err);
+      console.error('Error saving update:', err);
     }
   };
 
   // DELETE
   const deleteItem = async (id: string) => {
     try {
-      const res = await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
-      const json = await res.json();
-      if (json.success) fetchUpdates();
+      await apiCall('DELETE', `${ENDPOINTS.UPDATES}/${id}`);
+      fetchUpdates();
     } catch (err) {
-      console.error("Error deleting update:", err);
+      console.error('Error deleting update:', err);
     }
   };
 
@@ -230,7 +215,7 @@ export default function UpdatesPage() {
               className="bg-white p-6 rounded-xl w-full max-w-md shadow-lg"
             >
               <h2 className="text-xl font-semibold text-[#3b2f1c] mb-4">
-                {editingId ? "Edit Update" : "Add Update"}
+                {editingId ? 'Edit Update' : 'Add Update'}
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -320,7 +305,7 @@ export default function UpdatesPage() {
                     type="submit"
                     className="px-4 py-2 bg-[#9b743f] text-white rounded-md"
                   >
-                    {editingId ? "Update" : "Save"}
+                    {editingId ? 'Update' : 'Save'}
                   </button>
                 </div>
               </form>
