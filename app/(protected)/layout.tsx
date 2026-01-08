@@ -1270,9 +1270,8 @@ export default function RootLayout({
         {/* Sidebar */}
         {shouldShowSidebar && (
           <div
-            className={`lg:w-[20%] fixed top-0 left-0 h-full transition-transform duration-300 ease-in-out transform ${
-              isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-            } lg:translate-x-0 lg:static z-50`}
+            className={`lg:w-[20%] fixed top-0 left-0 h-full transition-transform duration-300 ease-in-out transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+              } lg:translate-x-0 lg:static z-50`}
           >
             {isSuperAdminRoute ? (
               <SuperAdminPanelSideNav />
@@ -1284,9 +1283,8 @@ export default function RootLayout({
 
         {/* Main Content */}
         <div
-          className={`w-full ${
-            shouldShowSidebar ? 'lg:w-[80%]' : 'lg:w-full'
-          } flex flex-col h-screen overflow-hidden transition-all duration-300`}
+          className={`w-full ${shouldShowSidebar ? 'lg:w-[80%]' : 'lg:w-full'
+            } flex flex-col h-screen overflow-hidden transition-all duration-300`}
         >
           {/* Header */}
           <header className="lg:hidden flex items-center justify-between p-4 bg-coffeeLight">
@@ -1433,9 +1431,8 @@ function SuperAdminPanelSideNav() {
                 </NavItem>
               </div>
               <div
-                className={`pl-4 mt-1 overflow-hidden transition-all duration-300 ease-in-out ${
-                  openHotelSubMenu ? 'max-h-screen' : 'max-h-0'
-                }`}
+                className={`pl-4 mt-1 overflow-hidden transition-all duration-300 ease-in-out ${openHotelSubMenu ? 'max-h-screen' : 'max-h-0'
+                  }`}
               >
                 <NavItem
                   href="/super-admin/hotel-management/sub_hotel-management"
@@ -1443,18 +1440,18 @@ function SuperAdminPanelSideNav() {
                 >
                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
-                <NavItem
+                {/* <NavItem
                   href="/super-admin/hotel-management/rooms"
                   label="Room Management"
                 >
-                   {/* <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
+                  {/* <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
                 <NavItem
                   href="/super-admin/hotel-management/room-upgrade"
                   label="Room Upgrade"
-                > */}
+                > 
                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
-                </NavItem>
+                </NavItem> */}
                 <NavItem
                   href="/super-admin/hotel-management/food-plans"
                   label="Food Plans"
@@ -1483,7 +1480,7 @@ function SuperAdminPanelSideNav() {
                   href="/super-admin/hotel-management/services"
                   label="Services"
                 > */}
-             
+
                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
               </div>
@@ -1600,9 +1597,8 @@ function HotelPanelSideNav() {
               </div>
 
               <div
-                className={`pl-4 mt-1 overflow-hidden transition-all duration-300 ease-in-out ${
-                  openGuestSubMenu ? 'max-h-screen' : 'max-h-0'
-                }`}
+                className={`pl-4 mt-1 overflow-hidden transition-all duration-300 ease-in-out ${openGuestSubMenu ? 'max-h-screen' : 'max-h-0'
+                  }`}
               >
                 {/* <NavItem
                   href="/hotel-panel/guest-management/room-upgrade"
@@ -1634,15 +1630,15 @@ function HotelPanelSideNav() {
               </div>
             </div>
           )}
-          
-          {hasAccess('hotel-management') && (
+
+          {/* {hasAccess('hotel-management') && (
             <NavItem
               href="/hotel-panel/room-management"
               label="Room Management"
             >
               <BedDouble className="h-5 w-5 lg:h-6 lg:w-6" />
             </NavItem>
-          )}
+          )} */}
 
           {hasServiceAccess() && (
             <NavItem

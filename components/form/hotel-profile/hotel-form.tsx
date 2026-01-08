@@ -545,7 +545,7 @@ const HotelForm = ({
           'success'
         );
         if (mode === 'add' || mode === 'edit') {
-          router.push('/super-admin/hotel-management');
+          router.push('/super-admin/guest-management');
         }
         console.log('Hotel data:', response);
       } else {

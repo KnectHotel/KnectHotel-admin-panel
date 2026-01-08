@@ -1257,7 +1257,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       }
 
       addGuestForm.reset();
-      router.back();
+      router.push('/hotel-panel/guest-management');
     } catch (err) {
       console.error('Booking Save/Update Failed:', err);
       const { title, fieldErrors } = parseApiError(err);

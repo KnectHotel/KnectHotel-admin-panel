@@ -249,46 +249,63 @@ export const HotelManagementHome: React.FC = () => {
         console.log(response);
 
         if (response.status) {
-          const hotels: HotelDataType[] = response.hotels.map((hotel: any) => ({
-            hotelID: hotel._id || '',
-            serviceID: hotel.HotelId,
-            hotelName: hotel.name,
-            mobileNo: hotel.phoneNo || 'N/A',
-            email: hotel.email,
-            subscriptionDetails: {
-              subscriptionPlan: {
-                _id: hotel.subscriptionPlan?._id || '',
-                planName: hotel.subscriptionPlan?.planName || 'N/A',
-                planType: hotel.subscriptionPlan?.planType || 'N/A',
-                cost: hotel.subscriptionPlan?.cost || 0
+          const hotels: HotelDataType[] = response.hotels.map((hotel: any) => {
+            // ✅ FINAL STATUS LOGIC: Payment + Valid Dates = ACTIVE
+            const isActive =
+              hotel.subscriptionPaymentStatus === 'paid' &&
+              !!hotel.subscriptionStartDate &&
+              !!hotel.subscriptionEndDate;
+
+            // 🔍 DEBUG LOG (Temporary - Remove after issue is 100% stable)
+            console.log('HOTEL STATUS DEBUG', {
+              hotelName: hotel.name,
+              backendStatus: hotel.status,
+              paymentStatus: hotel.subscriptionPaymentStatus,
+              subscriptionStartDate: hotel.subscriptionStartDate,
+              subscriptionEndDate: hotel.subscriptionEndDate,
+              derivedStatus: isActive ? 'ACTIVE' : 'INACTIVE'
+            });
+
+            return {
+              hotelID: hotel._id || '',
+              serviceID: hotel.HotelId,
+              hotelName: hotel.name,
+              mobileNo: hotel.phoneNo || 'N/A',
+              email: hotel.email,
+              subscriptionDetails: {
+                subscriptionPlan: {
+                  _id: hotel.subscriptionPlan?._id || '',
+                  planName: hotel.subscriptionPlan?.planName || 'N/A',
+                  planType: hotel.subscriptionPlan?.planType || 'N/A',
+                  cost: hotel.subscriptionPlan?.cost || 0
+                },
+                subscriptionEndDate: hotel.subscriptionEndDate || 'N/A',
+                subscriptionPrice: hotel.subscriptionPrice || 'N/A',
+                cost: 0
               },
-              subscriptionEndDate: hotel.subscriptionEndDate || 'N/A',
-              subscriptionPrice: hotel.subscriptionPrice || 'N/A',
-              cost: 0
-            },
-            // housekeepingStatus: hotel.housekeepingStatus || 'CLEANED',
-            status:
-              String(hotel.status).toUpperCase() === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE',
-            address: hotel.address || '',
-            city: hotel.city || '',
-            country: hotel.country || '',
-            state: hotel.state || '',
-            pincode: hotel.pincode || '',
-            rooms: hotel.rooms || [],
-            internetConnectivity: hotel.internetConnectivity || false,
-            softwareCompatibility: hotel.softwareCompatibility || false,
-            subscriptionStartDate: hotel.subscriptionStartDate || '',
-            subscriptionEndDate: hotel.subscriptionEndDate || '',
-            subscriptionPaymentStatus:
-              hotel.subscriptionPaymentStatus || 'pending',
-            about: hotel.about || '',
-            gstPercentage: hotel.gstPercentage || 18,
-            createdAt: hotel.createdAt || '',
-            updatedAt: hotel.updatedAt || '',
-            HotelId: hotel.HotelId || '',
-            transaction: hotel.transaction || '',
-            netPrice: hotel.netPrice || 0
-          }));
+              // ✅ USE DERIVED STATUS (not backend flag)
+              status: isActive ? 'ACTIVE' : 'INACTIVE',
+              address: hotel.address || '',
+              city: hotel.city || '',
+              country: hotel.country || '',
+              state: hotel.state || '',
+              pincode: hotel.pincode || '',
+              rooms: hotel.rooms || [],
+              internetConnectivity: hotel.internetConnectivity || false,
+              softwareCompatibility: hotel.softwareCompatibility || false,
+              subscriptionStartDate: hotel.subscriptionStartDate || '',
+              subscriptionEndDate: hotel.subscriptionEndDate || '',
+              subscriptionPaymentStatus:
+                hotel.subscriptionPaymentStatus || 'pending',
+              about: hotel.about || '',
+              gstPercentage: hotel.gstPercentage || 18,
+              createdAt: hotel.createdAt || '',
+              updatedAt: hotel.updatedAt || '',
+              HotelId: hotel.HotelId || '',
+              transaction: hotel.transaction || '',
+              netPrice: hotel.netPrice || 0
+            };
+          });
 
           setData(hotels);
           setFilteredData(hotels);
