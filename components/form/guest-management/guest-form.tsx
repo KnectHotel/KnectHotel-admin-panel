@@ -65,6 +65,7 @@ import DateTimeField from './DateTimeField';
 import { AxiosError } from 'axios';
 import AnimatedSelect from '@/components/ui/AnimatedSelect';
 import { useHotelRoomTypes } from '@/hooks/useHotelRoomTypes';
+import { useHotelRooms } from '@/hooks/useHotelRooms';
 
 interface Props {
   guestId?: string;
@@ -126,12 +127,7 @@ const getBorderColorClass = (status?: string) => {
   }
 };
 
-const DUMMY_ROOMS = [
-  { roomNumber: '101', type: 'Deluxe', category: 'Non-Smoking', tariff: 5000 },
-  { roomNumber: '102', type: 'Standard', category: 'Smoking', tariff: 3500 },
-  { roomNumber: '201', type: 'Suite', category: 'Non-Smoking', tariff: 12000 },
-  { roomNumber: '202', type: 'Deluxe', category: 'Non-Smoking', tariff: 5500 }
-];
+// DUMMY_ROOMS removed in favor of real room data from useHotelRooms hook
 
 const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
   const [services, setServices] = useState<Service[]>([]);
@@ -139,6 +135,9 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [status, setStatus] = useState<'PENDING' | 'APPROVE'>('PENDING');
   const [loading, setLoading] = useState(false);
+
+  // Real room data integration
+  const { availableRooms, loading: roomsLoading } = useHotelRooms();
   const [isExistingGuest, setIsExistingGuest] = useState(false);
   const [isGuestDataFetched, setIsGuestDataFetched] = useState(false);
   const [isRejectFormVisible, setIsRejectFormVisible] = useState(false);
@@ -1704,21 +1703,24 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     addGuestForm.watch('serviceDue')
   ]);
 
-  // Auto-fill Room Details
+  // Auto-fill Room Details from real room data
   useEffect(() => {
     if (assignedRoomNumber) {
-      const room = DUMMY_ROOMS.find((r) => r.roomNumber === assignedRoomNumber);
+      // Find room in real available rooms list
+      const room = availableRooms.find((r) => r.roomNumber === assignedRoomNumber);
       if (room) {
-        addGuestForm.setValue('roomCategory', room.category);
-        addGuestForm.setValue('roomTariff', room.tariff);
-        // Rate Plan could be added here if it existed in schema
+        // Auto-fill category and tariff from the Room model
+        addGuestForm.setValue('roomCategory', room.roomTypeName);
+        addGuestForm.setValue('roomTariff', room.baseRate || 0);
+
         ToastAtTopRight.fire({
           icon: 'success',
-          title: `Room ${room.roomNumber} details auto-filled`
+          title: `Room ${room.roomNumber} (${room.roomTypeName}) selected`,
+          timer: 1500
         });
       }
     }
-  }, [assignedRoomNumber]);
+  }, [assignedRoomNumber, availableRooms]);
 
   const isWalkIn = (v?: string | null) => {
     const s = (v ?? '').trim().toLowerCase();
@@ -2777,10 +2779,21 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                             <AnimatedSelect
                               label=""
                               name="assignedRoomNumber"
-                              options={DUMMY_ROOMS.map((room) => room.roomNumber)}
-                              value={field.value || ''}
+                              options={availableRooms.map((room) => `${room.roomNumber} (${room.roomTypeName})`)}
+                              value={
+                                field.value
+                                  ? (() => {
+                                    const room = availableRooms.find(r => r.roomNumber === field.value);
+                                    return room ? `${room.roomNumber} (${room.roomTypeName})` : field.value;
+                                  })()
+                                  : ''
+                              }
                               onChange={(e) => {
-                                field.onChange(e.target.value);
+                                // Parse out the room number from the "RoomNumber (Type)" format
+                                const selectedLabel = e.target.value;
+                                const roomNumMatch = selectedLabel.match(/^([^(]+)/);
+                                const roomNum = roomNumMatch ? roomNumMatch[1].trim() : selectedLabel;
+                                field.onChange(roomNum);
                               }}
                               searchable={true}
                               dropdownPosition="auto"

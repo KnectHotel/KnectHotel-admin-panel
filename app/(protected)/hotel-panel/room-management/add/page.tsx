@@ -13,11 +13,13 @@ import { useHotelRoomTypes } from '@/hooks/useHotelRoomTypes';
 
 export default function AddRoomPage() {
   const router = useRouter();
-  const { roomTypes, loading: roomTypesLoading, error: roomTypesError } = useHotelRoomTypes();
+  const { roomTypes, loading: roomTypesLoading, refetch } = useHotelRoomTypes();
 
+  const [isNewRoomType, setIsNewRoomType] = useState(false);
   const [formData, setFormData] = useState({
     roomNumber: '',
     roomTypeId: '',
+    roomTypeName: '',  // For new room type
     floorNumber: '1',
     bedType: 'Standard',
     maxOccupancy: 2,
@@ -29,8 +31,7 @@ export default function AddRoomPage() {
   const [submitting, setSubmitting] = useState(false);
 
   console.log('[AddRoom] RoomTypes loaded:', roomTypes);
-  console.log('[AddRoom] RoomTypes loading:', roomTypesLoading);
-  console.log('[AddRoom] RoomTypes error:', roomTypesError);
+  console.log('[AddRoom] Mode:', isNewRoomType ? 'Create New' : 'Select Existing');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -40,26 +41,49 @@ export default function AddRoomPage() {
     }));
   };
 
+  const handleRoomTypeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+
+    if (value === '__CREATE_NEW__') {
+      setIsNewRoomType(true);
+      setFormData(prev => ({ ...prev, roomTypeId: '', roomTypeName: '' }));
+    } else {
+      setIsNewRoomType(false);
+      setFormData(prev => ({ ...prev, roomTypeId: value, roomTypeName: '' }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     console.log('[AddRoom] Form submit started');
     console.log('[AddRoom] Form data:', formData);
 
-    if (!formData.roomTypeId) {
-      ToastAtTopRight.fire({
-        icon: 'error',
-        title: 'Room Type is required'
-      });
-      return;
-    }
-
+    // Validation
     if (!formData.roomNumber || formData.roomNumber.trim() === '') {
       ToastAtTopRight.fire({
         icon: 'error',
         title: 'Room Number is required'
       });
       return;
+    }
+
+    if (isNewRoomType) {
+      if (!formData.roomTypeName || formData.roomTypeName.trim() === '') {
+        ToastAtTopRight.fire({
+          icon: 'error',
+          title: 'Room Type Name is required'
+        });
+        return;
+      }
+    } else {
+      if (!formData.roomTypeId) {
+        ToastAtTopRight.fire({
+          icon: 'error',
+          title: 'Please select a room type'
+        });
+        return;
+      }
     }
 
     setSubmitting(true);
@@ -74,9 +98,26 @@ export default function AddRoomPage() {
 
       console.log('[AddRoom] Sending POST request');
 
+      // Prepare payload based on mode
+      const payload = {
+        roomNumber: formData.roomNumber,
+        floorNumber: formData.floorNumber,
+        bedType: formData.bedType,
+        maxOccupancy: formData.maxOccupancy,
+        baseRate: formData.baseRate,
+        status: formData.status,
+        features: formData.features,
+        ...(isNewRoomType
+          ? { roomTypeName: formData.roomTypeName }  // New room type
+          : { roomTypeId: formData.roomTypeId }       // Existing room type
+        )
+      };
+
+      console.log('[AddRoom] Payload:', payload);
+
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}api/hotel/rooms`,
-        formData,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -89,8 +130,15 @@ export default function AddRoomPage() {
       if (response.data.success) {
         ToastAtTopRight.fire({
           icon: 'success',
-          title: 'Room created successfully'
+          title: isNewRoomType
+            ? 'Room and Room Type created successfully'
+            : 'Room created successfully'
         });
+
+        // Refresh room types list if new one was created
+        if (isNewRoomType) {
+          await refetch();
+        }
 
         router.push('/hotel-panel/room-management');
       } else {
@@ -121,17 +169,9 @@ export default function AddRoomPage() {
     );
   }
 
-  const hasRoomTypes = roomTypes && roomTypes.length > 0;
-
   return (
     <div className="flex flex-col w-full p-8 gap-6">
       <Heading title="Add New Room" description="Create a new room for your hotel" />
-
-      {!hasRoomTypes && (
-        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
-          ⚠️ <strong>No Room Types Configured.</strong> Please configure room types before creating rooms.
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
         <div className="grid grid-cols-2 gap-4">
@@ -153,12 +193,10 @@ export default function AddRoomPage() {
               Room Type <span className="text-red-500">*</span>
             </label>
             <select
-              name="roomTypeId"
-              value={formData.roomTypeId}
-              onChange={handleChange}
+              value={isNewRoomType ? '__CREATE_NEW__' : formData.roomTypeId}
+              onChange={handleRoomTypeSelect}
               className="w-full border border-gray-300 rounded-md px-3 py-2"
               required
-              disabled={!hasRoomTypes}
             >
               <option value="">Select Room Type</option>
               {roomTypes.map(rt => (
@@ -166,8 +204,27 @@ export default function AddRoomPage() {
                   {rt.roomTypeName}
                 </option>
               ))}
+              <option value="__CREATE_NEW__">➕ Create New Room Type</option>
             </select>
           </div>
+
+          {isNewRoomType && (
+            <div className="col-span-2">
+              <label className="block text-sm font-medium mb-2">
+                New Room Type Name <span className="text-red-500">*</span>
+              </label>
+              <Input
+                name="roomTypeName"
+                value={formData.roomTypeName}
+                onChange={handleChange}
+                placeholder="e.g., Deluxe, Premium, Suite"
+                required
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                A new room type will be created and can be used for future rooms
+              </p>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium mb-2">Floor Number</label>
@@ -236,7 +293,7 @@ export default function AddRoomPage() {
         <div className="flex gap-4">
           <Button
             type="submit"
-            disabled={submitting || !hasRoomTypes}
+            disabled={submitting}
           >
             {submitting ? 'Creating...' : 'Create Room'}
           </Button>
