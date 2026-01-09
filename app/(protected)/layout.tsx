@@ -1631,14 +1631,14 @@ function HotelPanelSideNav() {
             </div>
           )}
 
-          {/* {hasAccess('hotel-management') && (
+          {hasAccess('hotel-management') && (
             <NavItem
               href="/hotel-panel/room-management"
               label="Room Management"
             >
               <BedDouble className="h-5 w-5 lg:h-6 lg:w-6" />
             </NavItem>
-          )} */}
+          )}
 
           {hasServiceAccess() && (
             <NavItem

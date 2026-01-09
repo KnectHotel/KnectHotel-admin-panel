@@ -1,6 +1,7 @@
+// KnectHotel-admin-panel/app/hotel-panel/room-management/page.tsx
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { DataTable } from '@/components/ui/data-table';
 import { Button } from '@/components/ui/button';
@@ -8,84 +9,69 @@ import { Heading } from '@/components/ui/heading';
 import { Plus } from 'lucide-react';
 import { columns, RoomDataType } from '@/components/tables/room-management/columns';
 import AnimatedList, { AnimatedListItem } from '@/components/ui/AnimatedList';
-
-const DUMMY_DATA: RoomDataType[] = [
-  {
-    id: '1',
-    roomNumber: '101',
-    roomType: 'Deluxe',
-    roomCategory: 'Non-Smoking',
-    floorNumber: '1',
-    bedType: 'King',
-    maxOccupancy: 2,
-    baseRate: 5000,
-    status: 'Available',
-  },
-  {
-    id: '2',
-    roomNumber: '102',
-    roomType: 'Standard',
-    roomCategory: 'Smoking',
-    floorNumber: '1',
-    bedType: 'Queen',
-    maxOccupancy: 2,
-    baseRate: 3500,
-    status: 'Occupied',
-  },
-  {
-    id: '3',
-    roomNumber: '201',
-    roomType: 'Suite',
-    roomCategory: 'Non-Smoking',
-    floorNumber: '2',
-    bedType: 'King',
-    maxOccupancy: 4,
-    baseRate: 12000,
-    status: 'Available',
-  },
-  {
-    id: '4',
-    roomNumber: '202',
-    roomType: 'Deluxe',
-    roomCategory: 'Non-Smoking',
-    floorNumber: '2',
-    bedType: 'Twin',
-    maxOccupancy: 2,
-    baseRate: 5500,
-    status: 'Maintenance',
-  },
-  {
-    id: '5',
-    roomNumber: '103',
-    roomType: 'Standard',
-    roomCategory: 'Non-Smoking',
-    floorNumber: '1',
-    bedType: 'Queen',
-    maxOccupancy: 2,
-    baseRate: 3500,
-    status: 'Available',
-  },
-  {
-    id: '6',
-    roomNumber: '203',
-    roomType: 'Deluxe',
-    roomCategory: 'Non-Smoking',
-    floorNumber: '2',
-    bedType: 'King',
-    maxOccupancy: 2,
-    baseRate: 5500,
-    status: 'Available',
-  },
-];
+import axios from 'axios';
+import { getSessionStorageItem } from 'utils/localstorage';
 
 export default function HotelRoomPage() {
   const router = useRouter();
-  const [data] = useState<RoomDataType[]>(DUMMY_DATA);
+  const [data, setData] = useState<RoomDataType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedRoomId, setSelectedRoomId] = useState<string | undefined>();
 
-  // Filter rooms that are vacant (Available) and cleaned
-  // In a real app, you'd have a separate "cleaned" status field
-  // For now, we'll assume "Available" means both vacant and cleaned
+  useEffect(() => {
+    fetchRooms();
+  }, []);
+
+  const fetchRooms = async () => {
+    console.log('[RoomManagement] Fetching rooms from API');
+    setLoading(true);
+    setError(null);
+
+    try {
+      const admin = getSessionStorageItem<any>('admin');
+      const token = admin?.token;
+
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}api/hotel/rooms`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('[RoomManagement] API response:', response.data);
+
+      if (response.data?.success && Array.isArray(response.data.rooms)) {
+        const formattedRooms: RoomDataType[] = response.data.rooms.map((room: any) => ({
+          id: room._id,
+          roomNumber: room.roomNumber,
+          roomType: room.roomTypeName,
+          roomCategory: 'Standard',
+          floorNumber: room.floorNumber,
+          bedType: room.bedType,
+          maxOccupancy: room.maxOccupancy,
+          baseRate: room.baseRate,
+          status: room.status,
+        }));
+
+        console.log('[RoomManagement] Formatted rooms:', formattedRooms);
+        setData(formattedRooms);
+      } else {
+        console.warn('[RoomManagement] No rooms found in response');
+        setData([]);
+      }
+    } catch (err: any) {
+      console.error('[RoomManagement] Error fetching rooms:', err);
+      setError(err.message || 'Failed to fetch rooms');
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const availableRooms = useMemo<AnimatedListItem[]>(() => {
     return data
       .filter((room) => room.status === 'Available')
@@ -100,9 +86,28 @@ export default function HotelRoomPage() {
 
   const handleRoomSelect = (item: AnimatedListItem) => {
     setSelectedRoomId(item.id);
-    // You can add additional logic here, like assigning the room to a guest
-    console.log('Selected room:', item);
+    console.log('[RoomManagement] Selected room:', item);
   };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col w-full p-8 gap-6">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-gray-500">Loading rooms...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col w-full p-8 gap-6">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-red-600">Error: {error}</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col w-full p-8 gap-6">
@@ -116,12 +121,10 @@ export default function HotelRoomPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Data Table */}
         <div className="lg:col-span-2">
           <DataTable searchKey="roomNumber" columns={columns} data={data} />
         </div>
 
-        {/* Room Assignment List */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
             <AnimatedList

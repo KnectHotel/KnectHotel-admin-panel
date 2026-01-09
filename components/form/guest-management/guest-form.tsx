@@ -901,6 +901,32 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
 
   const onSubmit = async (data: GuestSchemaType) => {
     console.log("[DEBUG] onSubmit called with data:", data);
+
+    console.log('[Validation] Checking roomTypeId:', data.roomTypeId);
+    if (!data.roomTypeId || data.roomTypeId.trim() === '') {
+      console.error('[Validation] roomTypeId is missing or empty');
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: 'Room type is required',
+        text: 'Please select a room type before creating the booking.'
+      });
+      return;
+    }
+
+    console.log('[Validation] Checking roomStays:', data.roomStays);
+    if (data.roomStays && data.roomStays.length > 0) {
+      const invalidRoomStay = data.roomStays.find(rs => !rs.roomTypeId || rs.roomTypeId.trim() === '');
+      if (invalidRoomStay) {
+        console.error('[Validation] Found room stay without roomTypeId:', invalidRoomStay);
+        ToastAtTopRight.fire({
+          icon: 'error',
+          title: 'All room stays must have a room type selected'
+        });
+        return;
+      }
+    }
+    console.log('[Validation] All checks passed');
+
     if (!data.checkInDate) {
       data.checkInDate = null;
     }
@@ -3463,27 +3489,48 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                         <FormLabel className="text-sm font-semibold text-gray-700">
                           Room Stays
                         </FormLabel>
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            // Use first available room type from hotel, or empty defaults
-                            const defaultRoomType = roomTypes[0];
-                            appendRoomStay({
-                              roomTypeId: defaultRoomType?.roomTypeId || '',
-                              ratePlanId: '',  // Omitted - Stayflexi uses default
-                              roomTypeName: defaultRoomType?.roomTypeName || '',
-                              numAdults: 1,
-                              numChildren: 0,
-                              roomId: ''
-                            });
-                          }}
-                          className="h-7 text-xs"
-                          disabled={!isEnabled || roomTypes.length === 0}
-                        >
-                          <Plus className="h-3 w-3 mr-1" /> Add Room Stay
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          {roomTypes.length === 0 && !roomTypesLoading && (
+                            <span className="text-xs text-red-600 bg-red-50 px-2 py-1 rounded">
+                              Room types must be configured before creating bookings
+                            </span>
+                          )}
+                          {roomTypesLoading && (
+                            <span className="text-xs text-gray-500">
+                              Loading room types...
+                            </span>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              console.log('[AddRoomStay] Button clicked, roomTypes.length:', roomTypes.length);
+                              if (roomTypes.length === 0) {
+                                ToastAtTopRight.fire({
+                                  icon: 'error',
+                                  title: 'Room types required',
+                                  text: 'Please configure room types for this hotel before creating bookings.'
+                                });
+                                return;
+                              }
+                              const defaultRoomType = roomTypes[0];
+                              console.log('[AddRoomStay] Adding room stay with roomTypeId:', defaultRoomType?.roomTypeId);
+                              appendRoomStay({
+                                roomTypeId: defaultRoomType?.roomTypeId || '',
+                                ratePlanId: '',
+                                roomTypeName: defaultRoomType?.roomTypeName || '',
+                                numAdults: 1,
+                                numChildren: 0,
+                                roomId: ''
+                              });
+                            }}
+                            className="h-7 text-xs"
+                            disabled={!isEnabled || roomTypes.length === 0}
+                          >
+                            <Plus className="h-3 w-3 mr-1" /> Add Room Stay
+                          </Button>
+                        </div>
                       </div>
                       <div className="w-[100%] gap-4">
                         {roomStaysFields.map((field, index) => (

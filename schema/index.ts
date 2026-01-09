@@ -1,3 +1,4 @@
+// KnectHotel-admin-panel/schema/index.ts
 import { sources } from 'next/dist/compiled/webpack/webpack';
 import { z } from 'zod';
 
@@ -216,13 +217,13 @@ export const guestSchema = z
 
     // Room Type and Rate Plan - nullable to handle null from API on edit
     ratePlanId: z.string().nullable().optional(),
-    roomTypeId: z.string().nullable().optional(),
+    roomTypeId: z.string().min(1, 'Room type is required'),
     roomTypeName: z.string().nullable().optional(),
     payAtHotel: z.boolean().default(false).optional(),
 
     // Room Stays - nullable fields to handle null from API on edit
     roomStays: z.array(z.object({
-      roomTypeId: z.string().nullable().optional(),
+      roomTypeId: z.string().min(1, 'Room type is required'),
       ratePlanId: z.string().nullable().optional(),
       roomTypeName: z.string().nullable().optional(),
       numAdults: z.number().default(1).optional(),

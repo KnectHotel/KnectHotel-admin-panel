@@ -23,6 +23,21 @@ export const columns: ColumnDef<RoomDataType>[] = [
   {
     accessorKey: 'roomType',
     header: 'Room Type',
+    cell: ({ row }) => {
+      const roomType = row.getValue('roomType') as string;
+      const isUnlinked = roomType === 'Unlinked';
+
+      return (
+        <div className={`${isUnlinked ? 'text-red-600 font-semibold flex items-center gap-1' : ''}`}>
+          {isUnlinked && (
+            <span className="text-red-600" title="Room not linked to any Room Type">
+              ⚠️
+            </span>
+          )}
+          {roomType}
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'roomCategory',
@@ -62,7 +77,7 @@ export const columns: ColumnDef<RoomDataType>[] = [
       if (status === 'Occupied') colorClass = 'text-red-500';
       if (status === 'Maintenance') colorClass = 'text-yellow-500';
       if (status === 'Reserved') colorClass = 'text-blue-500';
-      
+
       return <div className={`font-medium ${colorClass}`}>{status}</div>;
     },
   },
