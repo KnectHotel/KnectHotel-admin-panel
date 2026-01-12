@@ -13,13 +13,18 @@ RUN npm install --legacy-peer-deps
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copy dependencies from deps stage
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# BUILD-TIME ENV (VERY IMPORTANT)
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_STAYFLEXI_API_KEY
 
-# Set environment variables for build
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_STAYFLEXI_API_KEY=$NEXT_PUBLIC_STAYFLEXI_API_KEY
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules   
+COPY . .
 
 # Build the application
 RUN npm run build
@@ -27,9 +32,6 @@ RUN npm run build
 # Stage 3: Runner
 FROM node:20-alpine AS runner
 WORKDIR /app
-
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
 
 # Create non-root user for security
 RUN addgroup --system --gid 1001 nodejs
@@ -48,9 +50,9 @@ RUN chown -R nextjs:nodejs /app
 USER nextjs
 
 # Expose port
-EXPOSE 3000
+EXPOSE 8080
 
-ENV PORT=3000
+ENV PORT=8080
 ENV HOSTNAME="0.0.0.0"
 
 # Start the application
