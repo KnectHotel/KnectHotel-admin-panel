@@ -85,7 +85,7 @@ const LoginForm = () => {
     }
     // Hardcoded test login bypass
     if (data.email === 'info@knecthotel.com' && data.password === 'knect@123') {
-        router.push('/super-admin/dashboard');
+      router.push('/super-admin/dashboard');
 
       // Fake user object for testing
       const fakeUser = {
@@ -113,8 +113,7 @@ const LoginForm = () => {
     try {
       const response = await apiCall<LoginResponse>(
         'POST',
-        // 'https://uat-backend.knecthotel.com/api/superAdmin/login',
-        `${process.env.NEXT_PUBLIC_API_URL}api/superAdmin/login`,
+        '/api/superAdmin/login',
         {
           email: data.email,
           password: data.password
