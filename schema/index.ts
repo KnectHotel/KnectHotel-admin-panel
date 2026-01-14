@@ -370,6 +370,12 @@ export const roomConfigSchema = z.object({
     .default([])
 });
 
+export const roomTypeSchema = z.object({
+  roomTypeName: z.string().min(1, 'Room type name is required'),
+  roomCount: z.coerce.number().min(1, 'Room count must be at least 1'),
+  amenities: z.array(z.string()).optional().default([])
+});
+
 export const hotelSchema = z.object({
   hotelId: z.string().min(1, 'Hotel ID is required'), // maps to "HotelId"
   name: z.string().min(1, 'Hotel name is required'), // maps to "name"
@@ -464,7 +470,8 @@ export const hotelSchema = z.object({
   subscriptionPlanType: z.string().optional(),
   gstPercentage: z.number().min(0).max(100).optional(),
   serviceDue: z.number().optional(),
-  sendToStayflexi: z.boolean().optional().default(true)
+  sendToStayflexi: z.boolean().optional().default(true),
+  roomTypes: z.array(roomTypeSchema).min(1, 'At least one room type is required')
 });
 // Inferred type
 export type HotelSchemaType = z.infer<typeof hotelSchema>;

@@ -19,12 +19,9 @@ interface UseHotelRoomTypesResult {
 }
 
 /**
- * Hook to fetch hotel-specific room types from the backend.
- * Fetches directly from /api/hotel/room-types endpoint.
- * 
- * @returns {UseHotelRoomTypesResult} - roomTypes array, loading state, error, and refetch function
+ * @returns {UseHotelRoomTypesResult} 
  */
-export function useHotelRoomTypes(): UseHotelRoomTypesResult {
+export function useHotelRoomTypes(bookingMode: boolean = false): UseHotelRoomTypesResult {
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,10 +31,9 @@ export function useHotelRoomTypes(): UseHotelRoomTypesResult {
     setError(null);
 
     try {
-      console.debug('[useHotelRoomTypes] Fetching room types from API');
+      console.debug('[useHotelRoomTypes] Fetching room types from API', { bookingMode });
 
-      // Fetch room types directly from dedicated endpoint
-      const response = await apiCall('GET', '/api/hotel/room-types');
+      const response = await apiCall('GET', `/api/hotel/room-types?bookingMode=${bookingMode}`);
 
       console.debug('[useHotelRoomTypes] API response:', {
         success: response?.success,
@@ -72,7 +68,7 @@ export function useHotelRoomTypes(): UseHotelRoomTypesResult {
 
   useEffect(() => {
     fetchRoomTypes();
-  }, []);
+  }, [bookingMode]);
 
   return {
     roomTypes,
