@@ -233,6 +233,7 @@ const HotelForm = ({
       subscriptionStartDate: '',
       subscriptionEndDate: '',
       about: fetchedHotelData?.about || '',
+      roomTypes: fetchedHotelData?.roomTypes || [{ roomTypeName: 'Single', roomCount: 1, amenities: [] }],
       wifi: {
         wifiName: fetchedHotelData?.wifi?.wifiName || '',
         password: fetchedHotelData?.wifi?.password || '',
@@ -386,7 +387,8 @@ const HotelForm = ({
       'state',
       'pinCode',
       'subscriptionPlan',
-      'subscriptionStartDate'
+      'subscriptionStartDate',
+      'roomTypes'
     ]);
     if (!ok) return;
 
@@ -506,6 +508,7 @@ const HotelForm = ({
         scanner: data?.wifi?.scanner || ''
       },
       sendToStayflexi: data.sendToStayflexi,
+      roomTypes: data.roomTypes || [],
       about: data?.about || ''
     };
     console.log('Payload:', payload);
@@ -648,6 +651,7 @@ const HotelForm = ({
             // couponCode: res.hotel.applyCoupon || '',
             about: res.hotel.about || '',
             servingDepartment: res.hotel.servingDepartment || [],
+            roomTypes: res.hotel.roomTypes || [{ roomTypeName: 'Single', roomCount: 1, amenities: [] }],
             internetConnectivity: res.hotel.internetConnectivity || false,
             softwareCompatibility: res.hotel.softwareCompatibility || false,
             wifi: res.hotel.wifi || { wifiName: '', password: '', scanner: {} },
@@ -797,6 +801,7 @@ const HotelForm = ({
           netPrice: d.netPrice ?? 0,
 
           about: d.about || '',
+          roomTypes: d.roomTypes || [{ roomTypeName: 'Single', roomCount: 1, amenities: [] }],
           servingDepartment: d.servingDepartment || [],
           internetConnectivity: !!d.internetConnectivity,
           softwareCompatibility: !!d.softwareCompatibility,
@@ -968,6 +973,11 @@ const HotelForm = ({
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'roomConfigs'
+  });
+
+  const { fields: roomTypeFields, append: appendRoomType, remove: removeRoomType } = useFieldArray({
+    control: form.control,
+    name: 'roomTypes'
   });
 
   const fetchSubscriptionPlans = async () => {
@@ -2230,7 +2240,6 @@ const HotelForm = ({
                 }}
               />
 
-              {/* Room IDs */}
               <FormField
                 control={form.control}
                 name="roomIds"
@@ -2260,9 +2269,7 @@ const HotelForm = ({
 
                   return (
                     <FormItem>
-                      {/* <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                        Room IDs
-                      </FormLabel> */}
+              
                       <div className="flex flex-wrap gap-2 mb-2">
                         {roomIds?.map((id, i) => (
                           <span
@@ -2283,18 +2290,176 @@ const HotelForm = ({
                           </span>
                         ))}
                       </div>
-                      {/* <Input
-                        type="text"
-                        onKeyDown={onKeyDown}
-                        disabled={isDisabled}
-                        placeholder="Enter room ID, press Enter"
-                        className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-xs 2xl:text-sm"
-                      /> */}
                       <FormMessage className="text-[10px]" />
                     </FormItem>
                   );
                 }}
               />
+
+            
+              <div className="flex flex-col gap-4 bg-[#F9F4EA] p-5 rounded-lg border border-[#E8DCC4] mt-4">
+                <div className="flex justify-between items-center border-b border-[#E8DCC4] pb-3 mb-2">
+                  <h3 className="text-sm 2xl:text-base font-semibold text-gray-800">Room Types Configuration</h3>
+                  {!isDisabled && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => appendRoomType({ roomTypeName: 'Single', roomCount: 1, amenities: [] })}
+                      className="flex items-center gap-2 border-coffee text-coffee hover:bg-coffee hover:text-white h-8 text-xs"
+                    >
+                      <Plus size={14} /> Add Room Type
+                    </Button>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  {roomTypeFields.map((field, index) => (
+                    <div key={field.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start p-4 bg-white/50 rounded-md border border-[#F0E6D2] relative group">
+                      <div className="md:col-span-4">
+                        <FormField
+                          control={form.control}
+                          name={`roomTypes.${index}.roomTypeName`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-[11px] uppercase tracking-wider text-gray-500 font-bold">Room Type Name</FormLabel>
+                              <FormControl>
+                                <div className="flex flex-col gap-2">
+                                  <Select
+                                    onValueChange={(val) => {
+                                      if (val !== 'Custom') {
+                                        field.onChange(val);
+                                      } else {
+                                        field.onChange(''); // Clear to show input
+                                      }
+                                    }}
+                                    value={['Single', 'Double', 'Deluxe', 'Suite'].includes(field.value) ? field.value : (field.value === '' ? 'Custom' : 'Custom')}
+                                    disabled={isDisabled}
+                                  >
+                                    <SelectTrigger className="w-full bg-[#F6EEE0] border-none text-xs text-black">
+                                      <SelectValue placeholder="Select" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {['Single', 'Double', 'Deluxe', 'Suite', 'Custom'].map((opt) => (
+                                        <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                  {(!['Single', 'Double', 'Deluxe', 'Suite'].includes(field.value)) && (
+                                    <Input
+                                      placeholder="Ex: Presidential Suite"
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                      disabled={isDisabled}
+                                      className="bg-[#F6EEE0] border-none text-xs h-9 text-black"
+                                    />
+                                  )}
+                                </div>
+                              </FormControl>
+                              <FormMessage className="text-[10px]" />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <FormField
+                          control={form.control}
+                          name={`roomTypes.${index}.roomCount`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-[11px] uppercase tracking-wider text-gray-500 font-bold">Count</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  min={1}
+                                  {...field}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                                  disabled={isDisabled}
+                                  className="bg-[#F6EEE0] border-none text-xs h-9 text-black"
+                                />
+                              </FormControl>
+                              <FormMessage className="text-[10px]" />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="md:col-span-5">
+                        <FormField
+                          control={form.control}
+                          name={`roomTypes.${index}.amenities`}
+                          render={({ field }) => {
+                            const currentAmenities = Array.isArray(field.value) ? field.value : [];
+                            const common = ['AC', 'WiFi', 'TV', 'Mini Bar', 'Bathtub'];
+
+                            const toggle = (val: string) => {
+                              if (currentAmenities.includes(val)) {
+                                field.onChange(currentAmenities.filter((a: string) => a !== val));
+                              } else {
+                                field.onChange([...currentAmenities, val]);
+                              }
+                            };
+
+                            return (
+                              <FormItem>
+                                <FormLabel className="text-[11px] uppercase tracking-wider text-gray-500 font-bold">Amenities</FormLabel>
+                                <div className="flex flex-wrap gap-1.5 mt-1">
+                                  {common.map((a) => (
+                                    <button
+                                      key={a}
+                                      type="button"
+                                      onClick={() => !isDisabled && toggle(a)}
+                                      className={cn(
+                                        "px-2 py-1 text-[10px] rounded transition-all",
+                                        currentAmenities.includes(a)
+                                          ? "bg-coffee text-white"
+                                          : "bg-[#F6EEE0] text-gray-600 hover:bg-[#EBDCC4]"
+                                      )}
+                                      disabled={isDisabled}
+                                    >
+                                      {a}
+                                    </button>
+                                  ))}
+                                </div>
+                                {!isDisabled && (
+                                  <Input
+                                    placeholder="Add other..."
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        const val = e.currentTarget.value.trim();
+                                        if (val && !currentAmenities.includes(val)) {
+                                          field.onChange([...currentAmenities, val]);
+                                          e.currentTarget.value = '';
+                                        }
+                                      }
+                                    }}
+                                    className="mt-2 bg-[#F6EEE0] border-none text-xs h-7 text-black"
+                                  />
+                                )}
+                              </FormItem>
+                            );
+                          }}
+                        />
+                      </div>
+
+                      {!isDisabled && roomTypeFields.length > 1 && (
+                        <div className="md:col-span-1 pt-7">
+                          <button
+                            type="button"
+                            onClick={() => removeRoomType(index)}
+                            className="text-red-400 hover:text-red-600 transition-colors p-2"
+                            title="Remove Room Type"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {/* Pricing and Occupancy */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -4144,7 +4309,7 @@ const HotelForm = ({
             {mode !== 'pending' && (
               <Button
                 type="submit"
-                disabled={isDisabled}
+                disabled={isDisabled || roomTypeFields.length === 0}
                 className="btn-primary text-xs 2xl:text-sm"
               >
                 {isMode(['edit', 'view']) ? 'Save Changes' : 'Create'}

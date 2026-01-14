@@ -30,6 +30,7 @@ import {
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { saveRoomSyncData } from '@/utils/roomSync';
 import { usePathname } from 'next/navigation';
+import { apiCall } from '@/lib/axios';
 
 const formSchema = z.object({
   roomNumber: z.string().min(1, 'Room number is required'),
@@ -82,36 +83,33 @@ export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
   const onSubmit = async (data: RoomFormValues) => {
     try {
       setLoading(true);
-      // Save room data for syncing with hotel management form
-      saveRoomSyncData({
-        roomType: data.roomType,
-        roomCategory: data.roomCategory,
-        floorNumber: data.floorNumber,
-        tower: data.tower,
-        bedType: data.bedType,
-        maxOccupancy: data.maxOccupancy,
-        roomSize: data.roomSize,
-        baseRate: data.baseRate,
-        amenities: data.amenities,
-      });
-      // Simulate API call
-      console.log('Room Data Submitted:', data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const payload = {
+        ...data,
+        roomTypeName: data.roomType,
+        features: data.amenities ? data.amenities.split(',').map(s => s.trim()) : []
+      };
+
+      if (initialData) {
+        await apiCall('PUT', `/api/hotel/rooms/${params.roomId}`, payload);
+      } else {
+        await apiCall('POST', '/api/hotel/rooms', payload);
+      }
+
       ToastAtTopRight.fire({
-          icon: 'success',
-          title: toastMessage,
+        icon: 'success',
+        title: toastMessage,
       });
       router.refresh();
-      // Determine redirect path based on current route
       const redirectPath = pathname?.startsWith('/hotel-panel')
         ? '/hotel-panel/room-management'
         : '/super-admin/hotel-management/rooms';
       router.push(redirectPath);
     } catch (error: any) {
-        ToastAtTopRight.fire({
-            icon: 'error',
-            title: 'Something went wrong.',
-        });
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error?.message || 'Something went wrong.',
+      });
     } finally {
       setLoading(false);
     }
@@ -120,23 +118,21 @@ export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      // Simulate API call
-       await new Promise((resolve) => setTimeout(resolve, 1000));
-       ToastAtTopRight.fire({
+      await apiCall('DELETE', `/api/hotel/rooms/${params.roomId}`);
+      ToastAtTopRight.fire({
         icon: 'success',
         title: 'Room deleted.',
-    });
+      });
       router.refresh();
-      // Determine redirect path based on current route
       const redirectPath = pathname?.startsWith('/hotel-panel')
         ? '/hotel-panel/room-management'
         : '/super-admin/hotel-management/rooms';
       router.push(redirectPath);
     } catch (error: any) {
-        ToastAtTopRight.fire({
-            icon: 'error',
-            title: 'Make sure you removed all dependencies first.',
-        });
+      ToastAtTopRight.fire({
+        icon: 'error',
+        title: error?.message || 'Make sure you removed all dependencies first.',
+      });
     } finally {
       setLoading(false);
     }
@@ -168,13 +164,13 @@ export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
                 <FormItem>
                   <FormLabel>Room Number</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="e.g. 101" {...field} />
+                    <Input className="text-black" disabled={loading} placeholder="e.g. 101" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="roomType"
               render={({ field }) => (
@@ -187,7 +183,7 @@ export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="text-black">
                         <SelectValue defaultValue={field.value} placeholder="Select a room type" />
                       </SelectTrigger>
                     </FormControl>
@@ -215,7 +211,7 @@ export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="text-black">
                         <SelectValue defaultValue={field.value} placeholder="Select category" />
                       </SelectTrigger>
                     </FormControl>
@@ -234,27 +230,27 @@ export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Floor Number</FormLabel>
-                   <FormControl>
-                    <Input disabled={loading} placeholder="e.g. 1" {...field} />
+                  <FormControl>
+                    <Input className="text-black" disabled={loading} placeholder="e.g. 1" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="tower"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tower / Building</FormLabel>
-                   <FormControl>
-                    <Input disabled={loading} placeholder="e.g. Tower A" {...field} />
+                  <FormControl>
+                    <Input className="text-black" disabled={loading} placeholder="e.g. Tower A" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="bedType"
               render={({ field }) => (
@@ -267,7 +263,7 @@ export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="text-black">
                         <SelectValue defaultValue={field.value} placeholder="Select bed type" />
                       </SelectTrigger>
                     </FormControl>
@@ -282,40 +278,40 @@ export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="maxOccupancy"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Max Occupancy</FormLabel>
                   <FormControl>
-                    <Input type="number" disabled={loading} {...field} />
+                    <Input className="text-black" type="number" disabled={loading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="roomSize"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Room Size (sq. ft)</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="e.g. 350" {...field} />
+                    <Input className="text-black" disabled={loading} placeholder="e.g. 350" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="amenities"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Room Amenities (Comma separated)</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="e.g. WiFi, AC, TV" {...field} />
+                    <Input className="text-black" disabled={loading} placeholder="e.g. WiFi, AC, TV" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -328,7 +324,7 @@ export const RoomForm: React.FC<RoomFormProps> = ({ initialData }) => {
                 <FormItem>
                   <FormLabel>Room Charges</FormLabel>
                   <FormControl>
-                    <Input type="number" disabled={loading} {...field} />
+                    <Input className="text-black" type="number" disabled={loading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -127,7 +127,6 @@ const getBorderColorClass = (status?: string) => {
   }
 };
 
-// DUMMY_ROOMS removed in favor of real room data from useHotelRooms hook
 
 const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
   const [services, setServices] = useState<Service[]>([]);
@@ -136,7 +135,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
   const [status, setStatus] = useState<'PENDING' | 'APPROVE'>('PENDING');
   const [loading, setLoading] = useState(false);
 
-  // Real room data integration
   const { availableRooms, loading: roomsLoading } = useHotelRooms();
   const [isExistingGuest, setIsExistingGuest] = useState(false);
   const [isGuestDataFetched, setIsGuestDataFetched] = useState(false);
@@ -144,7 +142,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [rejectionMessage, setRejectionMessage] = useState('');
-  const [isEditMode, setIsEditMode] = useState(false); // Default is false (view mode)
+  const [isEditMode, setIsEditMode] = useState(false);
   const lastFetchedPhoneRef = React.useRef<string | null>(null);
   const [fetchingByPhone, setFetchingByPhone] = useState(false);
 
@@ -158,7 +156,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
   const id = guestId;
   const [guest, setGuest] = useState<GuestDataType | null>(null);
   const [showAllowModal, setShowAllowModal] = useState(false);
-  // At the top inside GuestForm
   type GuestPayloadType = {
     guestType: 'adult' | 'children' | 'infant';
     firstName: string;
@@ -177,10 +174,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     []
   );
 
-  // Fetch hotel-specific room types for dropdown
-  const { roomTypes, loading: roomTypesLoading, error: roomTypesError } = useHotelRoomTypes();
+  const { roomTypes, loading: roomTypesLoading, error: roomTypesError } = useHotelRoomTypes(true);
   const uploadToS3 = async (file: File): Promise<string> => {
-    // limit to 5 MB
     if (file.size > 5 * 1024 * 1024) throw new Error('File size exceeds 5MB');
     if (!/(image\/.*|application\/pdf)/i.test(file.type))
       throw new Error('Only images or PDF allowed');
@@ -224,10 +219,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         setLoading(true);
         const url = await uploadToS3(file);
 
-        // ✅ make sure the row exists (you already have ensureGuestCount)
         const currentGuests = addGuestForm.getValues('guests') || [];
         if (!currentGuests[index]) {
-          // add an empty row if somehow missing
           const blank: GuestPayloadType = {
             guestType: 'adult',
             firstName: '',
@@ -235,25 +228,18 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
             phoneNumber: '',
             countryCode: '+91',
             gender: 'male'
-            // idProof removed
           };
-          // ensure array long enough
           while (currentGuests.length <= index) currentGuests.push(blank);
           addGuestForm.setValue('guests', currentGuests, { shouldDirty: true });
         }
-
-        // ✅ set url for this guest
-        // ✅ ensure idProof object exists
         const currentGuest = addGuestForm.getValues(`guests.${index}`);
         if (!currentGuest?.idProof?.type) {
-          // Initialize idProof if missing or incomplete
           addGuestForm.setValue(`guests.${index}.idProof`, {
-            type: 'PASSPORT', // Default when user uploads
+            type: 'PASSPORT',
             url: url,
             verification: { status: 'PENDING' }
           }, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
         } else {
-          // Just update URL
           addGuestForm.setValue(`guests.${index}.idProof.url` as any, url, {
             shouldDirty: true,
             shouldTouch: true,
@@ -311,12 +297,12 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
               );
             }
             if (guest.specialRequests) {
-              setRejectionMessage(guest.specialRequests); // Set the state if required
-              addGuestForm.setValue('specialRequests', guest.specialRequests); // Set the form value
+              setRejectionMessage(guest.specialRequests);
+              addGuestForm.setValue('specialRequests', guest.specialRequests);
             }
             setIsExistingGuest(true);
             const normalizedGuests = (guest.guests ?? [])
-              .slice(1) // 👈 this removes index 0
+              .slice(1)
               .map((g: any) => ({
                 firstName: g.firstName || '',
                 lastName: g.lastName || '',
@@ -339,7 +325,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
             const cc = guest.countryCode || '+91';
             const e164 = toE164(nat, cc);
 
-            // ✅ Normalize location HERE (you already have this helper)
             const { countryISO, stateISO, cityName } = normalizeLocation(
               guest.country,
               guest.state,
@@ -348,20 +333,15 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
             addGuestForm.reset({
               firstName: guest.firstName,
               lastName: guest.lastName,
-              // phoneNumber: guest.phoneNumber,
               phoneE164: e164,
               phoneNumber: nat,
               countryCode: cc,
               email: guest.email,
               address: guest.address,
-              // country: guest.country,
-              // state: guest.state,
-              // city: guest.city,
               country: countryISO,
               state: stateISO,
               city: cityName,
               pinCode: guest.pincode,
-              // source: guest.sources,
               sources: guest.sources,
               receivedAmt: guest.receivedAmt || 0,
               roomTariffDue: guest.roomTariffDue || 0,
@@ -375,9 +355,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
               checkInDate: guest.checkInDate || null,
               checkOutDate: guest.checkOutDate || null,
               status: isValidStatus(guest.status) ? guest.status : 'Pending',
-              // paymentStatus: isValidPaymentStatus(guest.paymentStatus)
-              //   ? guest.paymentStatus
-              //   : 'Pending',
               guests: normalizedGuests,
               paymentStatus: guest.paymentStatus,
               childrenGuestsCount: guest.childrenGuestsCount,
@@ -416,26 +393,22 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
               },
               // Promo Info
               promoInfo: guest?.promoInfo || {},
-              // Room Type and Rate Plan - use actual values, no fallbacks
               ratePlanId: guest?.ratePlanId,
               roomTypeId: guest?.roomTypeId,
               roomTypeName: guest?.roomTypeName,
               payAtHotel: guest?.payAtHotel || false,
-              // Room Stays
               roomStays: guest?.roomStays || []
             });
 
-            // Debug: Verify roomStays after form reset
             console.debug('[BOOKING_RESET] roomStays set to form:', guest?.roomStays?.length || 0, 'items');
 
             if (guest.images) {
               setImages(guest.images);
             }
 
-            // Set the services data
             if (guest.services) {
               setServices(guest.services);
-              console.log('Fetched services:', guest.services); // Debug log
+              console.log('Fetched services:', guest.services);
             }
           }
         } catch (err) {
@@ -466,7 +439,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         setRejectionReason('');
         router.push('/hotel-panel/guest-management');
       } else {
-        // Show error if the request cannot be processed
         if (response.statusCode === 404) {
           toast.error('Pre-checkin request not found or already processed');
         } else {
@@ -488,8 +460,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     defaultValues: {
       firstName: '',
       lastName: '',
-      phoneE164: '', // new
-      countryCode: '+91', // keep a default if you want
+      phoneE164: '',
+      countryCode: '+91',
       phoneNumber: '',
       email: '',
       businessName: '',
@@ -498,15 +470,15 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       address: '',
       guests: [],
       landmark: '',
-      country: 'IN', // default India
-      state: '', // will be set after country
+      country: 'IN',
+      state: '',
       city: '',
       pinCode: '',
       gst: undefined,
       sources: 'Walk-In',
       adultGuestsCount: 1,
       childrenGuestsCount: 0,
-      infantGuestsCount: 0, // default to 1
+      infantGuestsCount: 0,
       receivedAmt: 0,
       roomTariffDue: 0,
       serviceDue: 0,
@@ -536,7 +508,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           requestId: null
         }
       },
-      // Payment Details
       paymentDetails: {
         sellRate: 300,
         netRate: 0,
@@ -548,14 +519,12 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         tds: 0,
         payAtHotel: false
       },
-      // Promo Info
       promoInfo: {},
-      // Room Type and Rate Plan - no hardcoded defaults, selected from hotel's roomTypes
+
       ratePlanId: undefined,
       roomTypeId: undefined,
       roomTypeName: undefined,
       payAtHotel: false,
-      // Room Stays
       roomStays: [],
       externalRatePlanId: '',
       externalRoomTypeId: '',
@@ -580,75 +549,18 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     control: addGuestForm.control,
     name: 'roomStays'
   });
-  // const { fields, append, remove, replace } = useFieldArray({
-  //   control: addGuestForm.control,
-  //   name: 'guests'
-  // });
+
   const [idProofDetails, setIdProofDetails] = useState<{
     type: string;
     url: string;
     status: string;
   } | null>(null);
 
-  // const fetchAndPrefillByPhone = async (digits10: string) => {
-  //   if (!digits10 || digits10.length !== 10) return;
-  //   if (lastFetchedPhoneRef.current === digits10) return; // avoid redundant calls
 
-  //   try {
-  //     setFetchingByPhone(true);
-  //     const response = await apiCall(
-  //       'GET',
-  //       `api/booking/fetch-guest/${digits10}`
-  //     );
-  //     const guest = response?.guest;
-
-  //     if (!guest) {
-  //       // nothing found -> allow free typing
-  //       setIsGuestDataFetched(false);
-  //       lastFetchedPhoneRef.current = digits10;
-  //       return;
-  //     }
-
-  //     // Mark that we auto-filled; disable certain fields
-  //     setIsGuestDataFetched(true);
-  //     lastFetchedPhoneRef.current = digits10;
-
-  //     // If your API returns slightly different keys, map here:
-  //     addGuestForm.setValue('firstName', guest.firstName || '');
-  //     addGuestForm.setValue('lastName', guest.lastName || '');
-  //     addGuestForm.setValue('email', guest.email || '');
-  //     // addGuestForm.setValue('address', guest.address || '');
-  //     // addGuestForm.setValue('state', guest.state || '');
-  //     // addGuestForm.setValue('city', guest.city || '');
-  //     // addGuestForm.setValue('pinCode', guest.pinCode || guest.pincode || '');
-  //     // addGuestForm.setValue('source', guest.source || guest.sources || '');
-
-  //     // id proof preview
-  //     if (guest?.idProof?.url) {
-  //       setIdProofDetails({
-  //         type: guest?.idProof?.type || '',
-  //         url: guest?.idProof?.url || '',
-  //         status: guest?.idProof?.verification?.status || 'PENDING'
-  //       });
-  //       setImages([guest.idProof.url, ...Array(5).fill(null)]);
-  //     } else {
-  //       setIdProofDetails(null);
-  //       setImages(Array(6).fill(null));
-  //     }
-  //   } catch (err) {
-  //     console.error('Error fetching guest by phone:', err);
-  //     setIsGuestDataFetched(false);
-  //   } finally {
-  //     setFetchingByPhone(false);
-  //   }
-  // };
-  // Fetch guest by 10-digit NATIONAL number only (no country code)
   const fetchAndPrefillByPhone = async (digits10: string): Promise<void> => {
-    // Guard: must be exactly 10 digits
     const onlyDigits = String(digits10 || '').replace(/\D/g, '');
     if (!/^\d{10}$/.test(onlyDigits)) return;
 
-    // Avoid redundant calls for the same number
     if (lastFetchedPhoneRef.current === onlyDigits) return;
 
     try {
@@ -3592,7 +3504,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                             <SelectValue placeholder="Select room type" />
                                           </SelectTrigger>
                                           <SelectContent>
-                                            {roomTypes.map((rt) => (
+                                            {roomTypes.filter(rt => rt.roomTypeName).map((rt) => (
                                               <SelectItem key={rt.roomTypeId} value={rt.roomTypeId}>
                                                 {rt.roomTypeName} ({rt.roomCount} rooms)
                                               </SelectItem>
