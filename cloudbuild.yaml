@@ -6,8 +6,14 @@ steps:
       - '--build-arg=NEXT_PUBLIC_API_URL=https://uat-api.knecthotel.com/'
       - '--build-arg=NEXT_PUBLIC_STAYFLEXI_API_KEY=knect_steflexy_adytt_u_wtyuio_kvbn'
       - '-t'
-      - 'gcr.io/knect-uat-admin/knecthotel-admin:latest'
+      - 'us-central1-docker.pkg.dev/knect-uat-admin/cloud-run/knect-admin:latest'
       - '.'
 
+  # Push to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/knect-uat-admin/cloud-run/knect-admin:latest'
+
 images:
-  - 'gcr.io/knect-uat-admin/knecthotel-admin:latest'
+  - 'us-central1-docker.pkg.dev/knect-uat-admin/cloud-run/knect-admin:latest'
