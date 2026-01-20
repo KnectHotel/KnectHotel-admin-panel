@@ -4,9 +4,9 @@ import { getSessionStorageItem } from "utils/localstorage";
 
 
 function fixProtocolTypos(url: string): string {
-  
-  if (/^https?:\/\
-  
+
+  if (/^https?:\/\//.test(url)) return url;
+
   return url.replace(/^(https?:)\/+/i, (m, p1) => `${p1}//`);
 }
 
@@ -35,7 +35,7 @@ const BASE_URL = resolveBaseURL();
 
 export const axios: AxiosInstance = Axios.create({
   baseURL: BASE_URL,
-  timeout: 60000, 
+  timeout: 60000,
 });
 
 if (process.env.NODE_ENV !== "production") {
@@ -49,7 +49,7 @@ function authRequestInterceptor(config: any) {
     config.headers.authorization = `Bearer ${adminData.token}`;
   }
 
-  
+
   const apiKey = process.env.NEXT_PUBLIC_STAYFLEXI_API_KEY;
   if (apiKey) {
     config.headers["x-api-key"] = apiKey;
@@ -100,7 +100,7 @@ function normalizeIfAbsoluteUrl(incoming?: string): string | null {
 
 export async function apiCall<T = any>(method: Method, url: string, data?: any): Promise<T> {
   try {
-    
+
     const absolute = normalizeIfAbsoluteUrl(url);
     if (absolute) {
       const resp = await Axios({
@@ -113,7 +113,7 @@ export async function apiCall<T = any>(method: Method, url: string, data?: any):
       return resp.data?.result ? resp.data?.result : resp.data;
     }
 
-    
+
     const safeUrl = url && !url.startsWith("/") ? `/${url}` : url || "/";
 
     const response: T = await axios({

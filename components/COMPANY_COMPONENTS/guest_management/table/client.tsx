@@ -10,24 +10,30 @@ import apiCall from '@/lib/axios';
 
 export const CompanyPanelGuestManagementHome: React.FC = () => {
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
   const [pageNo, setPageNo] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalRecords, setTotalRecords] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
+      // Construct query string with search
+      const queryParams = new URLSearchParams({
+        page: pageNo.toString(),
+        limit: limit.toString(),
+        search: searchQuery,
+      });
+
       const res = await apiCall(
         'GET',
-        `api/booking/platform?page=${pageNo}&limit=${limit}`
+        `api/booking/platform?${queryParams.toString()}`
       );
       if (res?.success) {
         setData(res.bookings || []);
-        setFilteredData(res.bookings || []);
         setTotalRecords(
           res.pagination?.totalBookings || res.bookings?.length || 0
         );
@@ -43,8 +49,15 @@ export const CompanyPanelGuestManagementHome: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, [pageNo, limit]);
+    // Debounce search API calls
+    const handler = setTimeout(() => {
+      fetchData();
+    }, 500); // 500ms debounce
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [pageNo, limit, searchQuery]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage > 0 && newPage <= Math.ceil(totalRecords / limit)) {
@@ -53,16 +66,8 @@ export const CompanyPanelGuestManagementHome: React.FC = () => {
   };
 
   const handleSearchChange = (searchValue: string) => {
-    if (searchValue.trim() === '') {
-      setFilteredData(data);
-    } else {
-      const filtered = data.filter((item: any) =>
-        `${item.firstName} ${item.lastName}`
-          .toLowerCase()
-          .includes(searchValue.toLowerCase())
-      );
-      setFilteredData(filtered);
-    }
+    setSearchQuery(searchValue);
+    setPageNo(1); // Reset to page 1 on new search
   };
 
   return (
@@ -71,7 +76,7 @@ export const CompanyPanelGuestManagementHome: React.FC = () => {
         <Heading title="All Guest Bookings" />
       </div>
 
-      {loading ? (
+      {loading && data.length === 0 ? (
         <div className="text-center py-4">Loading...</div>
       ) : error ? (
         <div className="text-center text-red-500 py-4">{error}</div>
@@ -79,15 +84,16 @@ export const CompanyPanelGuestManagementHome: React.FC = () => {
         <DataTable
           searchKey="firstName"
           columns={columns}
-          data={filteredData}
+          data={data}
           onSearch={handleSearchChange}
         />
       )}
 
-      {}
+      {/* Pagination Controls */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-6 px-3 py-4 border-t">
         <div className="text-sm">
-          Showing {Math.min((pageNo - 1) * limit + 1, totalRecords)} to{' '}
+          Showing{' '}
+          {totalRecords === 0 ? 0 : Math.min((pageNo - 1) * limit + 1, totalRecords)} to{' '}
           {Math.min(pageNo * limit, totalRecords)} of {totalRecords} entries
         </div>
         <div className="flex items-center space-x-2">
@@ -95,18 +101,18 @@ export const CompanyPanelGuestManagementHome: React.FC = () => {
             variant="outline"
             size="sm"
             onClick={() => handlePageChange(pageNo - 1)}
-            disabled={pageNo === 1}
+            disabled={pageNo === 1 || loading}
           >
             Previous
           </Button>
           <span className="text-sm text-gray-600">
-            Page {pageNo} of {Math.ceil(totalRecords / limit)}
+            Page {pageNo} of {Math.max(1, Math.ceil(totalRecords / limit))}
           </span>
           <Button
             variant="outline"
             size="sm"
             onClick={() => handlePageChange(pageNo + 1)}
-            disabled={pageNo >= Math.ceil(totalRecords / limit)}
+            disabled={pageNo >= Math.ceil(totalRecords / limit) || loading}
           >
             Next
           </Button>
