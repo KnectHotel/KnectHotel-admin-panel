@@ -11,7 +11,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import Navbar from '@/components/Navbar';
 import { format, parseISO } from 'date-fns';
 
-// Define the types for guest data
+
 export interface GuestDataType {
   guestId: string;
   id: string;
@@ -39,7 +39,7 @@ export interface GuestDataType {
     | string;
 }
 
-// Column Definitions for DataTable
+
 const columns: ColumnDef<GuestDataType>[] = [
   {
     accessorKey: 'uniqueId',
@@ -103,11 +103,11 @@ const columns: ColumnDef<GuestDataType>[] = [
       const addressLines: string[] = [];
 
       if (address.includes(',')) {
-        // With comma: split by comma
+        
         const parts = address.split(',').map((part) => part.trim());
         addressLines.push(...parts);
       } else {
-        // Without comma: break into 4-word lines
+        
         const words = address.trim().split(/\s+/);
         for (let i = 0; i < words.length; i += 4) {
           addressLines.push(words.slice(i, i + 4).join(' '));
@@ -186,7 +186,7 @@ const columns: ColumnDef<GuestDataType>[] = [
   }
 ];
 
-// Pending Page Component
+
 const PendingPage: React.FC = () => {
   const router = useRouter();
   const [data, setData] = useState<GuestDataType[]>([]);
@@ -203,7 +203,7 @@ const PendingPage: React.FC = () => {
       setError(null);
       try {
         const res = await apiCall('GET', 'api/booking/preCheckIns');
-        // console.log('response', res)
+        
         if (res?.success) {
           const bookings = res.bookings.map((booking: any) => ({
             id: booking._id,

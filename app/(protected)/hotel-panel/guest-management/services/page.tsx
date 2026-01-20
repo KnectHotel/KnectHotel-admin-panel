@@ -89,43 +89,9 @@ export default function ServicesPage() {
         className="rounded-xl p-8"
         style={{ background: '#fff', border: '1px solid #e8dfd2' }}
       >
-        {/* TOP BAR */}
-        {/* <div className="flex gap-4 items-end mb-6">
-          <div className="flex-1">
-            <AnimatedSelect
-              label="Hotel"
-              name="hotel"
-              value={selectedHotel}
-              searchable
-              onChange={(e: any) => setSelectedHotel(e.target.value)}
-              options={hotels.map((h) => h._id)}
-            />
-          </div>
-
-          <div className="w-64">
-            <AnimatedSelect
-              label="Service"
-              name="service"
-              value={selectedService}
-              searchable
-              onChange={(e: any) => setSelectedService(e.target.value)}
-              options={services
-                .filter((s) => s.hotelId === selectedHotel)
-                .map((s) => s.name)}
-            />
-          </div>
-
-          <button
-            className="px-4 py-2 rounded text-white"
-            style={{ background: '#B28A41' }}
-            disabled={!selectedHotel}
-            onClick={() => setShowList((s) => !s)}
-          >
-            {showList ? 'Hide' : 'View Services'}
-          </button>
-        </div>
- */}
-        {/* TABLE */}
+        {}
+        {}
+        {}
         {showList && (
           <div
             className="mb-6 p-4 rounded"
@@ -155,7 +121,7 @@ export default function ServicesPage() {
           </div>
         )}
 
-        {/* FORM */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <div className="w-full">
             <label className="block mb-1 font-medium">Service Name</label>
@@ -191,7 +157,7 @@ export default function ServicesPage() {
           </div>
         </div>
 
-        {/* DESCRIPTION */}
+        {}
         <div className="mt-6">
           <label className="block mb-1 font-medium">Description</label>
           <textarea
@@ -202,7 +168,7 @@ export default function ServicesPage() {
           />
         </div>
 
-        {/* ACTION BUTTONS */}
+        {}
         <div className="mt-6 flex gap-3">
           <button
             onClick={load}

@@ -10,7 +10,7 @@ import { columns } from './columns';
 import ToggleButton from '@/components/ui/toggleButton';
 import ManageProductsModal from '@/components/modal/concierge/manage-products';
 import PriceTimeSettingConciergeModal from '@/components/modal/concierge/PriceTimeSetting';
-import apiCall from '@/lib/axios'; // Make sure this exists and works like axios
+import apiCall from '@/lib/axios'; 
 
 export const ConciergeServiceTable: React.FC = () => {
   const router = useRouter();
@@ -61,12 +61,12 @@ export const ConciergeServiceTable: React.FC = () => {
             : 'N/A',
 
           hotelId: typeof item.HotelId === 'object' ? item.HotelId._id || item.HotelId : item.HotelId || '',
-          // createdAt: item.createdAt
-          //   ? new Date(item.createdAt).toLocaleString()
-          //   : '',
-          // updatedAt: item.updatedAt
-          //   ? new Date(item.updatedAt).toLocaleString()
-          //   : '',
+          
+          
+          
+          
+          
+          
           createdAt: item.createdAt || '',
           updatedAt: item.updatedAt || '',
         }));
@@ -116,20 +116,11 @@ export const ConciergeServiceTable: React.FC = () => {
         <div className="flex w-full justify-between items-center">
           <h2 className="text-coffee text-xl font-bold">Concierge Service</h2>
           <div className="flex items-center gap-2">
-            {/* <h2 className="text-[0.8rem] font-semibold">
-              AUTO ACCEPT REQUESTS
-            </h2> */}
-            {/* <ToggleButton /> */}
+            {}
+            {}
           </div>
         </div>
-        {/* <Settings
-          className="cursor-pointer"
-          onClick={() => setIsModalOpen(true)}
-        />
-        <PriceTimeSettingConciergeModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        /> */}
+        {}
       </div>
 
       <div className="w-full flex justify-end px-4">

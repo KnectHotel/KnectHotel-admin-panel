@@ -44,7 +44,7 @@ const PriceTimeSettingGym: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     }
   });
 
-  // Watch the value of priceType
+  
   const priceType = form.watch('priceType');
   if (!isOpen) return null;
 
@@ -68,7 +68,7 @@ const PriceTimeSettingGym: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               Edit time or price according to availability
             </p>
           </div>
-          {/* Close button */}
+          {}
           <button onClick={onClose} className="text-gray-600 hover:text-black">
             ✖
           </button>
@@ -123,7 +123,7 @@ const PriceTimeSettingGym: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              {/* Conditionally render the Amount field */}
+              {}
               {priceType === 'Paid' && (
                 <div className="flex gap-4 items-center justify-center">
                   <span className="text-sm pb-6 font-semibold">Amount</span>

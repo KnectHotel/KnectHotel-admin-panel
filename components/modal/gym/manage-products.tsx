@@ -69,12 +69,12 @@ const ManageProductsModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-6 text-sm"
           >
-            {/* Line */}
+            {}
             <div className="w-full h-[1px] bg-black opacity-20 mt-12" />
 
-            {/* Lower part of the form */}
+            {}
             <div className="flex flex-col gap-2 justify-center items-center px-10">
-              {/* Product Image Upload */}
+              {}
               <FormField
                 control={form.control}
                 name="equipmentImage"
@@ -111,7 +111,7 @@ const ManageProductsModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                 alt="Product preview"
                                 className="h-full w-full object-cover rounded-lg"
                               />
-                              {/* Overlay to make the image clickable for reupload */}
+                              {}
                               <label
                                 htmlFor="fileUpload"
                                 className="absolute inset-0 flex justify-center items-center cursor-pointer bg-black bg-opacity-20 hover:bg-opacity-30 transition-opacity rounded-lg"
@@ -183,7 +183,7 @@ const ManageProductsModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
             <div className="w-full h-[1px] bg-black opacity-15" />
 
-            {/* Submit Button */}
+            {}
             <div className="flex items-center gap-4 px-10">
               <Button type="submit" className="btn-primary">
                 Save

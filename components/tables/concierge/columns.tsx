@@ -84,7 +84,7 @@ export const columns: ColumnDef<ConciergeServiceDataType>[] = [
     cell: ({ row }) => {
       const serviceId = row.original.serviceID;
 
-      // UI label -> backend value
+      
       const statusMap = {
         Pending: 'pending',
         'In-Progress': 'in-progress',
@@ -94,7 +94,7 @@ export const columns: ColumnDef<ConciergeServiceDataType>[] = [
 
       type StatusLabel = keyof typeof statusMap;
 
-      // Normalize backend -> UI label
+      
       const normalizeStatus = (statusFromBackend: string): StatusLabel => {
         const s = statusFromBackend?.toLowerCase?.() ?? '';
         if (s === 'pending') return 'Pending';
@@ -129,7 +129,7 @@ export const columns: ColumnDef<ConciergeServiceDataType>[] = [
       ) => {
         const newStatus = e.target.value as StatusLabel;
         const prev = status;
-        setStatus(newStatus); // optimistic
+        setStatus(newStatus); 
         setUpdating(true);
 
         try {
@@ -137,7 +137,7 @@ export const columns: ColumnDef<ConciergeServiceDataType>[] = [
             'PATCH',
             `/api/services/status/${serviceId}`,
             {
-              status: statusMap[newStatus] // sends: 'pending' | 'in-progress' | 'completed' | 'cancelled'
+              status: statusMap[newStatus] 
             }
           );
 
@@ -148,11 +148,11 @@ export const columns: ColumnDef<ConciergeServiceDataType>[] = [
 
           if (!ok) {
             console.error('Failed to update status:', data?.message || data);
-            setStatus(prev); // rollback
+            setStatus(prev); 
           }
         } catch (error) {
           console.error('Error updating status:', error);
-          setStatus(prev); // rollback
+          setStatus(prev); 
         } finally {
           setUpdating(false);
         }

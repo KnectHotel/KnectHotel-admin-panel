@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@mui/material';
 
-/* ───────────────────────── Types ───────────────────────── */
+
 type RangeKey = 'today' | 'lastWeek' | 'lastMonth' | 'halfYear' | 'lastYear';
 
 interface PaymentReportsResponse {
@@ -58,11 +58,11 @@ interface Props {
   defaultChart?: 'area' | 'bar';
   defaultRange?: RangeKey;
   maximumFractionDigits?: number;
-  /** If provided, the component will POST this body instead of { range } and hide the range dropdown. */
+  
   body?: Record<string, any>;
 }
 
-/* ───────────────────────── Utils ───────────────────────── */
+
 const INR = (n?: number, maximumFractionDigits = 0) =>
   new Intl.NumberFormat('en-IN', {
     style: 'currency',
@@ -78,7 +78,7 @@ const toRows = (labels: string[], ds: PaymentReportsResponse['datasets']) =>
     actualCost: ds.actualCost[i] ?? 0
   }));
 
-/* ───────────────────────── Component ───────────────────────── */
+
 const PaymentReportsChart: React.FC<Props> = ({
   endpoint = '/api/reports/paymentReports',
   title = 'Payment Reports',
@@ -145,7 +145,7 @@ const PaymentReportsChart: React.FC<Props> = ({
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [endpoint, JSON.stringify(effectiveBody)]);
 
   const handleDownloadExcel = () => {
@@ -168,29 +168,12 @@ const PaymentReportsChart: React.FC<Props> = ({
         </CardTitle>
 
         <div className="flex flex-wrap items-center gap-2">
-          {/* Chart Type Toggle (optional UI) */}
+          {}
           <div className="inline-flex rounded-md border p-1">
-            {/* 
-            <Button
-              size="sm"
-              variant={chart === 'area' ? 'default' : 'ghost'}
-              className="h-8"
-              onClick={() => setChart('area')}
-            >
-              Area
-            </Button>
-            <Button
-              size="sm"
-              variant={chart === 'bar' ? 'default' : 'ghost'}
-              className="h-8"
-              onClick={() => setChart('bar')}
-            >
-              Bar
-            </Button> 
-            */}
+            {}
           </div>
 
-          {/* Range Selector (hidden if custom body passed) */}
+          {}
           {!useExternalBody && (
             <Select value={range} onValueChange={(v: RangeKey) => setRange(v)}>
               <SelectTrigger className="w-[160px] h-8">
@@ -389,7 +372,7 @@ const PaymentReportsChart: React.FC<Props> = ({
           </div>
         )}
 
-        {/* KPI strip */}
+        {}
         {data && (
           <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-5">
             <Stat
@@ -419,7 +402,7 @@ const PaymentReportsChart: React.FC<Props> = ({
   );
 };
 
-/* ───────────────────────── Tiny subcomponent ───────────────────────── */
+
 const Stat = ({ label, value }: { label: string; value: string }) => (
   <div className="rounded-2xl border bg-card p-3 text-sm">
     <div className="text-muted-foreground">{label}</div>

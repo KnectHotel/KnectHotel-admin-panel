@@ -18,7 +18,7 @@ type UseToastReturn = {
   dismiss: DismissFn
 }
 
-// --- simple event bus store ---
+
 const listeners = new Set<() => void>()
 let _toasts: ToasterToast[] = []
 
@@ -38,7 +38,7 @@ function removeToast(id: string) {
   emit()
 }
 
-// Subscribe helper for useSyncExternalStore
+
 function subscribe(cb: () => void) {
   listeners.add(cb)
   return () => listeners.delete(cb)

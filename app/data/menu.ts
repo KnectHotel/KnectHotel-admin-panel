@@ -1,4 +1,4 @@
-// app/data/menu.ts
+
 
 export const dummyCategories = [
   'Breakfast',

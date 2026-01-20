@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 
 const CellAction = (props: any) => {
   const { data } = props;
-  // console.log(data.guestID);
+  
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -13,9 +13,9 @@ const CellAction = (props: any) => {
 
   const onConfirm = async () => {
     try {
-      // Perform user  logic here
+      
     } catch (error: any) {
-      // console.error("Error deactivating user:", error);
+      
     } finally {
       setOpen(false);
     }
@@ -29,7 +29,7 @@ const CellAction = (props: any) => {
 
   return (
     <>
-      {/* Deactivate Confirmation Modal */}
+      {}
       <AlertModal
         isOpen={open}
         onCloseAction={() => setOpen(false)}
@@ -38,9 +38,9 @@ const CellAction = (props: any) => {
         description="Are you sure you want to deactivate this user?"
       />
 
-      {/* Action Buttons */}
+      {}
       <div className="flex space-x-2">
-        {/* View user details */}
+        {}
         <button
           onClick={() => handleViewUser()}
           className="p-1 rounded-md group hover:bg-[#a07d3d5e]"

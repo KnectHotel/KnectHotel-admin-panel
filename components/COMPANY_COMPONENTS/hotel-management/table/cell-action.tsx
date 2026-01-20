@@ -20,7 +20,7 @@ const CellAction = (props: any) => {
       router.push(`/super-admin/hotel-management`);
     } catch (error) {
       console.error('Error deleting hotel:', error);
-      // Show error toast if you want here
+      
     } finally {
       setLoading(false);
     }
@@ -36,7 +36,7 @@ const CellAction = (props: any) => {
 
   return (
     <>
-      {/* Deactivate Confirmation Modal */}
+      {}
       <AlertModal
         isOpen={open}
         onCloseAction={() => setOpen(false)}
@@ -45,9 +45,9 @@ const CellAction = (props: any) => {
         description="Are you sure you want to delet this hotel?"
       />
 
-      {/* Action Buttons */}
+      {}
       <div className="flex space-x-2">
-        {/* View user details */}
+        {}
         <button
           onClick={() => handleViewUser()}
           className="p-1 rounded-md group hover:bg-[#a07d3d5e]"
@@ -55,7 +55,7 @@ const CellAction = (props: any) => {
           <Eye className=" w-4 text-button-dark group-hover:text-white" />
         </button>
 
-        {/* Delete User */}
+        {}
         <button
           onClick={() => setOpen(true)}
           className="p-1 rounded-md group hover:bg-[#a07d3d5e]"
@@ -63,7 +63,7 @@ const CellAction = (props: any) => {
           <Trash className=" w-4 text-button-dark group-hover:text-white" />
         </button>
 
-        {/* Edit User */}
+        {}
         <Button
           onClick={() => handleEditUser()}
           className="p-3 rounded-md group cursor-pointer hover:bg-[#a07d3d5e]"

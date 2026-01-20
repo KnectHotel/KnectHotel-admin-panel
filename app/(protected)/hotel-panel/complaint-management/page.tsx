@@ -37,15 +37,7 @@ const ComplaintManagementPage = () => {
               To Super Admin
             </Button>
           </div>
-          {/* <Button
-            className="text-xs 2xl:text-sm md:text-sm btn-primary mb-4"
-            onClick={() => handleOnClick('add_admin')}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            <span className="text-white group-hover:text-black">
-              Add Complaint
-            </span>
-          </Button> */}
+          {}
           {activeTab === 'admin' && (
             <Button
               className="text-xs 2xl:text-sm md:text-sm btn-primary mb-4"

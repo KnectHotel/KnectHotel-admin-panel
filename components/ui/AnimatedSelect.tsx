@@ -8,7 +8,7 @@ interface AnimatedSelectProps {
   label: string;
   name: string;
   options: string[];
-  value?: string;       // ADDED
+  value?: string;       
   onChange: (e: any) => void;
   searchable?: boolean;
   dropdownPosition?: 'bottom' | 'top' | 'auto';
@@ -43,13 +43,13 @@ export default function AnimatedSelect({
     return () => window.removeEventListener('click', handleClose);
   }, []);
 
-  // Calculate dropdown position
+  
   useEffect(() => {
     if (open && dropdownPosition === 'auto' && ref.current) {
       const rect = ref.current.getBoundingClientRect();
       const spaceBelow = window.innerHeight - rect.bottom;
       const spaceAbove = rect.top;
-      const estimatedDropdownHeight = 250; // Approximate height of dropdown
+      const estimatedDropdownHeight = 250; 
       
       if (spaceBelow < estimatedDropdownHeight && spaceAbove > spaceBelow) {
         setPosition('top');
@@ -71,7 +71,7 @@ export default function AnimatedSelect({
     <div ref={ref} className="relative">
       {label && <p className="font-medium mb-1">{label}</p>}
 
-      {/* Select Box */}
+      {}
       <div
         onClick={() => setOpen(!open)}
         className="w-full p-2 rounded-md flex justify-between items-center cursor-pointer border bg-[#F6EEE0] text-gray-700 text-xs 2xl:text-sm"
@@ -87,7 +87,7 @@ export default function AnimatedSelect({
         </motion.div>
       </div>
 
-      {/* Dropdown */}
+      {}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -104,7 +104,7 @@ export default function AnimatedSelect({
               color: '#5A4A38'
             }}
           >
-            {/* SEARCH BAR */}
+            {}
             {searchable && (
               <div
                 className="flex items-center gap-2 px-3 py-2 border-b"
@@ -121,7 +121,7 @@ export default function AnimatedSelect({
               </div>
             )}
 
-            {/* OPTIONS */}
+            {}
             <ul className="max-h-52 overflow-auto">
               {filteredOptions.length === 0 ? (
                 <li className="px-4 py-2 text-sm opacity-70">

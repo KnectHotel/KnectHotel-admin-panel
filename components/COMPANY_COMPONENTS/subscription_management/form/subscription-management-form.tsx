@@ -21,7 +21,7 @@ import apiCall from '@/lib/axios';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronDown } from 'lucide-react';
 
-// ✅ ZOD Schema
+
 const SubscriptionManagementFormSchema = z.object({
   planName: z.string().min(1, 'Plan name is required'),
   planDuration: z.preprocess(val => Number(val), z.number()),
@@ -102,7 +102,7 @@ const SubscriptionManagementForm: React.FC<Props> = ({ id, mode = 'view' }) => {
           className="flex flex-col gap-8 py-7 px-2"
         >
           <div className="flex flex-row gap-8">
-            {/* Left Column */}
+            {}
             <div className="w-1/2 flex flex-col gap-6">
               <FormField
                 control={form.control}
@@ -148,7 +148,7 @@ const SubscriptionManagementForm: React.FC<Props> = ({ id, mode = 'view' }) => {
               />
             </div>
 
-            {/* Right Column */}
+            {}
             <div className="w-1/2 flex flex-col gap-6">
               <div className="flex justify-between gap-4">
                 <FormField
@@ -173,27 +173,7 @@ const SubscriptionManagementForm: React.FC<Props> = ({ id, mode = 'view' }) => {
                     </FormItem>
                   )}
                 />
-                {/* <FormField
-                  control={form.control}
-                  name="planType"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col items-start w-full">
-                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                        Plan Type
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={mode === 'view' || isSubmitting}
-                          type="text"
-                          {...field}
-                          placeholder="Enter Plan Type"
-                          className="w-full placeholder:opacity-65 h-8 px-2 py-1 bg-[#F6EEE0] text-gray-900 text-xs 2xl:text-sm border-none rounded-md focus:ring-0"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-[10px] mt-1" />
-                    </FormItem>
-                  )}
-                /> */}
+                {}
                 <FormField
                   control={form.control}
                   name="planType"

@@ -103,7 +103,7 @@ const AssignChatModal = ({
               >
                 <SelectTrigger className="relative w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none pr-10">
                   <SelectValue placeholder="Select Employee" />
-                  {/* Down arrow */}
+                  {}
                   <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#362913]/70" />
                 </SelectTrigger>
 

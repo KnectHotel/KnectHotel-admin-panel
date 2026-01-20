@@ -91,7 +91,7 @@ export default function DateTimeField({
     setOpen(false);
   };
 
-  // coffee theme for important states
+  
   const calendarClasses = {
     day_selected:
       'bg-[#A07D3D] text-white hover:bg-[#916e34] focus:bg-[#A07D3D]',
@@ -99,7 +99,7 @@ export default function DateTimeField({
     nav_button: 'text-[#A07D3D] hover:bg-[#A07D3D]/10'
   };
 
-  // dropdown options
+  
   const HOURS = Array.from({ length: 24 }, (_, i) =>
     i.toString().padStart(2, '0')
   );
@@ -132,7 +132,7 @@ export default function DateTimeField({
 
       <PopoverContent className="w-auto p-3" align="start">
         <div className="flex flex-col gap-3">
-          {/* Date */}
+          {}
           <Calendar
             mode="single"
             selected={temp ?? undefined}
@@ -141,10 +141,10 @@ export default function DateTimeField({
             initialFocus
           />
 
-          {/* Time (dropdowns) */}
+          {}
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-[#A07D3D]" />
-            {/* Hour */}
+            {}
             <Select
               value={hh}
               onValueChange={(v) => setTime(parseInt(v, 10), minute)}
@@ -161,7 +161,7 @@ export default function DateTimeField({
                 ))}
               </SelectContent>
             </Select>
-            :{/* Minute */}
+            :{}
             <Select
               value={mm.padStart(2, '0')}
               onValueChange={(v) => setTime(hour, parseInt(v, 10))}

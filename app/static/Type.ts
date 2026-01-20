@@ -1,6 +1,6 @@
 export type StatusType = 'Active' | 'Inactive';
 
-// types/auth.ts or any shared types file
+
 export interface AdminUser {
   token: string;
   user: {

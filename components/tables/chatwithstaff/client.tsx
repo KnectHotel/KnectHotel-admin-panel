@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
-import apiCall from '@/lib/axios';// 👈 Create a settings modal if needed
+import apiCall from '@/lib/axios';
 import ToggleButton from '@/components/ui/toggleButton';
 import { columns } from './column';
 
@@ -93,27 +93,21 @@ export const ChatWithStaffTable: React.FC = () => {
 
   return (
     <>
-      {/* Top Header */}
+      {}
       <div className="w-full pt-20 flex items-center gap-2 justify-end px-4 py-2 bg-white">
         <div className="flex w-full justify-between items-center">
           <h2 className="text-coffee text-xl font-bold">Chat With Staff</h2>
           <div className="flex items-center gap-2">
-            {/* <h2 className="text-[0.8rem] font-semibold">AUTO REPLY</h2> */}
-            {/* <ToggleButton /> */}
+            {}
+            {}
           </div>
         </div>
 
-        {/* <Settings
-          className="cursor-pointer"
-          onClick={() => setIsSettingsModalOpen(true)}
-        /> */}
-        {/* <ChatSettingsModal
-          isOpen={isSettingsModalOpen}
-          onClose={() => setIsSettingsModalOpen(false)}
-        /> */}
+        {}
+        {}
       </div>
 
-      {/* Data Table */}
+      {}
       {loading ? (
         <div className="px-4 py-6">Loading...</div>
       ) : (
@@ -125,7 +119,7 @@ export const ChatWithStaffTable: React.FC = () => {
         />
       )}
 
-      {/* Pagination */}
+      {}
       <div className="flex justify-between items-center px-4 py-3">
         <div>
           <label className="text-sm mr-2">Rows per page:</label>

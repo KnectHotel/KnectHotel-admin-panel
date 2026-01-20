@@ -83,43 +83,10 @@ export default function RoomCategoriesPage() {
         className="rounded-xl p-8"
         style={{ background: '#fff', border: '1px solid #e8dfd2' }}
       >
-        {/* TOP BAR */}
-        {/* <div className="flex gap-4 items-end mb-6">
-          <div className="flex-1">
-            <AnimatedSelect
-              label="Hotel"
-              name="hotel"
-              value={selectedHotel}
-              searchable={true}
-              options={hotels.map((h) => h._id)}
-              onChange={(e: any) => setSelectedHotel(e.target.value)}
-            />
-          </div>
+        {}
+        {}
 
-          <div className="w-64">
-            <AnimatedSelect
-              label="Category"
-              name="category"
-              value={selectedCategory}
-              searchable={true}
-              options={categories
-                .filter((c) => c.hotelId === selectedHotel)
-                .map((c) => c.name)}
-              onChange={(e: any) => setSelectedCategory(e.target.value)}
-            />
-          </div>
-
-          <button
-            className="px-4 py-2 rounded text-white"
-            style={{ background: '#B28A41' }}
-            onClick={() => setShowList((s) => !s)}
-            disabled={!selectedHotel}
-          >
-            {showList ? 'Hide' : 'View List'}
-          </button>
-        </div> */}
-
-        {/* LIST TABLE */}
+        {}
         {showList && (
           <div
             className="mb-6 p-4 rounded"
@@ -148,9 +115,9 @@ export default function RoomCategoriesPage() {
           </div>
         )}
 
-        {/* FORM */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {/* NAME */}
+          {}
           <div className="w-full">
             <label className="block mb-1 font-medium">Name</label>
             <input
@@ -161,7 +128,7 @@ export default function RoomCategoriesPage() {
             />
           </div>
 
-          {/* STATUS - AnimatedSelect */}
+          {}
           <div className="w-full">
             <AnimatedSelect
               label="Status"
@@ -178,7 +145,7 @@ export default function RoomCategoriesPage() {
           <div></div>
         </div>
 
-        {/* DESCRIPTION */}
+        {}
         <div className="mt-6">
           <label className="block mb-1 font-medium">Description</label>
           <textarea
@@ -189,7 +156,7 @@ export default function RoomCategoriesPage() {
           />
         </div>
 
-        {/* ACTIONS */}
+        {}
         <div className="mt-6 flex gap-3">
           <button
             onClick={load}

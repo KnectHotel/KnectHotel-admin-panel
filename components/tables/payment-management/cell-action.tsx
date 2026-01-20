@@ -7,14 +7,14 @@ const CellAction = (props: any) => {
   const { data } = props;
   const router = useRouter();
 
-  // Handle view transaction and redirect to the [id] page
+  
   const handleViewTransaction = (_id: string) => {
     router.push(`/hotel-panel/payment-management/view/${_id}`);
   };
 
   return (
     <>
-      {/* Action Buttons */}
+      {}
       <div className="flex items-center space-x-2">
         <Button
           className="p-1 rounded-md group cursor-pointer hover:bg-[#a07d3d5e]"

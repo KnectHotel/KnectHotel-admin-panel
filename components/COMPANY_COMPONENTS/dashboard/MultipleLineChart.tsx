@@ -101,14 +101,14 @@ export function MultipleLineChart({
               right: 12
             }}
           >
-            {/* <CartesianGrid vertical={false} /> */}
+            {}
             <XAxis
               dataKey="month"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
               tickFormatter={(value) => value.slice(0, 3)}
-              style={{ fill: 'white' }} // Direct color value
+              style={{ fill: 'white' }} 
             />
             <YAxis
               tickLine={false}

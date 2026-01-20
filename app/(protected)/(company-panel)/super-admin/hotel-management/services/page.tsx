@@ -89,7 +89,7 @@ export default function ServicesPage() {
         className="rounded-xl p-8"
         style={{ background: '#fff', border: '1px solid #e8dfd2' }}
       >
-        {/* TOP BAR */}
+        {}
         <div className="flex gap-4 items-end mb-6">
           <div className="flex-1">
             <AnimatedSelect
@@ -125,7 +125,7 @@ export default function ServicesPage() {
           </button>
         </div>
 
-        {/* TABLE */}
+        {}
         {showList && (
           <div
             className="mb-6 p-4 rounded"
@@ -155,7 +155,7 @@ export default function ServicesPage() {
           </div>
         )}
 
-        {/* FORM */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <div className="w-full">
             <label className="block mb-1 font-medium">Service Name</label>
@@ -191,7 +191,7 @@ export default function ServicesPage() {
           </div>
         </div>
 
-        {/* DESCRIPTION */}
+        {}
         <div className="mt-6">
           <label className="block mb-1 font-medium">Description</label>
           <textarea
@@ -202,7 +202,7 @@ export default function ServicesPage() {
           />
         </div>
 
-        {/* ACTION BUTTONS */}
+        {}
         <div className="mt-6 flex gap-3">
           <button
             onClick={load}

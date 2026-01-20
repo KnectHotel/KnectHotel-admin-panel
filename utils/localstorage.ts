@@ -1,4 +1,4 @@
-// utils/localStorage.ts
+
 
 export function setLocalStorageItem(key: string, value: any): void {
     if (typeof window !== "undefined") {
@@ -14,7 +14,7 @@ export function setLocalStorageItem(key: string, value: any): void {
     return null;
   }
   
-  //sessionStorage
+  
   
   export function setSessionStorageItem(key: string, value: any): void {
     if (typeof window !== "undefined") {

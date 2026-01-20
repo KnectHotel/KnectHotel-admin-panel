@@ -316,7 +316,7 @@ export const SpaServiceData: SpaServiceDataType[] = [
   }
 ];
 
-/// Product details dummy data
+
 
 type Product = {
   visibility: boolean;

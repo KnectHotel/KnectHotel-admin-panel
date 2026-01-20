@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import apiCall from '@/lib/axios';
 import AssignModal from '@/components/shared/AssignModal';
 
-/* ======================= Types ======================= */
+
 type SpaSalonBooking = {
   _id: string;
   uniqueId: string;
@@ -21,8 +21,8 @@ type SpaSalonBooking = {
   slot?: {
     _id: string;
     dayOfWeek: string;
-    startTime: string; // "10:00"
-    endTime: string; // "11:00"
+    startTime: string; 
+    endTime: string; 
     maxCapacity: number;
     currentCapacity?: number;
   };
@@ -59,7 +59,7 @@ type Props = {
   serviceID: string;
 };
 
-/* ======================= UI helpers (same style as OrderDetails) ======================= */
+
 const fmtINR = (n?: number) =>
   typeof n === 'number'
     ? new Intl.NumberFormat('en-IN', {
@@ -151,7 +151,7 @@ const StarRating = ({ rating = 0 }: { rating?: number }) => {
   );
 };
 
-/* ======================= Component ======================= */
+
 const SpaServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
   const [service, setService] = useState<SpaSalonBooking | null>(null);
   const [loading, setLoading] = useState(true);
@@ -214,12 +214,12 @@ const SpaServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
         })
       : 'N/A';
 
-  // Accept either "HH:mm" or an ISO string
+  
   const fmtTime = (t?: string) => {
     if (!t) return 'N/A';
-    // "10:00" style
+    
     if (/^\d{1,2}:\d{2}$/.test(t)) return t;
-    // ISO -> time
+    
     const d = new Date(t);
     return isNaN(d.getTime())
       ? t
@@ -235,7 +235,7 @@ const SpaServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
     <>
       <div className="mt-24 w-full">
         <div className="mx-auto max-w-6xl rounded-2xl border border-[#E6D6C2] bg-[#FAF6EF] shadow-[0_2px_20px_rgba(0,0,0,0.05)]">
-          {/* Header */}
+          {}
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E6D6C2] px-6 py-4">
             <div className="flex items-center gap-3">
               <div className="h-6 w-1 rounded bg-[#7A5C3E]" />
@@ -252,7 +252,7 @@ const SpaServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
               </div>
             </div>
 
-            {/* Status chip */}
+            {}
             <span
               className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm ring-1 ${st.bg} ${st.text} ${st.ring}`}
             >
@@ -261,9 +261,9 @@ const SpaServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
             </span>
           </div>
 
-          {/* Body */}
+          {}
           <div className="grid gap-8 px-6 py-8">
-            {/* Top quick facts */}
+            {}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               <Chip
                 label="Service Type"
@@ -289,7 +289,7 @@ const SpaServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
               />
             </div>
 
-            {/* Guest + Assignment + Session */}
+            {}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               <InfoCard title="Guest Information">
                 <div className="rounded-lg bg-[#F6EEE0] p-4">
@@ -304,18 +304,7 @@ const SpaServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
                   <span className="text-[11px] uppercase tracking-wide text-[#6a5a45]/70">
                     Assigned To
                   </span>
-                  {/* <button
-                    className="w-full rounded-md bg-[#F6EEE0] px-4 py-2 text-left text-[#3E3428] shadow-sm transition-colors hover:bg-[#F0E6D6]"
-                    onClick={() => setIsAssignModalOpen(true)}
-                  >
-                    {service.assignedTo
-                      ? `${service.assignedTo.firstName} ${service.assignedTo.lastName}${
-                          service.assignedTo.phoneNumber
-                            ? ` (${service.assignedTo.phoneNumber})`
-                            : ''
-                        }`
-                      : 'Unassigned'}
-                  </button> */}
+                  {}
                   <button
                     type="button"
                     className="w-full rounded-md border border-[#5a4118] bg-[#6E511D] px-4 py-2 text-left text-white shadow-sm transition-colors hover:bg-[#5f441b] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A07C3E]"
@@ -359,7 +348,7 @@ const SpaServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
               </InfoCard>
             </div>
 
-            {/* Product Details + Amount */}
+            {}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <InfoCard title="Service Details">
                 <div className="grid gap-3">
@@ -375,7 +364,7 @@ const SpaServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
                   </div>
                   {service.spaSalonProduct.imageUrl ? (
                     <div className="overflow-hidden rounded-lg border border-[#E6D6C2]">
-                      {/* Using native img to avoid Next/Image domain config issues */}
+                      {}
                       <img
                         src={service.spaSalonProduct.imageUrl}
                         alt={service.spaSalonProduct.productName}
@@ -413,7 +402,7 @@ const SpaServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
               </div>
             </div>
 
-            {/* Feedback */}
+            {}
             {(service.feedback?.serviceFeedback ||
               typeof service.feedback?.serviceRating === 'number' ||
               service.feedback?.agentFeedback ||
@@ -460,7 +449,7 @@ const SpaServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
         <div className="h-8" />
       </div>
 
-      {/* Assign Modal */}
+      {}
       <AssignModal
         onClose={() => setIsAssignModalOpen(false)}
         requestId={isAssignModalOpen ? serviceID : undefined}

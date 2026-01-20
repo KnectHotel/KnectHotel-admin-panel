@@ -2,7 +2,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import FormWrapper from './form-wrapper';
-import { notificationSchema, notificationSchemaType } from 'schema'; // Assumed schema
+import { notificationSchema, notificationSchemaType } from 'schema'; 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -21,12 +21,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 type Props = {
-  notificationId?: string; // Changed from guestId
+  notificationId?: string; 
   isEnabled?: boolean;
   mode: string;
 };
 
-// Assuming this is the GuestDataType from your notification data
+
 type GuestDataType = {
   notificationID: string;
   dateAndTime: {
@@ -49,7 +49,7 @@ const NotificationDetailsForm = ({
 }: Props) => {
   const router = useRouter();
 
-  // Get notification details using notificationId
+  
   const getNotificationDetails = (notificationId: string | undefined) => {
     if (notificationId) {
       return notificationsData.find(
@@ -61,7 +61,7 @@ const NotificationDetailsForm = ({
   };
   const notification = getNotificationDetails(notificationId);
 
-  // Initialize form with notification data
+  
   const addNotificationForm = useForm<notificationSchemaType>({
     resolver: zodResolver(notificationSchema),
     defaultValues: {
@@ -101,7 +101,7 @@ const NotificationDetailsForm = ({
           onSubmit={addNotificationForm.handleSubmit(onSubmit)}
           className="flex flex-col gap-4 pb-6 "
         >
-          {/* Form Fields */}
+          {}
           <div className="grid grid-cols-3 gap-10">
             <div className="flex flex-col gap-4">
               <FormField
@@ -303,7 +303,7 @@ const NotificationDetailsForm = ({
               />
             </div>
           </div>
-          {/* Buttons */}
+          {}
           {isEnabled && (
             <div className="flex items-center gap-3">
               <Button

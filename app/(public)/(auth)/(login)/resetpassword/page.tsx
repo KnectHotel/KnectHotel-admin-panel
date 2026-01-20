@@ -6,7 +6,7 @@ import loginPageImage from '../../../../../public/assets/loginPageImage.png';
 const ResetPasswordPage = () => {
   return (
     <div className="min-h-screen w-full flex relative">
-      {/* left part Image */}
+      {}
       <div className="hidden lg:block w-[60%]">
         <Image
           src={loginPageImage}
@@ -17,7 +17,7 @@ const ResetPasswordPage = () => {
           quality={100}
         />
       </div>
-      {/* Right part form */}
+      {}
       <div className="w-full relative overflow-hidden login-background flex justify-center items-center">
         <ResetPasswordForm />
       </div>

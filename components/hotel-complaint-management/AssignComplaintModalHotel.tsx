@@ -15,7 +15,7 @@ import type { SweetAlertIcon } from 'sweetalert2';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 import { ComplaintStatusType } from 'schema/company-panel';
 
-/** ——— Toast helper ——— */
+
 const showToast = (icon: SweetAlertIcon, title: string, ms = 2200) =>
   ToastAtTopRight.fire({
     icon,
@@ -27,7 +27,7 @@ const showToast = (icon: SweetAlertIcon, title: string, ms = 2200) =>
     timerProgressBar: true
   });
 
-/** ——— Types ——— */
+
 type Employee = {
   _id: string;
   firstName: string;
@@ -43,22 +43,22 @@ type ComplaintDoc = {
   description?: string;
   status?: ComplaintStatusType | string;
   assignedTo?: string | { _id: string };
-  ETOD?: number; // ⬅️ minutes
+  ETOD?: number; 
 };
 
 interface AssignComplaintModalHotelProps {
   open: boolean;
   onClose: () => void;
-  complaintId: string;              // real DB id
+  complaintId: string;              
   currentStatus: ComplaintStatusType;
   onAssignSuccess?: (emp: Employee) => void;
-  /** Agar aapko time field nahi chahiye ho to true pass karein */
-  withoutTime?: boolean;            // ⬅️ optional (default false)
-  /** Optional custom title */
+  
+  withoutTime?: boolean;            
+  
   title?: string;
 }
 
-/** ——— Small helpers ——— */
+
 const safeGet = (obj: any, path: string[], fallback?: any) => {
   try {
     return path.reduce((acc, k) => (acc == null ? acc : acc[k]), obj) ?? fallback;
@@ -84,7 +84,7 @@ const parseError = (err: any) => {
   return { status, data, msg };
 };
 
-/** ——— Component ——— */
+
 const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
   open,
   onClose,
@@ -100,10 +100,10 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
   const [assigning, setAssigning] = useState(false);
   const [baseDoc, setBaseDoc] = useState<ComplaintDoc | null>(null);
 
-  // Estimated Time (minutes)
+  
   const [estimatedTime, setEstimatedTime] = useState<string>('');
 
-  // Preload: employees + complaint doc (for safe PUT payload)
+  
   useEffect(() => {
     if (!open || !complaintId) return;
 
@@ -113,7 +113,7 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
 
     (async () => {
       try {
-        // 1) Employees for complaint-management module
+        
         const empRes = await apiCall(
           'GET',
           '/api/employee/by-module?moduleName=complaint-management'
@@ -122,7 +122,7 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
           empRes?.employees || empRes?.data?.employees || empRes?.data || [];
         setEmployees(Array.isArray(empList) ? empList : []);
 
-        // 2) Existing complaint (hotel scope)
+        
         const compRes = await apiCall(
           'GET',
           `/api/complaint/hotel/complaints/${complaintId}`
@@ -155,7 +155,7 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
           };
           setBaseDoc(safe);
 
-          // If server already has ETOD, show it
+          
           if (typeof safe.ETOD === 'number' && !Number.isNaN(safe.ETOD)) {
             setEstimatedTime(String(safe.ETOD));
           }
@@ -180,8 +180,8 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
     [employees, selectedEmployeeId]
   );
 
-  /** ——— Validators ——— */
-  const sanitizeMinutes = (v: string) => v.replace(/[^\d]/g, ''); // allow only digits
+  
+  const sanitizeMinutes = (v: string) => v.replace(/[^\d]/g, ''); 
   const minutesToNumber = (v: string) => {
     if (!v) return undefined;
     const n = Number(v);
@@ -190,14 +190,14 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
     return Math.floor(n);
   };
 
-  /** ——— Assign handler ——— */
+  
   const handleAssign = async () => {
     if (!selectedEmployeeId) {
       showToast('warning', 'Please select an employee.');
       return;
     }
 
-    // If time is required, validate it
+    
     let ETODnum: number | undefined = undefined;
     if (!withoutTime) {
       const cleaned = sanitizeMinutes(estimatedTime);
@@ -212,7 +212,7 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
     setAssigning(true);
     const url = `/api/complaint/hotel/complaints/${complaintId}`;
 
-    // Prefer full PUT (preserves validators)
+    
     const payload: ComplaintDoc = baseDoc
       ? {
         ...baseDoc,
@@ -227,7 +227,7 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
       };
 
     try {
-      // Try PUT first
+      
       await apiCall('PUT', url, payload);
 
       if (selectedEmp) onAssignSuccess?.(selectedEmp);
@@ -237,7 +237,7 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
       const parsed = parseError(err);
       console.error('❌ PUT failed:', parsed, err);
 
-      // Fallback: PATCH minimal body on common validation errors
+      
       if (parsed.status === 400 || parsed.status === 422) {
         showToast('info', 'Trying alternate update…');
         try {
@@ -257,7 +257,7 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
         }
       }
 
-      // Helpful hints when no status/data present (network/CORS/wrong URL)
+      
       if (!parsed.status && !parsed.data) {
         console.warn('⚠️ No status/data on error. Check base URL, CORS, wrapper throw style, and ID.');
         if (!complaintId || String(complaintId).includes('undefined')) {
@@ -285,7 +285,7 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
           </div>
 
           <div className="flex flex-col gap-6">
-            {/* Employee */}
+            {}
             <div className="flex items-center gap-6 w-full">
               <label className="text-sm text-gray-900 whitespace-nowrap">Employee name</label>
               <Select
@@ -317,7 +317,7 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
               </Select>
             </div>
 
-            {/* Estimated Time (minutes) */}
+            {}
             {!withoutTime && (
               <div className="flex items-center gap-6 w-full">
                 <label htmlFor="estimatedTime" className="text-sm text-gray-900 whitespace-nowrap">
@@ -330,12 +330,12 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
                   min={1}
                   value={estimatedTime}
                   onChange={(e) => {
-                    // keep only digits, remove leading zeros
+                    
                     const cleaned = e.target.value.replace(/[^\d]/g, '');
                     setEstimatedTime(cleaned.replace(/^0+/, '') || '');
                   }}
                   onBlur={() => {
-                    // normalize value on blur
+                    
                     if (!estimatedTime) return;
                     const n = minutesToNumber(estimatedTime);
                     if (!n) {
@@ -351,7 +351,7 @@ const AssignComplaintModalHotel: React.FC<AssignComplaintModalHotelProps> = ({
               </div>
             )}
 
-            {/* Action */}
+            {}
             <button
               className="mt-2 bg-[#A07D3D] text-white p-2 rounded-md disabled:opacity-60"
               disabled={!selectedEmployeeId || assigning || (!withoutTime && !estimatedTime)}

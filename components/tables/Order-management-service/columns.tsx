@@ -52,17 +52,17 @@ export const columns: ColumnDef<OrderManagementDataType, any>[] = [
     cell: ({ row }) => {
       const serviceId = row.original.serviceID;
 
-      // Map UI display values to backend values
+      
       const statusMap = {
         Pending: 'pending',
         'In-Progress': 'in-progress',
         Completed: 'completed',
-        Cancelled: 'cancelled', // ✅ Added Cancelled
+        Cancelled: 'cancelled', 
       } as const;
 
       type StatusLabel = keyof typeof statusMap;
 
-      // Normalize backend value to match UI expected values
+      
       const normalizeStatus = (statusFromBackend: string): StatusLabel => {
         switch (statusFromBackend.toLowerCase()) {
           case 'pending':
@@ -89,7 +89,7 @@ export const columns: ColumnDef<OrderManagementDataType, any>[] = [
         'Pending',
         'In-Progress',
         'Completed',
-        'Cancelled', // ✅ Add to options
+        'Cancelled', 
       ];
 
       const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -98,7 +98,7 @@ export const columns: ColumnDef<OrderManagementDataType, any>[] = [
 
         try {
           const data = await apiCall('PATCH', `/api/services/status/${serviceId}`, {
-            status: statusMap[newStatus], // Send lowercase value to backend
+            status: statusMap[newStatus], 
           });
 
           if (
@@ -138,7 +138,7 @@ export const columns: ColumnDef<OrderManagementDataType, any>[] = [
               key={option}
               value={option}
               className={
-                option === 'Cancelled' ? 'text-red-500' : 'text-black' // ✅ option itself red
+                option === 'Cancelled' ? 'text-red-500' : 'text-black' 
               }
             >
               {option}

@@ -1,6 +1,6 @@
 import img from '../../../public/placeholder-user.jpg';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
-// Guest Data for homepage table
+
 
 export type GuestDetailsDataType = {
   guestID: string;
@@ -38,7 +38,7 @@ export const GuestDetailsDummyData: GuestDetailsDataType[] = [
   }
 ];
 
-// Guest Data for details card
+
 
 export type GuestDetailsCardDataType = {
   guestImage: StaticImport | string;

@@ -41,7 +41,7 @@ export type SwimmingpoolServiceDataType = {
   paymentStatus: string;
   rulesAndRegulations: string;
 
-  // Newly added fields
+  
   hotelId: string;
   bookingDate: string;
   paymentDate: string;
@@ -69,7 +69,7 @@ export const columns: ColumnDef<SwimmingpoolServiceDataType>[] = [
           <span className="font-medium text-gray-900">{guest.name}</span>
           <span>Room: {guest.roomNo}</span>
           <span>Phone: {guest.phoneNumber}</span>
-          {/* <span>Email: {guest.email}</span> */}
+          {}
         </div>
       );
     },
@@ -87,17 +87,17 @@ export const columns: ColumnDef<SwimmingpoolServiceDataType>[] = [
     cell: ({ row }) => {
       const serviceId = row.original.serviceID;
 
-      // Map UI display values to backend values
+      
       const statusMap = {
         Pending: 'pending',
         'In-Progress': 'in-progress',
         Completed: 'completed',
-        Cancelled: 'cancelled', // ✅ Added Cancelled
+        Cancelled: 'cancelled', 
       } as const;
 
       type StatusLabel = keyof typeof statusMap;
 
-      // Normalize backend value to match UI expected values
+      
       const normalizeStatus = (statusFromBackend: string): StatusLabel => {
         switch (statusFromBackend?.toLowerCase()) {
           case 'pending':
@@ -124,7 +124,7 @@ export const columns: ColumnDef<SwimmingpoolServiceDataType>[] = [
         'Pending',
         'In-Progress',
         'Completed',
-        'Cancelled', // ✅ Added here
+        'Cancelled', 
       ];
 
       const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -133,7 +133,7 @@ export const columns: ColumnDef<SwimmingpoolServiceDataType>[] = [
 
         try {
           const data = await apiCall('PATCH', `/api/services/status/${serviceId}`, {
-            status: statusMap[newStatus], // Send lowercase value to backend
+            status: statusMap[newStatus], 
           });
 
           if (
@@ -172,7 +172,7 @@ export const columns: ColumnDef<SwimmingpoolServiceDataType>[] = [
             <option
               key={option}
               value={option}
-              className={option === 'Cancelled' ? 'text-red-500' : 'text-black'} // ✅ Dropdown option red too
+              className={option === 'Cancelled' ? 'text-red-500' : 'text-black'} 
             >
               {option}
             </option>
@@ -211,26 +211,26 @@ export const columns: ColumnDef<SwimmingpoolServiceDataType>[] = [
       <div className="text-sm">{row.original.bookingDate}</div>
     ),
   },
-  // {
-  //   accessorKey: 'paymentDate',
-  //   header: 'Payment Date',
-  //   cell: ({ row }) => {
-  //     const paymentDate = row.original.paymentDate;
-  //     if (paymentDate) {
-  //       const date = new Date(paymentDate);
-  //       const formattedDate = date.toLocaleDateString();
-  //       const formattedTime = date.toLocaleTimeString();
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
-  //       return (
-  //         <div className="text-sm">
-  //           <div>{formattedDate}</div>
-  //           <div>{formattedTime}</div>
-  //         </div>
-  //       );
-  //     }
-  //     return <div className="text-sm">N/A</div>;
-  //   },
-  // },
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   {
     accessorKey: 'createdAt',
     header: 'Created At',

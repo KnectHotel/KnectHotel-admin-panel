@@ -47,7 +47,7 @@ const PriceTimeSettingHouseKeeping: React.FC<ModalProps> = ({
     )
   );
 
-  // ✅ Fetch housekeeping schedule on open
+  
   useEffect(() => {
     const fetchAvailability = async () => {
       try {
@@ -126,7 +126,7 @@ const PriceTimeSettingHouseKeeping: React.FC<ModalProps> = ({
   };
 
   const handleSave = async () => {
-    // Include pending input if any
+    
     const updated = { ...availability };
     weekdays.forEach((day) => {
       const { from, to, slots, checked } = updated[day];
@@ -197,7 +197,7 @@ const PriceTimeSettingHouseKeeping: React.FC<ModalProps> = ({
         <div className="space-y-4">
           {weekdays.map((day) => (
             <div key={day} className="grid grid-cols-3 gap-2 items-start">
-              {/* Day & Checkbox */}
+              {}
               <label className="flex items-center gap-2 mt-2">
                 <input
                   type="checkbox"
@@ -208,7 +208,7 @@ const PriceTimeSettingHouseKeeping: React.FC<ModalProps> = ({
                 <span className="text-gray-700">{day}</span>
               </label>
 
-              {/* From/To input with add button */}
+              {}
               <div className="flex gap-4 col-span-2 items-center mt-2">
                 <div className="flex items-center gap-1 w-[200px]">
                   <span className="text-sm text-gray-600">From</span>
@@ -242,7 +242,7 @@ const PriceTimeSettingHouseKeeping: React.FC<ModalProps> = ({
                 </div>
               </div>
 
-              {/* Show slots if exist */}
+              {}
               {availability[day].slots.length > 0 && (
                 <div className="col-span-2 col-start-2 text-sm font-medium text-gray-800">
                   Saved Time Slots

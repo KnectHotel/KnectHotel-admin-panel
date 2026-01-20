@@ -88,7 +88,7 @@ export const allServices: ServiceItem[] = [
 
 
 
-// Define the type for the guest data (ensure the correct type is passed)
+
 export interface GuestDataType {
   guestId: string;
   id: string;

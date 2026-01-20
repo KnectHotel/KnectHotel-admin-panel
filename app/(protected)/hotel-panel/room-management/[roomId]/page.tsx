@@ -9,7 +9,7 @@ type PageProps = {
 export default async function HotelRoomPage({ params }: PageProps) {
   const { roomId } = await params;
 
-  // In a real app, fetch room data based on roomId
+  
   const initialData =
     roomId === 'add'
       ? null

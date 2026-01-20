@@ -8,7 +8,7 @@ type PieChartProps = {
   value3: number;
 };
 
-const COLORS = ['#78B150', '#FE9900', '#3787E3']; // Three different colors
+const COLORS = ['#78B150', '#FE9900', '#3787E3']; 
 
 const CustomPieChart = ({ value1, value2, value3 }: PieChartProps) => {
   const total = value1 + value2 + value3;
@@ -25,10 +25,10 @@ const CustomPieChart = ({ value1, value2, value3 }: PieChartProps) => {
           data={data}
           cx="50%"
           cy="50%"
-          innerRadius={60} // Creates the ring shape
+          innerRadius={60} 
           outerRadius={80}
           dataKey="value"
-          stroke="none" // Removes extra stroke borders
+          stroke="none" 
         >
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index]} />

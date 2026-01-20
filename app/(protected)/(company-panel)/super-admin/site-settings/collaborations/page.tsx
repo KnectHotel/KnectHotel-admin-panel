@@ -21,7 +21,7 @@ export default function CollaborationPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  // FETCH COLLABORATIONS FROM API
+  
   const fetchCollaborations = async () => {
     try {
       const data = await apiCall('GET', ENDPOINTS.COLLABORATIONS);
@@ -47,7 +47,7 @@ export default function CollaborationPage() {
     fetchCollaborations();
   }, []);
 
-  // HANDLE SUBMIT → CREATE OR UPDATE
+  
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
@@ -69,13 +69,13 @@ export default function CollaborationPage() {
     }
   };
 
-  // HANDLE DELETE CLICK
+  
   const handleDeleteClick = (id: string) => {
     setDeleteId(id);
     setShowDeleteModal(true);
   };
 
-  // CONFIRM DELETE
+  
   const confirmDelete = async () => {
     if (!deleteId) return;
 
@@ -92,7 +92,7 @@ export default function CollaborationPage() {
     }
   };
 
-  // HANDLE EDIT
+  
   const handleEdit = (item: any) => {
     setEditingId(item._id);
     setFormData({
@@ -106,7 +106,7 @@ export default function CollaborationPage() {
 
   return (
     <div className="p-6 w-full">
-      {/* HEADER */}
+      {}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
           <button
@@ -132,7 +132,7 @@ export default function CollaborationPage() {
         </button>
       </div>
 
-      {/* CARD GRID */}
+      {}
       {items.length === 0 ? (
         <div className="text-gray-500 py-16 text-center flex flex-col items-center gap-3">
           <svg
@@ -162,7 +162,7 @@ export default function CollaborationPage() {
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 relative group"
             >
-              {/* Logo/Header Section */}
+              {}
               <div className="relative h-48 bg-gradient-to-br from-[#f3f4f6] to-[#e5e7eb] overflow-hidden">
                 {item.logo ? (
                   <img
@@ -192,7 +192,7 @@ export default function CollaborationPage() {
                   </div>
                 )}
 
-                {/* Action Icons - Top Right */}
+                {}
                 <div className="absolute top-3 right-3 flex gap-2">
                   <button
                     onClick={() => handleEdit(item)}
@@ -211,7 +211,7 @@ export default function CollaborationPage() {
                   </button>
                 </div>
 
-                {/* Type Badge */}
+                {}
                 {item.type && (
                   <div className="absolute bottom-3 left-3">
                     <span className="px-3 py-1 bg-[#9b743f] text-white text-xs font-medium rounded-full shadow-sm">
@@ -221,7 +221,7 @@ export default function CollaborationPage() {
                 )}
               </div>
 
-              {/* Card Content */}
+              {}
               <div className="p-5">
                 <h3 className="font-semibold text-lg text-[#3b2f1c] mb-2 line-clamp-1">
                   {item.name}
@@ -231,7 +231,7 @@ export default function CollaborationPage() {
                   {item.description || 'No description available'}
                 </p>
 
-                {/* Meta Info */}
+                {}
                 <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
                   <span className="flex items-center gap-1">
                     <svg
@@ -259,7 +259,7 @@ export default function CollaborationPage() {
         </div>
       )}
 
-      {/* ADD/EDIT COLLABORATION MODAL */}
+      {}
       <AnimatePresence>
         {showForm && (
           <motion.div
@@ -274,7 +274,7 @@ export default function CollaborationPage() {
               exit={{ scale: 0.9, opacity: 0 }}
               className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
             >
-              {/* Modal Header */}
+              {}
               <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-[#9b743f] to-[#c49a5a]">
                 <h2 className="text-2xl font-bold text-white">
                   {editingId ? 'Edit Collaboration' : 'Add New Collaboration'}
@@ -293,16 +293,16 @@ export default function CollaborationPage() {
                 </button>
               </div>
 
-              {/* Modal Body - Scrollable */}
+              {}
               <div className="overflow-y-auto p-6">
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Basic Information Section */}
+                  {}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
                       Basic Information
                     </h3>
 
-                    {/* NAME */}
+                    {}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Name <span className="text-red-500">*</span>
@@ -319,7 +319,7 @@ export default function CollaborationPage() {
                       />
                     </div>
 
-                    {/* DESCRIPTION */}
+                    {}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Description <span className="text-red-500">*</span>
@@ -339,7 +339,7 @@ export default function CollaborationPage() {
                       />
                     </div>
 
-                    {/* TYPE */}
+                    {}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Type <span className="text-red-500">*</span>
@@ -357,13 +357,13 @@ export default function CollaborationPage() {
                     </div>
                   </div>
 
-                  {/* Media Section */}
+                  {}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
                       Media
                     </h3>
 
-                    {/* LOGO */}
+                    {}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Logo URL
@@ -380,7 +380,7 @@ export default function CollaborationPage() {
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
+                  {}
                   <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
                     <button
                       type="button"
@@ -409,7 +409,7 @@ export default function CollaborationPage() {
         )}
       </AnimatePresence>
 
-      {/* DELETE CONFIRMATION MODAL */}
+      {}
       <AnimatePresence>
         {showDeleteModal && (
           <motion.div

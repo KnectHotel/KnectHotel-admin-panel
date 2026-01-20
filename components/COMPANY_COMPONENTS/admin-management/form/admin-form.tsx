@@ -38,7 +38,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
       mobileNumber: '',
       roleId: '',
       status: 'Active',
-      // housekeepingStatus: 'CLEANED'
+      
     }
   });
 
@@ -61,7 +61,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
     fetchData();
   }, [adminID, mode]);
 
-  // Reset form only after both roles and employee are loaded
+  
   useEffect(() => {
     if (roles.length && employee) {
       form.reset({
@@ -72,10 +72,10 @@ const AdminForm = ({ adminID, mode }: Props) => {
         mobileNumber: employee.mobileNumber || '',
         roleId: employee.roleId?._id || '',
         status: employee.status || 'Active',
-        // housekeepingStatus: employee.housekeepingStatus || 'CLEANED'
+        
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [roles, employee]);
 
   const onSubmit = async (data: AdminSchemaType) => {
@@ -248,7 +248,7 @@ const AdminForm = ({ adminID, mode }: Props) => {
               )}
             />
 
-            {/* Role Selection */}
+            {}
             <FormField
               control={form.control}
               name="roleId"
@@ -309,37 +309,11 @@ const AdminForm = ({ adminID, mode }: Props) => {
               )}
             />
 
-            {/* Room Status */}
-            {/* <FormField
-              control={form.control}
-              name="housekeepingStatus"
-              render={({ field }) => (
-                <FormItem className="relative">
-                  <FormLabel>
-                    Room Status <span className="text-red-500 ml-1">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <div className="flex gap-1">
-                      <Select onValueChange={field.onChange} value={field.value} disabled={mode === 'view' || loading}>
-                        <SelectTrigger className="min-w-32 bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none">
-                          <SelectValue placeholder="Select room status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="CLEANED">Cleaned</SelectItem>
-                          <SelectItem value="DIRTY">Dirty</SelectItem>
-                          <SelectItem value="INSPECTED">Inspected</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                  <ChevronDown className="absolute right-4 top-[2.2rem] text-black w-4 h-4" />
-                </FormItem>
-              )}
-            /> */}
+            {}
+            {}
           </div>
 
-          {/* Buttons */}
+          {}
           <div className="flex items-center gap-3">
             <Button type="button" onClick={() => router.back()} className="btn-secondary" disabled={loading}>
               Cancel

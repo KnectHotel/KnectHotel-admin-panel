@@ -7,7 +7,7 @@ export interface RoomDataType {
   id: string;
   roomNumber: string;
   roomType: string;
-  roomCategory: string; // Smoking / Non-Smoking
+  roomCategory: string; 
   floorNumber: string;
   bedType: string;
   maxOccupancy: number;

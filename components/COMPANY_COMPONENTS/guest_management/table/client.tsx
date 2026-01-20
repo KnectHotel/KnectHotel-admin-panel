@@ -84,7 +84,7 @@ export const CompanyPanelGuestManagementHome: React.FC = () => {
         />
       )}
 
-      {/* Pagination always at the bottom */}
+      {}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-6 px-3 py-4 border-t">
         <div className="text-sm">
           Showing {Math.min((pageNo - 1) * limit + 1, totalRecords)} to{' '}

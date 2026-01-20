@@ -1,4 +1,4 @@
-// KnectHotel-admin-panel/app/(protected)/hotel-panel/room-types/add/page.tsx
+
 'use client';
 
 import React, { useState } from 'react';

@@ -28,7 +28,7 @@ export default function MilestonesPage() {
     images: ''
   });
 
-  // FETCH MILESTONES
+  
   const fetchMilestones = async () => {
     try {
       const json = await apiCall('GET', ENDPOINTS.MILESTONES);
@@ -47,7 +47,7 @@ export default function MilestonesPage() {
     setOpenId(openId === id ? null : id);
   };
 
-  // CREATE / UPDATE
+  
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
@@ -79,7 +79,7 @@ export default function MilestonesPage() {
     }
   };
 
-  // DELETE
+  
   const deleteItem = async (id: string) => {
     try {
       await apiCall('DELETE', `${ENDPOINTS.MILESTONES}/${id}`);
@@ -89,7 +89,7 @@ export default function MilestonesPage() {
     }
   };
 
-  // OPEN EDIT FORM
+  
   const editItem = (item: any) => {
     setEditingId(item._id);
     setShowForm(true);
@@ -106,7 +106,7 @@ export default function MilestonesPage() {
 
   return (
     <div className="p-6 w-full">
-      {/* Header */}
+      {}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -147,7 +147,7 @@ export default function MilestonesPage() {
         </motion.button>
       </motion.div>
 
-      {/* Empty State */}
+      {}
       {items.length === 0 ? (
         <div className="text-center text-gray-500 py-20">
           <img
@@ -170,7 +170,7 @@ export default function MilestonesPage() {
               </h3>
               <p className="text-sm text-gray-600 mt-1">{item.description}</p>
 
-              {/* Dropdown */}
+              {}
               <button
                 onClick={() => toggleDropdown(item._id)}
                 className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded"
@@ -206,7 +206,7 @@ export default function MilestonesPage() {
         </div>
       )}
 
-      {/* FORM MODAL */}
+      {}
       <AnimatePresence>
         {showForm && (
           <motion.div

@@ -1,8 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table';
 import CellAction from './cell-action';
-import { NotificationsDataType } from 'app/static/ServiceManagementData'; // Corrected import
+import { NotificationsDataType } from 'app/static/ServiceManagementData'; 
 
-// Updated columns to match NotificationsDataType
+
 export const columns: ColumnDef<NotificationsDataType>[] = [
   {
     accessorKey: 'notificationID',

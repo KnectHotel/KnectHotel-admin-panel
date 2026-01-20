@@ -11,9 +11,9 @@ import {
 
 import { useParams, useRouter } from 'next/navigation';
 import FormWrapper from './form-wrapper';
-// import { guestSchema, guestSchemaType } from 'schema';
 
-// import { useForm } from 'react-hook-form';
+
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import {
@@ -43,14 +43,14 @@ import {
   FieldErrors
 } from 'react-hook-form';
 
-// import {
-//   City,
-//   Country,
-//   ICity,
-//   ICountry,
-//   IState,
-//   State
-// } from 'country-state-city';
+
+
+
+
+
+
+
+
 import { ParsedCountry, PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import {
@@ -98,15 +98,15 @@ interface ServiceRequest {
   uniqueId: string;
 }
 
-// interface Service {
-//   amount: number;
-//   serviceRequestId: ServiceRequest;
-//   _id: string;
-// }
+
+
+
+
+
 interface Service {
   _id: string;
   amount: number;
-  requestName?: string; // optional since only present if serviceRequestId is null
+  requestName?: string; 
   serviceRequestId?: {
     _id: string;
     uniqueId: string;
@@ -123,7 +123,7 @@ const getBorderColorClass = (status?: string) => {
     case 'PENDING':
       return 'border-2 border-yellow-500';
     default:
-      return 'border border-gray-300'; // default gray
+      return 'border border-gray-300'; 
   }
 };
 
@@ -285,7 +285,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           const guest = res.booking;
           console.log('aaabbcc', res.booking.paymentStatus);
 
-          // Debug log for Room Stays
+          
           console.debug('[BOOKING_FETCH] bookingId:', guest?._id, 'roomStaysCount:', guest?.roomStays?.length || 0, 'roomStays:', guest?.roomStays);
 
           if (guest) {
@@ -379,7 +379,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                   requestId: guest?.idProof?.verification?.requestId ?? null
                 }
               },
-              // Payment Details
+              
               paymentDetails: guest?.paymentDetails || {
                 sellRate: 300,
                 netRate: 0,
@@ -389,9 +389,16 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                 otaCommission: 0,
                 tcs: 0,
                 tds: 0,
-                payAtHotel: false
+                payAtHotel: false,
+                billingName: guest?.paymentDetails?.billingName || '',
+                billingEmail: guest?.paymentDetails?.billingEmail || '',
+                billingMobile: guest?.paymentDetails?.billingMobile || '',
+                companyName: guest?.paymentDetails?.companyName || '',
+                gstNumber: guest?.paymentDetails?.gstNumber || '',
+                corporateCode: guest?.paymentDetails?.corporateCode || '',
+                invoiceRequired: guest?.paymentDetails?.invoiceRequired || false
               },
-              // Promo Info
+              
               promoInfo: guest?.promoInfo || {},
               ratePlanId: guest?.ratePlanId,
               roomTypeId: guest?.roomTypeId,
@@ -575,17 +582,17 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       const guest = response?.guest;
 
       if (!guest) {
-        // Nothing found -> allow free typing; don't lock fields
+        
         setIsGuestDataFetched(false);
         lastFetchedPhoneRef.current = onlyDigits;
         return;
       }
 
-      // Mark that we auto-filled; can use this to disable some inputs if needed
+      
       setIsGuestDataFetched(true);
       lastFetchedPhoneRef.current = onlyDigits;
 
-      // ---- Prefill primary guest fields (adjust mapping to your API) ----
+      
       addGuestForm.setValue('firstName', guest.firstName || '', {
         shouldDirty: true
       });
@@ -594,21 +601,21 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       });
       addGuestForm.setValue('email', guest.email || '', { shouldDirty: true });
 
-      // If you want to prefill address/location too, uncomment these:
-      // addGuestForm.setValue('address', guest.address || '', { shouldDirty: true });
-      // addGuestForm.setValue('state',   guest.state   || '', { shouldDirty: true });
-      // addGuestForm.setValue('city',    guest.city    || '', { shouldDirty: true });
-      // addGuestForm.setValue('pinCode', guest.pinCode || guest.pincode || '', { shouldDirty: true });
-      // addGuestForm.setValue('source',  guest.source  || guest.sources || '', { shouldDirty: true });
+      
+      
+      
+      
+      
+      
 
-      // ---- ID proof preview (if present) ----
+      
       if (guest?.idProof?.url) {
         setIdProofDetails({
           type: guest.idProof?.type || '',
           url: guest.idProof?.url || '',
           status: guest.idProof?.verification?.status || 'PENDING'
         });
-        // Put primary ID first, rest empty placeholders to keep array length = 6
+        
         setImages([guest.idProof.url, ...Array(5).fill(null)]);
       } else {
         setIdProofDetails(null);
@@ -616,21 +623,21 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       }
     } catch (err: unknown) {
       const error: any = err;
-      // Axios errors often have useful response info
+      
       if (error?.isAxiosError) {
-        // 404 is expected when guest doesn't exist - don't show error
+        
         if (error.response?.status === 404) {
-          // Guest not found is normal - just continue without pre-filling
+          
           setIsGuestDataFetched(false);
           return;
         }
-        // Only log/show error for non-404 errors
+        
         console.error('Error fetching guest by phone:', {
           status: error.response?.status,
           data: error.response?.data,
           message: error.message
         });
-        // show user-friendly message if available
+        
         ToastAtTopRight.fire(
           error?.response?.data?.message ||
           error?.message ||
@@ -638,7 +645,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           'error'
         );
       } else {
-        // Try to serialize non-axios errors for better debugging
+        
         try {
           console.error(
             'Error fetching guest by phone:',
@@ -678,9 +685,9 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         setLoading(true);
         const res = await apiCall('GET', `/api/booking/hotel/${id}`);
         const guest = res.booking;
-        console.log(guest); // Log the guest object for debugging
+        console.log(guest); 
         const normalizedGuests = (guest.guests ?? [])
-          .slice(1) // 👈 this removes index 0
+          .slice(1) 
           .map((g: any) => ({
             firstName: g.firstName || '',
             lastName: g.lastName || '',
@@ -704,11 +711,11 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         const e164 = toE164(nat, cc);
 
         if (guest) {
-          // Reset the form with guest details
+          
           addGuestForm.reset({
             firstName: guest.firstName || '',
             lastName: guest.lastName || '',
-            // phoneNumber: guest.phoneNumber || '',
+            
             phoneE164: e164,
             phoneNumber: nat,
             countryCode: cc,
@@ -727,7 +734,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
             infantGuestsCount: guest.infantGuestsCount,
             assignedRoomNumber: guest.assignedRoomNumber || '',
             adultGuestsCount: guest.adultGuestsCount,
-            // source: guest.sources || '',
+            
             sources: guest.sources ?? 'Walk-In',
             receivedAmt: guest.receivedAmt || 0,
             roomTariffDue: guest.roomTariffDue || 0,
@@ -753,7 +760,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                 requestId: guest?.idProof?.verification?.requestId ?? null
               }
             },
-            // Payment Details
+            
             paymentDetails: guest?.paymentDetails || {
               sellRate: 300,
               netRate: 0,
@@ -763,18 +770,25 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
               otaCommission: 0,
               tcs: 0,
               tds: 0,
-              payAtHotel: false
+              payAtHotel: false,
+              billingName: guest?.paymentDetails?.billingName || '',
+              billingEmail: guest?.paymentDetails?.billingEmail || '',
+              billingMobile: guest?.paymentDetails?.billingMobile || '',
+              companyName: guest?.paymentDetails?.companyName || '',
+              gstNumber: guest?.paymentDetails?.gstNumber || '',
+              corporateCode: guest?.paymentDetails?.corporateCode || '',
+              invoiceRequired: guest?.paymentDetails?.invoiceRequired || false
             },
-            // Promo Info
+            
             promoInfo: guest?.promoInfo || {},
-            // Room Type and Rate Plan - use actual values, no fallbacks
+            
             ratePlanId: guest?.ratePlanId,
             roomTypeId: guest?.roomTypeId,
             roomTypeName: guest?.roomTypeName,
             payAtHotel: guest?.payAtHotel || false,
-            // Room Stays
+            
             roomStays: guest?.roomStays || [],
-            // Stayflexi External Fields
+            
             externalRatePlanId: guest?.externalRatePlanId || '',
             externalRoomTypeId: guest?.externalRoomTypeId || '',
             externalRoomIds: guest?.externalRoomIds || []
@@ -783,7 +797,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           if (guest?.idProof?.url) {
             setImages([guest.idProof.url]);
           }
-          // Set images if available
+          
           if (guest.images) {
             setImages(guest.images);
           }
@@ -796,7 +810,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
             setImages([guest.idProof.url]);
           }
 
-          // Set the services if available
+          
           if (guest.services) {
             setServices(guest.services);
             console.log('Services:', guest.services);
@@ -844,14 +858,14 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     if (!data.checkOutDate) {
       data.checkOutDate = null;
     }
-    // const guestsFromForm = (data.guests ?? []).map((g) => ({
-    //   ...g,
-    //   // ensure phone digits only, keep +91 as countryCode
-    //   phoneNumber: g.phoneNumber
-    //     ? String(g.phoneNumber).replace(/\D/g, '').slice(-10)
-    //     : undefined,
-    //   countryCode: g.countryCode || '+91'
-    // }));
+    
+    
+    
+    
+    
+    
+    
+    
     const guestsFromForm = (data.guests ?? []).map((g) => ({
       ...g,
       phoneNumber: g.phoneNumber
@@ -862,29 +876,29 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     const normalizedSource = isWalkIn(data.sources)
       ? 'Walk-In'
       : (data.sources ?? '').trim();
-    // For the primary guest (booking payload)
+    
     const payload = {
-      // ...
+      
       countryCode: data.countryCode || '',
       phoneNumber: data.phoneNumber
         ? String(data.phoneNumber).replace(/\D/g, '')
         : '',
-      phoneE164: data.phoneE164 || undefined // optional but nice to have
-      // ...
+      phoneE164: data.phoneE164 || undefined 
+      
     };
 
-    // ----- PRE-SUBMIT GUARD FOR SECONDARY GUESTS -----
+    
     const guests = data.guests ?? [];
     const addedSecondary = guests.length;
 
-    // Case 1: No secondary rows added at all -> allow submit
+    
     if (addedSecondary === 0) {
-      // pass
+      
     } else {
-      // If any row has any value, we consider secondary details "started"
+      
       const anyTouched = guests.some(isGuestRowFilled);
 
-      // If user added rows but didn't type anything, block (they should remove the empty rows)
+      
       if (!anyTouched) {
         ToastAtTopRight.fire({
           icon: 'error',
@@ -893,7 +907,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         return;
       }
 
-      // Must add EXACTLY requiredSecondary rows once they started
+      
       if (addedSecondary !== requiredSecondary) {
         ToastAtTopRight.fire({
           icon: 'error',
@@ -903,7 +917,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         return;
       }
 
-      // Every added row must be complete
+      
       const firstIncomplete = guests.findIndex((g) => !isGuestRowComplete(g));
       if (firstIncomplete !== -1) {
         addGuestForm.setError(`guests.${firstIncomplete}.firstName` as any, {
@@ -917,14 +931,14 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         return;
       }
     }
-    // ----- /PRE-SUBMIT GUARD -----
+    
 
-    // =========================
-    // PRE-SUBMIT SECONDARY GUEST VALIDATION
-    // Rule: If user didn't add any secondary guest rows, allow submit.
-    // If they added any rows, they must add EXACTLY (adults + children + infants - 1)
-    // and every added row must be complete.
-    // =========================
+    
+    
+    
+    
+    
+    
     {
       const totalGuestsPlanned =
         (data.adultGuestsCount ?? 0) +
@@ -940,14 +954,14 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           g.gender,
           g.guestType,
           g.phoneNumber
-          // g.idProof?.url // idProof is strictly optional
+          
         ].some((v) => (typeof v === 'string' ? v.trim() !== '' : !!v))
       );
 
       if (!anySecondaryTouched && addedSecondary === 0) {
-        // OK: no secondary rows at all
+        
       } else {
-        // They started adding rows → must add exactly the required count
+        
         if (addedSecondary !== requiredSecondary) {
           ToastAtTopRight.fire({
             icon: 'error',
@@ -957,7 +971,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           return;
         }
 
-        // Validate completeness for each row
+        
         let invalidIndex = -1;
         for (let i = 0; i < addedSecondary; i++) {
           const g = data.guests![i];
@@ -984,23 +998,23 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         }
       }
     }
-    // =========================
-    // /PRE-SUBMIT VALIDATION
-    // =========================
+    
+    
+    
 
     try {
-      // Construct the common data
+      
       const baseData = {
         firstName: data.firstName,
         lastName: data.lastName,
-        // phoneNumber: data.phoneNo,
+        
         email: data.email,
         address: data.address,
         state: data.state,
         city: data.city,
-        // sources: data.source,
-        // sources: normalizedSource, // ✅ this is what your DB actually stores now
-        sources: normalizedSource, // optional mirror, safe to include
+        
+        
+        sources: normalizedSource, 
         country: data.country,
         adultGuestsCount: data.adultGuestsCount,
         childrenGuestsCount: data.childrenGuestsCount,
@@ -1018,7 +1032,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         preCheckIn: false,
         paymentStatus: data.paymentStatus,
         receivedAmt: data.receivedAmt || 0,
-        // roomTariffDue: data.roomTariffDue || 0,
+        
         serviceDue: data.serviceDue || 0,
         paymentMode: data.paymentMode || '',
         roomCategory: data.roomCategory || '',
@@ -1029,7 +1043,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           password: data?.wifi?.password || '',
           scanner: data?.wifi?.scanner || ''
         },
-        // Payment Details
+        
         paymentDetails: data.paymentDetails || {
           sellRate: 300,
           netRate: 0,
@@ -1041,23 +1055,23 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           tds: 0,
           payAtHotel: false
         },
-        // Promo Info
+        
         promoInfo: data.promoInfo || {},
-        // Room Type and Rate Plan - use selected values, no fallbacks
+        
         ratePlanId: data.ratePlanId,
         roomTypeId: data.roomTypeId,
         roomTypeName: data.roomTypeName,
         payAtHotel: data.payAtHotel || false,
-        // Room Stays
+        
         roomStays: data.roomStays || [],
-        // Stayflexi External Fields
+        
         externalRatePlanId: data.externalRatePlanId,
         externalRoomTypeId: data.externalRoomTypeId,
         externalRoomIds: data.externalRoomIds
       };
 
       if (mode === 'edit' && id) {
-        // For UPDATE
+        
         const payload = {
           updates: baseData
         };
@@ -1077,12 +1091,12 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       } else {
         const guestsFromForm = (data.guests ?? []).map((g) => ({
           ...g,
-          // ensure phone digits only, keep +91 as countryCode
+          
           phoneNumber: g.phoneNumber
             ? String(g.phoneNumber).replace(/\D/g, '').slice(-10)
             : undefined,
           countryCode: g.countryCode || '+91',
-          idProof: g.idProof?.type ? g.idProof : undefined // Sanitize idProof
+          idProof: g.idProof?.type ? g.idProof : undefined 
         }));
         const payload = {
           phoneNumber: data.phoneNumber,
@@ -1095,17 +1109,17 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           city: data.city,
           businessName: data.businessName || undefined,
           gstIn: data.gstIn || undefined,
-          // source: normalizedSource, // <-- add
-          sources: normalizedSource, // <-- keep
+          
+          sources: normalizedSource, 
           pincode: data.pinCode,
-          // hotelId MUST be extracted from correct path in session admin data
-          // Path confirmed from hotel-profile/page.tsx: adminData.user.HotelId
+          
+          
           hotelId: (function () {
             try {
               const item = sessionStorage.getItem('admin');
               if (item) {
                 const adminData = JSON.parse(item);
-                // CORRECT PATH: adminData.user.HotelId (confirmed from hotel-profile/page.tsx)
+                
                 const hotelId = adminData?.user?.HotelId || adminData?.HotelId || adminData?._id;
                 console.log('[DEBUG] Hotel context (FULL):', {
                   'adminData.user.HotelId': adminData?.user?.HotelId,
@@ -1124,7 +1138,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           adultGuestsCount: data.adultGuestsCount,
           childrenGuestsCount: data.childrenGuestsCount,
           infantGuestsCount: data.infantGuestsCount,
-          // sources: data.source,
+          
           checkIn: toUtcIso(data.checkInDate),
           checkOut: toUtcIso(data.checkOutDate),
           assignedRoomNumber: data.assignedRoomNumber,
@@ -1137,7 +1151,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           status: data.status,
           roomTariff: data.roomTariff,
           roomCategory: data.roomCategory,
-          // Payment Details
+          
           paymentDetails: data.paymentDetails || {
             sellRate: 300,
             netRate: 0,
@@ -1147,23 +1161,30 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
             otaCommission: 0,
             tcs: 0,
             tds: 0,
-            payAtHotel: false
+            payAtHotel: false,
+            billingName: data.paymentDetails?.billingName,
+            billingEmail: data.paymentDetails?.billingEmail,
+            billingMobile: data.paymentDetails?.billingMobile,
+            companyName: data.paymentDetails?.companyName,
+            gstNumber: data.paymentDetails?.gstNumber,
+            corporateCode: data.paymentDetails?.corporateCode,
+            invoiceRequired: data.paymentDetails?.invoiceRequired
           },
-          // Promo Info
+          
           promoInfo: data.promoInfo || {},
-          // Room Type and Rate Plan - use selected values, no fallbacks
-          // ratePlanId omitted - Stayflexi uses default rate plan
+          
+          
           roomTypeId: data.roomTypeId,
           roomTypeName: data.roomTypeName,
           payAtHotel: data.payAtHotel || false,
 
-          // Room Stays
+          
           roomStays: data.roomStays || [],
-          // gender: data.gender,
+          
           countryCode: data.countryCode || '+91',
           idProof: data.idProof?.type ? data.idProof : undefined,
-          guests: guestsFromForm, // 👈 use RHF array
-          // Stayflexi External Fields
+          guests: guestsFromForm, 
+          
           externalRatePlanId: data.externalRatePlanId,
           externalRoomTypeId: data.externalRoomTypeId,
           externalRoomIds: data.externalRoomIds
@@ -1172,7 +1193,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         console.log('Submit data', data);
         console.log('[DEBUG] Sending AddBooking Payload:', JSON.stringify(payload, null, 2));
 
-        // PRE-SUBMIT GUARD: Hard-fail if hotelId is missing
+        
         if (!payload.hotelId) {
           console.error('[CRITICAL] hotelId is missing - booking blocked');
           ToastAtTopRight.fire({
@@ -1183,7 +1204,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           return;
         }
 
-        // Use EXTERNAL booking route with x-api-key authentication
+        
         const res = await apiCall('POST', '/api/booking/external/addBooking', payload);
         console.log('[DEBUG] AddBooking Response:', res);
 
@@ -1199,13 +1220,13 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       console.error('Booking Save/Update Failed:', err);
       const { title, fieldErrors } = parseApiError(err);
 
-      // Show precise backend reason (e.g., "phoneNumber is required")
+      
       ToastAtTopRight.fire({ icon: 'error', title });
 
-      // Map backend field errors back into RHF so users see inline messages
+      
       if (fieldErrors) {
         Object.entries(fieldErrors).forEach(([path, msg]) => {
-          // Supports nested paths like "guests.0.firstName"
+          
           addGuestForm.setError(path as any, {
             type: 'server',
             message: String(msg || 'Invalid')
@@ -1221,7 +1242,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       g?.gender,
       g?.guestType,
       g?.phoneNumber
-      // g?.idProof?.url // idProof is strictly optional
+      
     ].some((v) => (typeof v === 'string' ? v.trim() !== '' : !!v));
 
   const isGuestRowComplete = (g: any) =>
@@ -1265,7 +1286,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       const response = await apiCall(
         'PUT',
         `/api/booking/approve-precheckin/${guestId}`,
-        { assignedRoomNumber: roomNumber } // use string
+        { assignedRoomNumber: roomNumber } 
       );
       console.log('yyyyyy', response);
       if (response.status === 200 || response.success) {
@@ -1367,19 +1388,19 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       );
     }
   };
-  // RHF helpers
+  
   const { watch, setValue } = addGuestForm;
-  // How many secondary guests are needed?
+  
   const adults = Number(watch('adultGuestsCount') ?? 0);
   const children = Number(watch('childrenGuestsCount') ?? 0);
   const infants = Number(addGuestForm.watch('infantGuestsCount') ?? 0);
-  // const requiredGuests = Math.max(0, adults + children - 1); // ❌ old calc (kept for reference)
+  
 
-  // ✅ include infants in the calculation
-  // const infants = Number(watch('infantGuestsCount') ?? 0);
+  
+  
   const requiredSecondary = Math.max(0, adults + children + infants - 1);
 
-  // RHF field array for guests
+  
   const { fields, append, remove, replace } = useFieldArray({
     control: addGuestForm.control,
     name: 'guests'
@@ -1392,17 +1413,17 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     phoneNumber: '',
     countryCode: '+91',
     gender: 'male',
-    // idProof removed, defaults to undefined due to optional type
+    
   };
-  // helpers (put near top of file)
+  
   const selectAllOnFocus = (e: React.FocusEvent<HTMLInputElement>) =>
     e.currentTarget.select();
 
-  // Ensure exactly `count` rows exist
+  
   const ensureGuestCount = (count: number) => {
     const current = addGuestForm.getValues('guests')?.length ?? 0;
     if (count <= 0) {
-      replace([]); // none needed
+      replace([]); 
       return;
     }
     if (current < count) {
@@ -1415,35 +1436,35 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
   const countryISO2 = watch('country') || 'IN';
   const stateISO2 = watch('state');
 
-  // All countries (ISO2)
+  
   const countries: ICountry[] = Country.getAllCountries();
 
-  // States for selected country
+  
   const states: IState[] = countryISO2
     ? State.getStatesOfCountry(countryISO2)
     : [];
 
-  // Cities for selected state
+  
   const cities: ICity[] =
     countryISO2 && stateISO2
       ? City.getCitiesOfState(countryISO2, stateISO2)
       : [];
 
-  // When country changes, clear state/city
-  // useEffect(() => {
-  //   setValue('state', '');
-  //   setValue('city', '');
-  // }, [countryISO2, setValue]);
+  
+  
+  
+  
+  
 
-  // // When state changes, clear city
-  // useEffect(() => {
-  //   setValue('city', '');
-  // }, [stateISO2, setValue]);
+  
+  
+  
+  
   const [showGuestForm, setShowGuestForm] = useState(false);
   const [wifiUploading, setWifiUploading] = useState(false);
 
-  // How many secondary guests are allowed?
-  const maxExtraGuests = requiredSecondary; // Adults + Children + Infants − 1
+  
+  const maxExtraGuests = requiredSecondary; 
   const currentExtraGuests = fields.length;
   const remainingGuests = Math.max(0, maxExtraGuests - currentExtraGuests);
   const canAddMoreGuests = remainingGuests > 0;
@@ -1455,7 +1476,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           ? 'No additional guests are allowed for this booking.'
           : `Only ${maxExtraGuests} ${maxExtraGuests === 1 ? 'guest is' : 'guests are'} allowed`;
 
-      // Use your SweetAlert wrapper
+      
       ToastAtTopRight.fire({
         icon: 'warning',
         title: msg
@@ -1473,10 +1494,10 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     return Number.isFinite(n) ? n : 0;
   };
 
-  // keep two decimals but return NUMBER (not string)
+  
   const round2 = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100;
 
-  // NEW: watch assignedRoomNumber
+  
   const assignedRoomNumber = addGuestForm.watch('assignedRoomNumber');
 
   const mustKeep =
@@ -1513,40 +1534,40 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     name: 'lateCheckout'
   });
 
-  // useEffect(() => {
-  //   const t =
-  //     typeof tariffWatch === 'number' ? tariffWatch : toNum(tariffWatch);
-  //   const d = typeof dueWatch === 'number' ? dueWatch : toNum(dueWatch);
+  
+  
+  
+  
 
-  //   if (d > t) {
-  //     addGuestForm.setError('roomTariffDue', {
-  //       type: 'validate',
-  //       message: 'Due cannot be greater than Tariff'
-  //     });
-  //     addGuestForm.setValue('receivedAmt', 0, { shouldValidate: true });
-  //     return;
-  //   }
+  
+  
+  
+  
+  
+  
+  
+  
 
-  //   addGuestForm.clearErrors('roomTariffDue');
-  //   const received = Math.max(0, t - d);
-  //   addGuestForm.setValue('receivedAmt', round2(received), {
-  //     shouldValidate: true,
-  //     shouldDirty: true
-  //   });
-  // }, [tariffWatch, dueWatch]);
-  // const [sourceMode, setSourceMode] = useState<'select' | 'input'>('select');
+  
+  
+  
+  
+  
+  
+  
+  
 
-  // // optional: auto-sync mode when editing an existing booking
-  // const srcWatch = addGuestForm.watch('source');
-  // useEffect(() => {
-  //   setSourceMode(srcWatch && srcWatch !== 'Walk-In' ? 'input' : 'select');
-  // }, [srcWatch]);
-  // defaults: Walk-In selected, dropdown visible
-  // const [sourceMode, setSourceMode] = useState<'select' | 'input'>('select');
-  // const [selectValue, setSelectValue] = useState<'Walk-In' | 'others'>(
-  //   'Walk-In'
-  // );
-  // 1) helpers
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   useEffect(() => {
     const t =
       typeof tariffWatch === 'number' ? tariffWatch : toNum(tariffWatch);
@@ -1554,19 +1575,19 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       typeof receivedWatch === 'number' ? receivedWatch : toNum(receivedWatch);
 
     if (r > t) {
-      // Received cannot exceed Tariff
-      // addGuestForm.setError('receivedAmt', {
-      //   type: 'validate',
-      //   message: 'Received cannot be greater than Tariff'
-      // });
-      // Set due to full tariff to reflect the error state clearly
-      // addGuestForm.setValue('roomTariffDue', t, { shouldValidate: true });
-      // return;
+      
+      
+      
+      
+      
+      
+      
+      
     }
 
     addGuestForm.clearErrors('receivedAmt');
 
-    // NEW CALCULATION LOGIC
+    
     const discountType = addGuestForm.getValues('discountType');
     const discountAmount = toNum(addGuestForm.getValues('discountAmount'));
     const extraCharges = addGuestForm.getValues('extraCharges') || [];
@@ -1577,7 +1598,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
 
     let totalVal = t;
 
-    // Apply Discount
+    
     let discountVal = 0;
     if (discountType === 'percentage') {
       discountVal = (t * discountAmount) / 100;
@@ -1586,18 +1607,18 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     }
     totalVal -= discountVal;
 
-    // Add Extra Charges
+    
     const extraChargesTotal = extraCharges.reduce(
       (acc, curr) => acc + toNum(curr.amount),
       0
     );
     totalVal += extraChargesTotal;
 
-    // Add Late Checkout
+    
     totalVal += lateCheckoutAmount;
 
-    // Add Service Due (if it's part of the total payable, usually it is separate but let's assume it adds up)
-    totalVal += serviceDue; // Assuming serviceDue is part of the final bill
+    
+    totalVal += serviceDue; 
 
     const due = round2(Math.max(0, totalVal - r));
 
@@ -1615,13 +1636,13 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     addGuestForm.watch('serviceDue')
   ]);
 
-  // Auto-fill Room Details from real room data
+  
   useEffect(() => {
     if (assignedRoomNumber) {
-      // Find room in real available rooms list
+      
       const room = availableRooms.find((r) => r.roomNumber === assignedRoomNumber);
       if (room) {
-        // Auto-fill category and tariff from the Room model
+        
         addGuestForm.setValue('roomCategory', room.roomTypeName);
         addGuestForm.setValue('roomTariff', room.baseRate || 0);
 
@@ -1639,20 +1660,20 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     return s === 'walk-in' || s === 'walkin' || s === 'walk in';
   };
 
-  // 2) defaults (you can keep these)
+  
   const [sourceMode, setSourceMode] = useState<'select' | 'input'>('select');
   const [selectValue, setSelectValue] = useState<'Walk-In' | 'others'>(
     'Walk-In'
   );
 
-  // 3) watch the actual form field
+  
   const sourceValue = useWatch({
     control: addGuestForm.control,
     name: 'sources'
   });
 
-  // 4) whenever the form value changes (including after reset from API),
-  //    put the UI in the correct mode and selection
+  
+  
   useEffect(() => {
     if (isWalkIn(sourceValue) || !sourceValue) {
       setSourceMode('select');
@@ -1666,7 +1687,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     const nat = String(phoneNumber || '')
       .replace(/\D/g, '')
       .slice(-10);
-    const cc = String(countryCode || '+91').replace(/^\+/, ''); // strip plus
+    const cc = String(countryCode || '+91').replace(/^\+/, ''); 
     return nat ? `+${cc}${nat}` : '';
   };
   function normalizeLocation(
@@ -1674,7 +1695,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     stateVal?: string,
     cityVal?: string
   ) {
-    // Country: accept 'IN' or 'India'
+    
     const countries = Country.getAllCountries();
     const country =
       countries.find((c) => c.isoCode === countryVal) ||
@@ -1684,7 +1705,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
 
     const countryISO = country?.isoCode || 'IN';
 
-    // State: accept 'UP' or 'Uttar Pradesh'
+    
     const states = State.getStatesOfCountry(countryISO);
     const state =
       states.find((s) => s.isoCode === stateVal) ||
@@ -1694,7 +1715,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
 
     const stateISO = state?.isoCode || '';
 
-    // City: keep by name (your Select uses city.name as value)
+    
     const cities = stateISO ? City.getCitiesOfState(countryISO, stateISO) : [];
     const city =
       cities.find(
@@ -1713,17 +1734,17 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     if (currentCity && !list.includes(currentCity)) {
       addGuestForm.setValue('city', '');
     }
-  }, [countryISO2, stateISO2]); // you already have these watches
-  // 1) put this near your other fns, above the return()
+  }, [countryISO2, stateISO2]); 
+  
 
   const onInvalid = (errors: FieldErrors<GuestSchemaType>) => {
-    // Debug: Log all validation errors to identify the failing field(s)
+    
     console.warn('[FORM VALIDATION] Validation errors:', errors);
     Object.entries(errors).forEach(([key, val]) => {
       console.warn('[FORM VALIDATION] Field failed:', key, '→', val?.message || val);
     });
 
-    // Get first error field name for specific message
+    
     const firstKey = Object.keys(errors)[0];
     const firstError = firstKey ? errors[firstKey as keyof typeof errors] : null;
     const errorMessage = firstError?.message
@@ -1738,8 +1759,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     });
 
     if (firstKey) {
-      // focus first invalid field
-      // @ts-ignore
+      
+      
       addGuestForm.setFocus(firstKey);
     }
   };
@@ -1754,11 +1775,11 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
     const ax = err as AxiosError<any>;
     const data = ax?.response?.data;
 
-    // Common patterns: { message }, { error: { message } }, { errors: { field: msg } }
+    
     const title =
       data?.message || data?.error?.message || ax?.message || fallback.title;
 
-    // Try to pick field-level errors if backend sends them
+    
     const fieldErrors: FieldErrs | undefined =
       typeof data?.errors === 'object'
         ? data.errors
@@ -1803,7 +1824,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
               </div>
             )}
 
-            {/* Reject Modal */}
+            {}
             {mode === 'pending' && showRejectModal && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div className="bg-white rounded-lg p-6 w-full max-w-md">
@@ -1818,22 +1839,22 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                     className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-coffee resize-none"
                   />
                   <div className="mt-4 flex justify-end gap-2">
-                    {/* Cancel Button */}
+                    {}
                     <Button
                       onClick={() => {
                         setShowRejectModal(false);
-                        setRejectionReason(''); // Clear the rejection reason when cancel
+                        setRejectionReason(''); 
                       }}
                       className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300"
                     >
                       Cancel
                     </Button>
-                    {/* Submit Button */}
+                    {}
                     <Button
                       onClick={() => {
-                        rejectRequest(rejectionReason); // Call function with rejection reason
+                        rejectRequest(rejectionReason); 
                       }}
-                      disabled={!rejectionReason.trim()} // Disable if reason is empty
+                      disabled={!rejectionReason.trim()} 
                       className="px-4 py-2 rounded text-white bg-[rgb(160,125,61)] hover:opacity-90 disabled:opacity-50"
                     >
                       Send
@@ -1907,24 +1928,21 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
               </div>
             )}
 
-            {/* Other sections of your form */}
+            {}
           </div>
         </div>
         <Form {...addGuestForm}>
-          {/* <form
-            onSubmit={addGuestForm.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4 w-full"
-          > */}
+          {}
           <form
             onSubmit={addGuestForm.handleSubmit(onSubmit, onInvalid)}
             className="space-y-6"
           >
             <div className="flex flex-col gap-4">
-              {/* Row 1: Phone, First Name, Last Name */}
+              {}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                 <FormField
                   control={addGuestForm.control}
-                  name="phoneE164" // full international value (e.g., +14155552671)
+                  name="phoneE164" 
                   rules={{ required: true }}
                   render={({ field }) => {
                     const [debounceTimer, setDebounceTimer] = useState<
@@ -1935,25 +1953,25 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       phone: string,
                       meta: { country: ParsedCountry; inputValue: string }
                     ) => {
-                      // phone is full E.164 like "+919876543210"
+                      
                       field.onChange(phone);
 
-                      // Extract national digits by stripping the dial code
+                      
                       const dial = (meta?.country?.dialCode ?? '').replace(
                         /\D/g,
                         ''
-                      ); // e.g. "91"
+                      ); 
                       const national = phone
                         .replace(/^\+/, '')
                         .replace(new RegExp(`^${dial}`), '')
                         .replace(/\D/g, '');
 
-                      // Keep national in your old field (used for fetching)
+                      
                       addGuestForm.setValue('phoneNumber', national, {
                         shouldDirty: true
                       });
 
-                      // Debounced fetch by NATIONAL number only
+                      
                       if (debounceTimer) window.clearTimeout(debounceTimer);
                       const t = window.setTimeout(() => {
                         if (national.length === 10)
@@ -1981,8 +1999,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                           <div className="flex gap-2 items-center">
                             <PhoneInput
                               defaultCountry="in"
-                              value={field.value || ''} // full E.164 in form state
-                              onChange={handleChange} // <-- correct signature
+                              value={field.value || ''} 
+                              onChange={handleChange} 
                               onBlur={handleBlur}
                               disabled={!isEnabled || mode === 'view'}
                               required
@@ -2039,7 +2057,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                   )}
                 />
               </div>
-              {/* Row 2: Email, Street Address, Landmark */}
+              {}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                 <FormField
                   control={addGuestForm.control}
@@ -2107,9 +2125,9 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                   )}
                 />
               </div>
-              {/* Row 3: Country, State, City (CASCADING) */}
+              {}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-                {/* Country */}
+                {}
                 <FormField
                   control={addGuestForm.control}
                   name="country"
@@ -2127,7 +2145,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                           addGuestForm.setValue('city', '');
                         }
                       }
-                      // eslint-disable-next-line react-hooks/exhaustive-deps
+                      
                     }, []);
 
                     const selectedCountryCode =
@@ -2170,7 +2188,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                   }}
                 />
 
-                {/* State */}
+                {}
                 <FormField
                   control={addGuestForm.control}
                   name="state"
@@ -2222,56 +2240,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                   }}
                 />
 
-                {/* City */}
-                {/* <FormField
-                  control={addGuestForm.control}
-                  name="city"
-                  render={({ field }) => {
-                    const countryCode = addGuestForm.watch('country') || 'IN';
-                    const stateCode = addGuestForm.watch('state') || '';
-                    const cities =
-                      countryCode && stateCode
-                        ? City.getCitiesOfState(countryCode, stateCode)
-                        : [];
-
-                    return (
-                      <FormItem className="w-full">
-                        <FormLabel className="text-black text-[0.8rem]">
-                          City <span className="text-red-600">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Select
-                            value={field.value || ''}
-                            onValueChange={field.onChange}
-                            disabled={!isEnabled || !countryCode || !stateCode}
-                          >
-                            <SelectTrigger className="relative bg-[#F6EEE0] text-gray-700 p-2 rounded-md border border-gray-300 text-xs 2xl:text-sm">
-                              <SelectValue placeholder="Select City" />
-                              <ChevronDown
-                                size={14}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                              />
-                            </SelectTrigger>
-                            <SelectContent className="max-h-64">
-                              {cities.length === 0 ? (
-                                <div className="p-2 text-xs text-gray-500">
-                                  No cities found
-                                </div>
-                              ) : (
-                                cities.map((city) => (
-                                  <SelectItem key={city.name} value={city.name}>
-                                    {city.name}
-                                  </SelectItem>
-                                ))
-                              )}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                /> */}
+                {}
+                {}
                 <FormField
                   control={addGuestForm.control}
                   name="city"
@@ -2324,7 +2294,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                 />
               </div>
 
-              {/* Row 4: Pincode, Source, Total Adults */}
+              {}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                 <FormField
                   control={addGuestForm.control}
@@ -2358,27 +2328,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                   )}
                 />
 
-                {/* <FormField
-                  control={addGuestForm.control}
-                  name="source"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel className="text-black text-[0.8rem]">
-                        Source
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={!isEnabled}
-                          type="text"
-                          placeholder="(e.g., Walk-in, Website, OTA, Referral)"
-                          {...field}
-                          className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
+                {}
                 <FormField
                   control={addGuestForm.control}
                   name="sources"
@@ -2390,17 +2340,17 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       <FormControl>
                         {sourceMode === 'select' ? (
                           <Select
-                            value={selectValue} // <- use UI state, not field.value
+                            value={selectValue} 
                             onValueChange={(val) => {
                               if (val === 'Walk-In') {
                                 setSelectValue('Walk-In');
-                                field.onChange('Walk-In'); // persist in form
+                                field.onChange('Walk-In'); 
                                 setSourceMode('select');
                               } else {
-                                // val === 'others' -> open input immediately (no flicker)
+                                
                                 setSelectValue('others');
                                 setSourceMode('input');
-                                // do NOT change field yet; user will type
+                                
                               }
                             }}
                             disabled={!isEnabled}
@@ -2437,7 +2387,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                               size="sm"
                               disabled={!isEnabled}
                               onClick={() => {
-                                // Snap back to dropdown with Walk-In as default
+                                
                                 field.onChange('Walk-In');
                                 setSelectValue('Walk-In');
                                 setSourceMode('select');
@@ -2485,7 +2435,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                   )}
                 />
               </div>
-              {/* Row 5: Children & Infants ONLY */}
+              {}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                 <FormField
                   control={addGuestForm.control}
@@ -2571,7 +2521,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                   )}
                 />
 
-                {/* GSTIN – optional, uppercase with max length 15 */}
+                {}
                 <FormField
                   control={addGuestForm.control}
                   name="gstIn"
@@ -2588,7 +2538,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                           placeholder="GSTIN Number"
                           onChange={(e) =>
                             field.onChange(e.target.value.toUpperCase())
-                          } // uppercase convert on input
+                          } 
                           disabled={!isEnabled}
                           className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md text-sm border border-gray-300"
                         />
@@ -2599,7 +2549,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                 />
               </div>
 
-              {/* NEW CONTAINER: Stay Details & Billing */}
+              {}
               <div className="flex flex-col gap-4 2xl:gap-5 bg-[#FAF6EF] shadow-custom p-6 2xl:p-8 rounded-lg mt-4">
                 <h2 className="text-base 2xl:text-lg font-semibold text-gray-800">
                   Stay Details & Billing
@@ -2608,7 +2558,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                 <div className="grid grid-cols-1 md:grid-cols-1 gap-4 w-full">
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-                    {/* Check-in */}
+                    {}
                     <FormField
                       control={addGuestForm.control}
                       name="checkInDate"
@@ -2630,7 +2580,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       )}
                     />
 
-                    {/* Check-out */}
+                    {}
                     <FormField
                       control={addGuestForm.control}
                       name="checkOutDate"
@@ -2652,7 +2602,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       )}
                     />
 
-                    {/* Room Category (kept as-is) */}
+                    {}
                     <div className="flex flex-col gap-4">
                       <FormField
                         control={addGuestForm.control}
@@ -2678,7 +2628,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       />
                     </div>
 
-                    {/* Assign Room Number */}
+                    {}
                     <FormField
                       control={addGuestForm.control}
                       name="assignedRoomNumber"
@@ -2701,7 +2651,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                   : ''
                               }
                               onChange={(e) => {
-                                // Parse out the room number from the "RoomNumber (Type)" format
+                                
                                 const selectedLabel = e.target.value;
                                 const roomNumMatch = selectedLabel.match(/^([^(]+)/);
                                 const roomNum = roomNumMatch ? roomNumMatch[1].trim() : selectedLabel;
@@ -2763,28 +2713,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       </div>
                     </div>
 
-                    {/* Room Tariff (kept as-is) */}
-                    {/* <FormField
-                    control={addGuestForm.control}
-                    name="roomTariff"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Room Tariff (Including GST){' '}
-                          <span className="text-red-600">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            placeholder="Room Tariff"
-                            disabled={!isEnabled} // Disabled based on conditions
-                            {...field} // Bind the form control
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  /> */}
+                    {}
+                    {}
 
                     <FormField
                       control={addGuestForm.control}
@@ -2797,7 +2727,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                           </FormLabel>
                           <FormControl>
                             <Input
-                              type="text" // or "number" with step="0.01"
+                              type="text" 
                               inputMode="decimal"
                               placeholder="Room Tariff"
                               disabled={!isEnabled}
@@ -2816,21 +2746,21 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       )}
                     />
 
-                    {/* GST (kept as-is) */}
+                    {}
                     <FormField
                       control={addGuestForm.control}
                       name="gst"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-black text-[0.8rem]">
-                            GST %{/* <span className="text-red-600">*</span> */}
+                            GST %{}
                           </FormLabel>
                           <FormControl>
                             <Input
                               type="text"
-                              disabled={!isEnabled} // Disabled based on conditions
+                              disabled={!isEnabled} 
                               placeholder="percent type (e.g., 0, 5, 12, 18)"
-                              {...field} // Bind the form control
+                              {...field} 
                               className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
                             />
                           </FormControl>
@@ -2838,82 +2768,11 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       )}
                     />
 
-                    {/* <FormField
-                    className="w-full"
-                    control={addGuestForm.control}
-                    name="roomTariffDue"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Room Tariff Due
-                        </FormLabel>
-                        <FormControl>
-                          <div className="flex gap-1">
-                            <Input
-                              disabled={!isEnabled}
-                              type="text"
-                              placeholder="0"
-                              {...field}
-                              className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
+                    {}
 
-                    {/* Received Amount */}
-                    {/* <FormField
-                    control={addGuestForm.control}
-                    name="receivedAmt"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Received Amount
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            disabled={!isEnabled}
-                            type="text"
-                            placeholder="0"
-                            {...field}
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
-                    {/* <FormField
-                    control={addGuestForm.control}
-                    name="roomTariffDue"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Room Tariff Due
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            inputMode="decimal"
-                            placeholder="0"
-                            disabled={!isEnabled}
-                            value={
-                              field.value === undefined
-                                ? ''
-                                : String(field.value)
-                            }
-                            onChange={(e) =>
-                              field.onChange(toNum(e.target.value))
-                            }
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
+                    {}
+                    {}
+                    {}
                     <FormField
                       control={addGuestForm.control}
                       name="roomTariffDue"
@@ -2942,63 +2801,9 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       )}
                     />
 
-                    {/* <FormField
-                    control={addGuestForm.control}
-                    name="roomTariffDue"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Room Tariff Due
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            inputMode="decimal"
-                            placeholder="0"
-                            // Disable if in edit mode
-                            disabled={!isEditMode || !isEnabled}
-                            value={
-                              field.value === undefined
-                                ? ''
-                                : String(field.value)
-                            }
-                            onChange={(e) =>
-                              field.onChange(toNum(e.target.value))
-                            }
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
+                    {}
 
-                    {/* <FormField
-                    control={addGuestForm.control}
-                    name="receivedAmt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Received Amount
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            readOnly
-                            disabled={!isEnabled}
-                            value={
-                              field.value === undefined
-                                ? ''
-                                : String(field.value)
-                            }
-                            onChange={() => {}}
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
+                    {}
                     <FormField
                       control={addGuestForm.control}
                       name="receivedAmt"
@@ -3029,31 +2834,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       )}
                     />
 
-                    {/* <FormField
-                    className="w-full"
-                    control={addGuestForm.control}
-                    name="serviceDue"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-black text-[0.8rem]">
-                          Service Due
-                        </FormLabel>
-                        <FormControl>
-                          <div className="flex gap-1">
-                            <Input
-                              disabled={!isEnabled}
-                              type="number"
-                              
-                              placeholder="0"
-                              {...field}
-                              className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
+                    {}
                     <FormField
                       className="w-full"
                       control={addGuestForm.control}
@@ -3076,7 +2857,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                               }
                               onChange={(e) =>
                                 field.onChange(toNum(e.target.value))
-                              } // 👈 converts to number
+                              } 
                               className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
                             />
                           </FormControl>
@@ -3085,7 +2866,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       )}
                     />
 
-                    {/* Payment Mode */}
+                    {}
                     <FormField
                       className="w-full"
                       control={addGuestForm.control}
@@ -3122,7 +2903,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       )}
                     />
 
-                    {/* Payment Status */}
+                    {}
                     <FormField
                       control={addGuestForm.control}
                       name="paymentStatus"
@@ -3160,7 +2941,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                   </div>
                   <div className='w-full flex gap-4'>
 
-                    {/* Payment Details Section - Top Row */}
+                    {}
                     <div className="w-full mt-4 border-t pt-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <FormField
@@ -3297,7 +3078,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                             </FormItem>
                           )}
                         />
-                        {/* Hidden fields for sellRate, netRate, paymentMade - still in form but not shown in UI */}
+                        {}
                         <FormField
                           control={addGuestForm.control}
                           name="paymentDetails.sellRate"
@@ -3321,11 +3102,122 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                         />
                       </div>
                     </div>
-                    {/* Room Type Section */}
+                    {}
+                    <div className="w-full mt-4 border-t pt-4">
+                      <FormWrapper title="Billing & Company Details">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {}
+                          <FormField
+                            control={addGuestForm.control}
+                            name="paymentDetails.billingName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-black text-[0.8rem]">Billing Name</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Billing Name" {...field} disabled={!isEnabled} className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          {}
+                          <FormField
+                            control={addGuestForm.control}
+                            name="paymentDetails.billingEmail"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-black text-[0.8rem]">Billing Email</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Billing Email" {...field} disabled={!isEnabled} className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          {}
+                          <FormField
+                            control={addGuestForm.control}
+                            name="paymentDetails.billingMobile"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-black text-[0.8rem]">Billing Mobile</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Billing Mobile" {...field} disabled={!isEnabled} className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          {}
+                          <FormField
+                            control={addGuestForm.control}
+                            name="paymentDetails.companyName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-black text-[0.8rem]">Company Name</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Company Name" {...field} disabled={!isEnabled} className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          {}
+                          <FormField
+                            control={addGuestForm.control}
+                            name="paymentDetails.gstNumber"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-black text-[0.8rem]">GST Number</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="GST Number" {...field} disabled={!isEnabled} className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          {}
+                          <FormField
+                            control={addGuestForm.control}
+                            name="paymentDetails.corporateCode"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-black text-[0.8rem]">Corporate Code</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Corporate Code" {...field} disabled={!isEnabled} className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          {}
+                          <FormField
+                            control={addGuestForm.control}
+                            name="paymentDetails.invoiceRequired"
+                            render={({ field }) => (
+                              <FormItem className="flex items-center gap-2 mt-6">
+                                <FormControl>
+                                  <input
+                                    type="checkbox"
+                                    checked={field.value || false}
+                                    onChange={(e) => field.onChange(e.target.checked)}
+                                    disabled={!isEnabled}
+                                    className="form-checkbox"
+                                  />
+                                </FormControl>
+                                <FormLabel className="text-black text-[0.8rem] mb-0">Invoice Required</FormLabel>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </FormWrapper>
+                    </div>
+                    {}
                     <div className="w-full mt-4 border-t pt-4">
                       <FormWrapper title="Room Type">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                          {/* Room Type Dropdown - REQUIRED */}
+                          {}
                           <FormField
                             control={addGuestForm.control}
                             name="roomTypeId"
@@ -3374,7 +3266,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                               </FormItem>
                             )}
                           />
-                          {/* Hidden roomTypeName field - populated by dropdown selection */}
+                          {}
                           <Controller
                             control={addGuestForm.control}
                             name="roomTypeName"
@@ -3407,7 +3299,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       </FormWrapper>
                     </div>
                   </div>
-                  {/* Room Stays Section */}
+                  {}
                   <div className="w-full mt-4 border-t pt-4">
                     <FormWrapper title="Room Stays">
                       <div className="flex justify-between items-center mb-2">
@@ -3476,7 +3368,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                               )}
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                              {/* Room Type dropdown for this room stay */}
+                              {}
                               <FormField
                                 control={addGuestForm.control}
                                 name={`roomStays.${index}.roomTypeId`}
@@ -3517,7 +3409,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                   </FormItem>
                                 )}
                               />
-                              {/* Hidden roomTypeName for this room stay */}
+                              {}
                               <Controller
                                 control={addGuestForm.control}
                                 name={`roomStays.${index}.roomTypeName`}
@@ -3525,7 +3417,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                   <input type="hidden" {...field} value={field.value ?? ''} />
                                 )}
                               />
-                              {/* Hidden ratePlanId - omitted from payload */}
+                              {}
                               <Controller
                                 control={addGuestForm.control}
                                 name={`roomStays.${index}.ratePlanId`}
@@ -3581,7 +3473,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                   </FormItem>
                                 )}
                               />
-                              {/* Room ID - hidden, assigned at check-in not booking */}
+                              {}
                               <Controller
                                 control={addGuestForm.control}
                                 name={`roomStays.${index}.roomId`}
@@ -3600,11 +3492,11 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       </div>
                     </FormWrapper>
                   </div>
-                  {/* Reorganized Layout: flex-col with specific sections */}
+                  {}
                   <div className="w-full mt-4 border-t pt-4 flex flex-col gap-6">
-                    {/* Wrapper for Extra Charges, Late Checkout, and Billing Breakdown with grid-cols-3 */}
+                    {}
                     <div className="w-full grid grid-cols-3 gap-6">
-                      {/* Extra Charges Section - Full Width (spans all 3 columns) */}
+                      {}
                       <div className="col-span-3">
                         <div className="flex justify-between items-center mb-2">
                           <FormLabel className="text-sm font-semibold text-gray-700">
@@ -3690,7 +3582,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                         </div>
                       </div>
 
-                      {/* Late Checkout Section - Takes 1 column */}
+                      {}
                       <div className="col-span-1">
                         <FormLabel className="text-sm font-semibold text-gray-700 mb-2 block">
                           Late Checkout
@@ -3764,7 +3656,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                         </div>
                       </div>
 
-                      {/* Billing Breakdown Section - Takes 2 columns */}
+                      {}
                       <div className="col-span-2">
                         <div className="bg-white p-4 rounded-md border border-gray-200 shadow-sm">
                           <h3 className="font-semibold text-gray-800 mb-3 text-sm border-b pb-2">
@@ -3858,7 +3750,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       </div>
                     </div>
 
-                    {/* Booking Status Section - Full Width */}
+                    {}
                     <div className="w-44">
                       <FormField
                         control={addGuestForm.control}
@@ -3905,16 +3797,16 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                       />
                     </div>
 
-                    {/* Pay Later Service Requests - Full Width */}
+                    {}
                     <div className="w-full p-4 border-t border-dashed border-gray-400 pt-4">
                       {(mode === 'view' || mode === 'edit') &&
                         (() => {
-                          // compute once
+                          
                           const servicesList = Array.isArray(services)
                             ? services
                             : [];
 
-                          // treat null/undefined/'' as "no linked request"
+                          
                           const payLaterServices = servicesList.filter(
                             (srv) => !srv?.serviceRequestId
                           );
@@ -3923,7 +3815,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                             (srv) => !!srv?.serviceRequestId
                           );
 
-                          // Get payment mode and booking charges
+                          
                           const paymentMode = addGuestForm.watch('paymentMode');
                           const roomTariff = toNum(addGuestForm.watch('roomTariff') || 0);
                           const serviceDue = toNum(addGuestForm.watch('serviceDue') || 0);
@@ -3931,10 +3823,10 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                           const lateCheckout = addGuestForm.watch('lateCheckout') || {};
                           const lateCheckoutAmount = toNum(lateCheckout?.amount || 0);
 
-                          // Create pay-later items from booking charges when payment mode is "PayLater"
+                          
                           const payLaterItems: Array<{ _id: string; requestName: string; amount: number }> = [];
 
-                          // Add services without linked requests
+                          
                           payLaterServices.forEach((srv) => {
                             payLaterItems.push({
                               _id: srv._id || `service-${Date.now()}-${Math.random()}`,
@@ -3943,9 +3835,9 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                             });
                           });
 
-                          // If payment mode is "PayLater", add booking charges as pay-later items
+                          
                           if (paymentMode === 'PayLater') {
-                            // Add Room Tariff
+                            
                             if (roomTariff > 0) {
                               payLaterItems.push({
                                 _id: `room-tariff-${Date.now()}`,
@@ -3954,7 +3846,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                               });
                             }
 
-                            // Add Service Due
+                            
                             if (serviceDue > 0) {
                               payLaterItems.push({
                                 _id: `service-due-${Date.now()}`,
@@ -3963,7 +3855,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                               });
                             }
 
-                            // Add Extra Charges
+                            
                             extraCharges.forEach((charge: any, index: number) => {
                               const chargeAmount = toNum(charge?.amount || 0);
                               if (chargeAmount > 0) {
@@ -3975,7 +3867,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                               }
                             });
 
-                            // Add Late Checkout
+                            
                             if (lateCheckoutAmount > 0) {
                               payLaterItems.push({
                                 _id: `late-checkout-${Date.now()}`,
@@ -3987,7 +3879,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
 
                           return (
                             <>
-                              {/* --- Pay Later (no linked request) --- */}
+                              {}
                               <h2 className="text-2xl font-semibold text-gray-700 mb-6">
                                 Pay later
                               </h2>
@@ -4021,7 +3913,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                 </div>
                               )}
 
-                              {/* --- Linked Service Requests (have requestId) --- */}
+                              {}
                               {withRequest.length > 0 && (
                                 <>
                                   <h2 className="text-2xl font-semibold text-gray-700 mt-10 mb-6">
@@ -4061,7 +3953,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                         })()}
                     </div>
 
-                    {/* Upload Documents Section - Full Width */}
+                    {}
                     <div className="w-full flex flex-col items-start pb-4">
                       <FormWrapper
                         title={
@@ -4078,7 +3970,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
 
                         {idProofDetails?.url ? (
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            {/* Existing Uploaded Document */}
+                            {}
                             <div className="w-full flex flex-col">
                               <a
                                 href={idProofDetails.url}
@@ -4106,7 +3998,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                               </div>
                             </div>
 
-                            {/* Upload New (Only in edit mode) */}
+                            {}
                             {mode === 'edit' && (
                               <div className="relative rounded-sm w-full h-40 md:h-56 overflow-hidden border border-gray-300">
                                 <label className="w-full h-full block cursor-pointer">
@@ -4143,7 +4035,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                             )}
                           </div>
                         ) : (
-                          // No fetched image – fallback to 3 upload slots
+                          
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                             {[0, 1, 2].map((index) => (
                               <div
@@ -4187,7 +4079,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                           </div>
                         )}
 
-                        {/* Show schema error for guests array if any */}
+                        {}
                         {addGuestForm.formState.errors.guests && (
                           <p className="text-red-600 text-sm mt-3">
                             {(addGuestForm.formState.errors.guests as any)?.message ??
@@ -4195,7 +4087,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                           </p>
                         )}
 
-                        {/* ---- Secondary Guests Inline ---- */}
+                        {}
                         <div className="mt-8">
                           <div className="flex items-center justify-between mb-3">
                             <div className="text-sm text-gray-700"></div>
@@ -4220,7 +4112,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                   key={f.id}
                                   className="relative border rounded-lg p-4 bg-[#FAF6EF] shadow-sm"
                                 >
-                                  {/* Delete Guest Button */}
+                                  {}
                                   <button
                                     type="button"
                                     onClick={() => !mustKeep && remove(index)}
@@ -4236,7 +4128,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                   </button>
 
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {/* First Name */}
+                                    {}
                                     <FormField
                                       control={addGuestForm.control}
                                       name={`guests.${index}.firstName`}
@@ -4259,7 +4151,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                       )}
                                     />
 
-                                    {/* Last Name */}
+                                    {}
                                     <FormField
                                       control={addGuestForm.control}
                                       name={`guests.${index}.lastName`}
@@ -4282,7 +4174,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                       )}
                                     />
 
-                                    {/* Phone (secondary) */}
+                                    {}
                                     <Controller
                                       control={addGuestForm.control}
                                       name={`guests.${index}.phoneNumber`}
@@ -4322,7 +4214,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                       )}
                                     />
 
-                                    {/* Gender */}
+                                    {}
                                     <FormField
                                       control={addGuestForm.control}
                                       name={`guests.${index}.gender`}
@@ -4368,7 +4260,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                       )}
                                     />
 
-                                    {/* Guest Type */}
+                                    {}
                                     <FormField
                                       control={addGuestForm.control}
                                       name={`guests.${index}.guestType`}
@@ -4411,7 +4303,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                       )}
                                     />
 
-                                    {/* ID Proof Type */}
+                                    {}
                                     <FormField
                                       control={addGuestForm.control}
                                       name={`guests.${index}.idProof.type`}
@@ -4462,7 +4354,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                       )}
                                     />
 
-                                    {/* ID Proof Upload */}
+                                    {}
                                     <FormField
                                       control={addGuestForm.control}
                                       name={`guests.${index}.idProof.url`}
@@ -4517,9 +4409,9 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                               className="hidden"
                                               disabled={!isEnabled}
                                               onChange={(e) => {
-                                                // mark field touched so RHF knows it changed
+                                                
                                                 field.onChange(field.value);
-                                                // upload & set url into guests.${index}.idProof.url
+                                                
                                                 handleSecondaryIdProofUpload(index)(
                                                   e
                                                 );
@@ -4537,7 +4429,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                             </div>
                           )}
                         </div>
-                        {/* ---- /Secondary Guests Inline ---- */}
+                        {}
                       </FormWrapper>
                     </div>
                   </div>
@@ -4557,7 +4449,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                 <Input
                                   type="text"
                                   placeholder="Rejection message"
-                                  value={preCheckInRejectionMessage ?? ''} // Display the rejection message
+                                  value={preCheckInRejectionMessage ?? ''} 
                                   disabled
                                   className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
                                 />
@@ -4584,7 +4476,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                               <Input
                                 type="text"
                                 placeholder="Enter special requests"
-                                value={field.value || ''} // Display the special requests value
+                                value={field.value || ''} 
                                 onChange={field.onChange}
                                 className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
                               />
@@ -4603,7 +4495,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                   Wi-Fi Details
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {/* WiFi Name */}
+                  {}
                   <FormField
                     control={addGuestForm.control}
                     name="wifi.wifiName"
@@ -4617,7 +4509,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                             placeholder="Enter WiFi name"
                             disabled={!isEnabled}
                             {...field}
-                            // disabled={isDisabled}
+                            
                             className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none text-xs 2xl:text-sm"
                           />
                         </FormControl>
@@ -4626,7 +4518,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                     )}
                   />
 
-                  {/* WiFi Password */}
+                  {}
                   <FormField
                     control={addGuestForm.control}
                     name="wifi.password"
@@ -4646,7 +4538,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                 disabled={!isEnabled}
                                 type={showWifiPassword ? 'text' : 'password'}
                                 {...field}
-                                // disabled={isDisabled}
+                                
                                 className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none text-xs 2xl:text-sm pr-10"
                               />
                               <button
@@ -4671,7 +4563,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                     }}
                   />
 
-                  {/* WiFi QR Scanner */}
+                  {}
                   <FormField
                     control={addGuestForm.control}
                     name="wifi.scanner"
@@ -4691,9 +4583,9 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                 if (!file) return;
                                 try {
                                   setWifiUploading(true);
-                                  // Upload and get URL string
+                                  
                                   const url = await uploadToS3(file);
-                                  // Store URL (string) into the form state so validators expecting string pass
+                                  
                                   onChange(url as any);
                                   ToastAtTopRight.fire(
                                     'Image uploaded successfully',
@@ -4716,7 +4608,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                               {...rest}
                             />
 
-                            {/* Preview: if value is a string (URL) show it, otherwise (older object) create an object URL */}
+                            {}
                             {value && typeof value === 'string' && (
                               <img
                                 src={value}

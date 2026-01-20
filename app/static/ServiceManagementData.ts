@@ -11,7 +11,7 @@ import img9 from '../../public/assets/service_management_page_images/ordermanage
 import img10 from '../../public/assets/service_management_page_images/sos.svg';
 import img11 from '../../public/assets/service_management_page_images/chat.svg';
 
-//************************Service management home page dummy data
+
 export type ServiceManagementHomePageDataType = {
   id: number;
   name: string;
@@ -101,7 +101,7 @@ export const serviceManagementHomePageData: ServiceManagementHomePageDataType[] 
   },
   ];
 
-//************************Notification details dummy data
+
 type StatusType = 'Received' | 'Sent';
 type NotificationType = 'Email';
 

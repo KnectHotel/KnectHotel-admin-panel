@@ -30,7 +30,7 @@ import apiCall from '@/lib/axios';
 
 type Props = {
   subHotelID?: string;
-  mode: string; // Explicit modes
+  mode: string; 
 };
 
 type HotelApiResponse = {
@@ -47,7 +47,7 @@ type HotelApiResponse = {
     servingDepartment: string[];
     subscriptionPlan: string;
     panNumber: { number: string };
-    // Add other fields as needed
+    
   }[];
 };
 
@@ -59,7 +59,7 @@ const SubHotelIdForm = ({ subHotelID, mode }: Props) => {
   >('idle');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Cleanup preview URL
+  
   useEffect(() => {
     return () => {
       if (preview) URL.revokeObjectURL(preview);
@@ -68,7 +68,7 @@ const SubHotelIdForm = ({ subHotelID, mode }: Props) => {
 
 
 
-  // Initialize form with default values from dummy data or empty
+  
   const form = useForm<CreateSubHotelIdFormSchemaType>({
     resolver: zodResolver(CreateSubHotelIdFormSchema),
     defaultValues: {
@@ -87,7 +87,7 @@ const SubHotelIdForm = ({ subHotelID, mode }: Props) => {
     }
   });
 
-  // Set initial preview if image URL exists in view/edit mode
+  
   useEffect(() => {
     const fetchHotelData = async () => {
       if (!subHotelID || mode !== 'view') return;
@@ -100,12 +100,12 @@ const SubHotelIdForm = ({ subHotelID, mode }: Props) => {
           form.reset({
             parentHotelID: data?.parentHotel || '',
             subHotelImageUrl: data?.logo || '',
-            subHotelImageFile: undefined, // In view mode, image file is not needed
+            subHotelImageFile: undefined, 
             subHotelName: data?.name || '',
             address: data?.address || '',
             services: (data?.servingDepartment || []) as ServiceType[],
             subscriptionPlan: data?.subscriptionPlan || '',
-            subscriptionPrice: 2999, // You can fetch actual price if available
+            subscriptionPrice: 2999, 
             subHotelID: data?.HotelId || '',
             contactNo: data?.phoneNo || '',
             email: data?.email || '',
@@ -149,7 +149,7 @@ const SubHotelIdForm = ({ subHotelID, mode }: Props) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col md:px-8 gap-8 justify-center pt-8 items-center"
         >
-          {/* Image Display or Upload */}
+          {}
           {mode === 'view' && preview ? (
             <div className="h-32 w-32">
               <Image
@@ -263,9 +263,9 @@ const SubHotelIdForm = ({ subHotelID, mode }: Props) => {
             />
           )}
 
-          {/* Form Fields */}
+          {}
           <div className="w-full flex flex-col md:flex-row justify-between items-start gap-4">
-            {/* Left Part */}
+            {}
             <div className="flex flex-col gap-3 w-full max-w-md">
               <FormField
                 control={form.control}
@@ -336,7 +336,7 @@ const SubHotelIdForm = ({ subHotelID, mode }: Props) => {
                 )}
               />
             </div>
-            {/* Right Part */}
+            {}
             <div className="flex flex-col gap-3 w-full max-w-md">
               <FormField
                 control={form.control}
@@ -410,15 +410,15 @@ const SubHotelIdForm = ({ subHotelID, mode }: Props) => {
             </div>
           </div>
 
-          {/* Services and Subscription */}
+          {}
           <div className="flex flex-col gap-8 w-full">
             <div className="flex flex-col w-fit sm:flex-row">
-              {/* Label */}
+              {}
               <label className="w-full sm:w-32 text-sm font-medium text-black pt-1">
                 Services
               </label>
 
-              {/* Services Grid */}
+              {}
               <div className="w-full">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4">
                   {serviceOptions.map((service, index) => (
@@ -448,7 +448,7 @@ const SubHotelIdForm = ({ subHotelID, mode }: Props) => {
                           value={field.value}
                           className="w-fit placeholder:opacity-65 mb-1 h-8 bg-transparent bg-lightbrown text-black rounded-md border-none outline-none focus:ring-0 text-sm"
                         />
-                        {/* ****Hardcoded for now**** */}
+                        {}
                       </FormControl>
                       <span className="text-sm min-h-8 text-goldenBrown ml-2">
                         INR- 2999/month
@@ -482,7 +482,7 @@ const SubHotelIdForm = ({ subHotelID, mode }: Props) => {
             </div>
           </div>
 
-          {/* Submit Button */}
+          {}
           {mode !== 'view' && (
             <div className="w-full flex justify-start items-center">
               <Button

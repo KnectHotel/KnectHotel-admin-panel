@@ -24,14 +24,14 @@ export const GymServiceTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const lastReqSigRef = useRef<string>(''); // stale-response guard
+  const lastReqSigRef = useRef<string>(''); 
 
   const fetchData = async (term = '') => {
     setLoading(true);
     try {
       const isSearching = term.trim().length >= 3;
 
-      // Always send page & limit; add searchTerm only when searching
+      
       const qs = new URLSearchParams({
         page: String(pageNo),
         limit: String(limit)
@@ -47,7 +47,7 @@ export const GymServiceTable: React.FC = () => {
 
       const response = await apiCall('GET', endpoint);
 
-      // Ignore out-of-order responses (typing/paging fast)
+      
       if (lastReqSigRef.current !== sig) return;
 
       if (response?.success && Array.isArray(response.data)) {
@@ -103,7 +103,7 @@ export const GymServiceTable: React.FC = () => {
         setData(mapped);
         setFilteredData(mapped);
 
-        // ✅ Use server totals if provided; fallback otherwise
+        
         const srvTotal =
           typeof response.total === 'number' ? response.total : mapped.length;
         const srvPages =
@@ -114,7 +114,7 @@ export const GymServiceTable: React.FC = () => {
         setTotalRecords(srvTotal);
         setTotalPages(Math.max(1, srvPages));
 
-        // Optional: sync client page with server page if present
+        
         if (typeof response.page === 'number' && response.page !== pageNo) {
           setPageNo(response.page);
         }
@@ -137,7 +137,7 @@ export const GymServiceTable: React.FC = () => {
 
   useEffect(() => {
     fetchData(searchTerm);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [pageNo, limit, searchTerm]);
 
   const handlePageChange = (newPage: number) => {
@@ -148,7 +148,7 @@ export const GymServiceTable: React.FC = () => {
     setSearchTerm(value);
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     typingTimeoutRef.current = setTimeout(() => {
-      // reset to first page; useEffect will refetch
+      
       setPageNo(1);
     }, 500);
   };
@@ -159,11 +159,7 @@ export const GymServiceTable: React.FC = () => {
         <h2 className="text-xl font-bold text-coffee">
           GYM / COMMUNITY / CONFERENCE HALL
         </h2>
-        {/* <Settings className="cursor-pointer" onClick={() => setIsModalOpen(true)} />
-        <PriceTimeSettingGym
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        /> */}
+        {}
       </div>
 
       <div className="w-full flex justify-end gap-4 px-4 py-2">

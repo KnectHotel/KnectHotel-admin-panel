@@ -17,7 +17,7 @@ export function NavItem({
   children: React.ReactNode;
   disabled?: boolean;
 }) {
-  const pathname = usePathname(); // Get current route
+  const pathname = usePathname(); 
 
   if (disabled) {
     return (
@@ -31,7 +31,7 @@ export function NavItem({
     );
   }
 
-  // Filter out any NavItem components from children to prevent nested anchors
+  
   const safeChildren = React.Children.toArray(children).filter((child) => {
     if (React.isValidElement(child) && child.type === NavItem) {
       console.warn('NavItem cannot contain another NavItem as a child. This will cause nested anchor tags.');
@@ -46,8 +46,8 @@ export function NavItem({
       className={clsx(
         'flex items-center gap-4 p-2 2xl:my-2 rounded-lg transition-colors text-white ',
         {
-          'bg-[#ffffff3b] text-[#EEA720]': pathname?.startsWith(href), // Active state
-          'hover:bg-[#ffffff3b] hover:text-[#EEA720]': pathname !== href // Hover effect only if not active
+          'bg-[#ffffff3b] text-[#EEA720]': pathname?.startsWith(href), 
+          'hover:bg-[#ffffff3b] hover:text-[#EEA720]': pathname !== href 
         }
       )}
     >

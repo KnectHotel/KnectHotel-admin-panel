@@ -1,10 +1,10 @@
-// import { redirect } from 'next/navigation';
 
-// export default function Logout() {
-//   redirect('/');
-// }
 
-// ///////////////This is a temporary logout page
+
+
+
+
+
 
 
 'use client';
@@ -19,13 +19,13 @@ export default function Logout() {
   const router = useRouter();
 
   useEffect(() => {
-    setIsOpen(true); // open modal immediately on mount
+    setIsOpen(true); 
   }, []);
 
   const handleConfirmLogout = () => {
     setLoading(true);
 
-    // ✅ Clear session + cookie
+    
     sessionStorage.removeItem('token');
     document.cookie = 'token=; Max-Age=0; path=/; secure; samesite=strict';
 

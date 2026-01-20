@@ -221,14 +221,14 @@ export default function AdminHotelForm() {
         Admin Hotel Panel
       </h1>
 
-      {/* FORM SECTION */}
+      {}
       <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
         <h2 className="text-2xl font-semibold mb-6 text-[#7a6a54]">
           {editingId ? 'Edit Hotel' : 'Add New Hotel'}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* NAME */}
+          {}
           <div>
             <label className="block mb-2 font-medium">Hotel Name</label>
             <input
@@ -238,7 +238,7 @@ export default function AdminHotelForm() {
             />
           </div>
 
-          {/* LOCATION */}
+          {}
           <div>
             <label className="block mb-2 font-medium">Location</label>
             <input
@@ -248,7 +248,7 @@ export default function AdminHotelForm() {
             />
           </div>
 
-          {/* BANNER */}
+          {}
           <div>
             <label className="block mb-2 font-medium">Banner Image URL</label>
             <input
@@ -258,7 +258,7 @@ export default function AdminHotelForm() {
             />
           </div>
 
-          {/* DESCRIPTION */}
+          {}
           <div className="md:col-span-2">
             <label className="block mb-2 font-medium">Description</label>
             <textarea
@@ -271,7 +271,7 @@ export default function AdminHotelForm() {
             />
           </div>
 
-          {/* AMENITIES */}
+          {}
           <div className="md:col-span-2">
             <label className="block mb-2 font-medium">Amenities</label>
 
@@ -320,7 +320,7 @@ export default function AdminHotelForm() {
             </div>
           </div>
 
-          {/* FEATURES */}
+          {}
           <div className="md:col-span-2">
             <label className="block mb-2 font-medium">Features</label>
 
@@ -369,7 +369,7 @@ export default function AdminHotelForm() {
             </div>
           </div>
 
-          {/* PHOTOS */}
+          {}
           <div className="md:col-span-2">
             <label className="block mb-2 font-medium">Photo URLs</label>
             <div className="flex gap-3 mt-2">
@@ -394,7 +394,7 @@ export default function AdminHotelForm() {
               </button>
             </div>
 
-            {/* Drag and Drop Zone */}
+            {}
             <div
               className={`mt-4 border-2 border-dashed rounded-lg p-8 text-center transition ${
                 isDraggingPhoto
@@ -437,7 +437,7 @@ export default function AdminHotelForm() {
             </div>
           </div>
 
-          {/* VIDEOS */}
+          {}
           <div className="md:col-span-2">
             <label className="block mb-2 font-medium">Video URLs</label>
             <div className="flex gap-3 mt-2">
@@ -462,7 +462,7 @@ export default function AdminHotelForm() {
               </button>
             </div>
 
-            {/* Drag and Drop Zone */}
+            {}
             <div
               className={`mt-4 border-2 border-dashed rounded-lg p-8 text-center transition ${
                 isDraggingVideo
@@ -504,7 +504,7 @@ export default function AdminHotelForm() {
             </div>
           </div>
 
-          {/* PRICING */}
+          {}
           <div>
             <label className="block mb-2 font-medium">Weekday Price</label>
             <input
@@ -541,7 +541,7 @@ export default function AdminHotelForm() {
             />
           </div>
 
-          {/* CONTACT */}
+          {}
           <div>
             <label className="block mb-2 font-medium">Phone</label>
             <input
@@ -569,7 +569,7 @@ export default function AdminHotelForm() {
             />
           </div>
 
-          {/* STATS */}
+          {}
           <div>
             <label className="block mb-2 font-medium">Rating</label>
             <input
@@ -619,7 +619,7 @@ export default function AdminHotelForm() {
             />
           </div>
 
-          {/* SUBMIT */}
+          {}
           <div className="md:col-span-2 mt-6 flex gap-4">
             <button
               onClick={handleSubmit}
@@ -639,7 +639,7 @@ export default function AdminHotelForm() {
         </div>
       </div>
 
-      {/* SAVED HOTELS LIST */}
+      {}
       {savedHotels.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm p-8">
           <h2 className="text-2xl font-semibold mb-6 text-[#7a6a54]">

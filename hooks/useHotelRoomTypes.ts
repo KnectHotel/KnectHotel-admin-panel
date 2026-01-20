@@ -18,9 +18,7 @@ interface UseHotelRoomTypesResult {
   refetch: () => Promise<void>;
 }
 
-/**
- * @returns {UseHotelRoomTypesResult} 
- */
+
 export function useHotelRoomTypes(bookingMode: boolean = false): UseHotelRoomTypesResult {
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

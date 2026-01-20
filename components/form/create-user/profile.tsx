@@ -40,8 +40,8 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-// import apiCall from "@/lib/axios";
-// import { ToastAtTopRight } from "@/lib/sweetalert";
+
+
 
 interface ProfileFormType {
   initialData: any | null;
@@ -61,7 +61,7 @@ const FormSchema = z.object({
       z.date({
         required_error: 'Role Assignment Date is required'
       }),
-      z.string().transform((str) => new Date(str)) // Convert string to Date
+      z.string().transform((str) => new Date(str)) 
     ])
     .nullable(),
   verificationStatus: z.string().min(1, 'Verification Status is required'),
@@ -102,7 +102,7 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
 
   console.log('initialData', initialData);
 
-  const id: any = params.id; // Access the ID directly
+  const id: any = params.id; 
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -124,7 +124,7 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
     }
   });
 
-  // Reset form when initialData arrives
+  
   useEffect(() => {
     if (initialData) {
       form.reset({
@@ -160,43 +160,43 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
     try {
       setLoading(true);
       if (initialData) {
-        // Update existing user
-        // await axios.post(`/api/users/edit/${initialData._id}`, data);
+        
+        
         try {
-          // await apiCall("PUT", `/api/approver/${id}`,data);
-          // ToastAtTopRight.fire({
-          //   icon: "success",
-          //   title: "Approver user updated successfully",
-          // });
+          
+          
+          
+          
+          
           router.push('/user-management/approver');
         } catch (err: any) {
           const errorMessage = err?.message || 'Failed to update Approver User';
-          // ToastAtTopRight.fire({
-          //   icon: "error",
-          //   title: errorMessage,
-          // });
+          
+          
+          
+          
         }
       } else {
-        // Create new user
-        // const res = await axios.post(`/api/users/create`, data);
-        // console.log("User", res);
+        
+        
+        
         try {
-          // await apiCall("POST", `/api/approver/create-approver`,data);
-          // ToastAtTopRight.fire({
-          //   icon: "success",
-          //   title: "Approver user created successfully",
-          // });
+          
+          
+          
+          
+          
           router.push('/user-management/approver');
         } catch (err: any) {
           const errorMessage = err?.message || 'Failed to create Approver User';
-          // ToastAtTopRight.fire({
-          //   icon: "error",
-          //   title: errorMessage,
-          // });
+          
+          
+          
+          
         }
       }
     } catch (error: any) {
-      // Handle error
+      
     } finally {
       setLoading(false);
     }
@@ -205,12 +205,12 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      // Delete user
-      // await axios.delete(`/api/users/${params.userId}`);
+      
+      
       router.refresh();
       router.push(`/dashboard/users`);
     } catch (error: any) {
-      // Handle error
+      
     } finally {
       setLoading(false);
       setOpen(false);
@@ -218,8 +218,8 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
   };
 
   const processForm = (data: z.infer<typeof FormSchema>) => {
-    // Handle form submission
-    // form.reset();
+    
+    
   };
 
   const cities = [
@@ -495,7 +495,7 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
                         render={({ field }) => (
                           <Calendar
                             mode="single"
-                            // selected={field.value ? new Date(field.value) : null}
+                            
                             onSelect={(date) => {
                               if (date) {
                                 field.onChange(format(date, 'yyyy-MM-dd'));
@@ -613,7 +613,7 @@ export const CreateProfileOne: React.FC<ProfileFormType> = ({
                           render={({ field }) => (
                             <Calendar
                               mode="single"
-                              // selected={field.value ? new Date(field.value) : null}
+                              
                               onSelect={(date) => {
                                 if (date) {
                                   field.onChange(format(date, 'yyyy-MM-dd'));

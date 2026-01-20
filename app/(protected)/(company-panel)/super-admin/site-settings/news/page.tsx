@@ -31,7 +31,7 @@ export default function NewsPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  // FETCH NEWS LIST
+  
   useEffect(() => {
     const fetchNews = async () => {
       try {
@@ -45,7 +45,7 @@ export default function NewsPage() {
     fetchNews();
   }, []);
 
-  // SUBMIT CREATE / EDIT
+  
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
@@ -98,7 +98,7 @@ export default function NewsPage() {
 
   return (
     <div className="p-6 w-full">
-      {/* HEADER */}
+      {}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
           <button
@@ -122,7 +122,7 @@ export default function NewsPage() {
         </button>
       </div>
 
-      {/* CARD GRID */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item) => (
           <motion.div
@@ -131,7 +131,7 @@ export default function NewsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 relative group"
           >
-            {/* Image Preview */}
+            {}
             <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
               {item.image ? (
                 <img
@@ -162,7 +162,7 @@ export default function NewsPage() {
                 </div>
               )}
 
-              {/* Action Icons - Top Right */}
+              {}
               <div className="absolute top-3 right-3 flex gap-2">
                 <button
                   onClick={() => {
@@ -185,7 +185,7 @@ export default function NewsPage() {
                 </button>
               </div>
 
-              {/* Category Badge */}
+              {}
               {item.category && (
                 <div className="absolute bottom-3 left-3">
                   <span className="px-3 py-1 bg-[#9b743f] text-white text-xs font-medium rounded-full shadow-sm">
@@ -195,7 +195,7 @@ export default function NewsPage() {
               )}
             </div>
 
-            {/* Card Content */}
+            {}
             <div className="p-5">
               <h3 className="font-semibold text-lg text-[#3b2f1c] mb-2 line-clamp-2">
                 {item.title}
@@ -205,7 +205,7 @@ export default function NewsPage() {
                 {item.excerpt}
               </p>
 
-              {/* Meta Info */}
+              {}
               <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
                 <span className="flex items-center gap-1">
                   <svg
@@ -241,7 +241,7 @@ export default function NewsPage() {
         ))}
       </div>
 
-      {/* FORM MODAL */}
+      {}
       <AnimatePresence>
         {showForm && (
           <motion.div
@@ -256,7 +256,7 @@ export default function NewsPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
             >
-              {/* Modal Header */}
+              {}
               <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-[#9b743f] to-[#c49a5a]">
                 <h2 className="text-2xl font-bold text-white">
                   {editingId ? 'Edit News' : 'Add News'}
@@ -275,16 +275,16 @@ export default function NewsPage() {
                 </button>
               </div>
 
-              {/* Modal Body - Scrollable */}
+              {}
               <div className="overflow-y-auto p-6">
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Basic Information Section */}
+                  {}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
                       Basic Information
                     </h3>
 
-                    {/* TITLE */}
+                    {}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Title <span className="text-red-500">*</span>
@@ -300,7 +300,7 @@ export default function NewsPage() {
                       />
                     </div>
 
-                    {/* EXCERPT */}
+                    {}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Excerpt <span className="text-red-500">*</span>
@@ -317,7 +317,7 @@ export default function NewsPage() {
                       />
                     </div>
 
-                    {/* DESCRIPTION */}
+                    {}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Description <span className="text-red-500">*</span>
@@ -337,7 +337,7 @@ export default function NewsPage() {
                       />
                     </div>
 
-                    {/* CONTENT */}
+                    {}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Content
@@ -354,14 +354,14 @@ export default function NewsPage() {
                     </div>
                   </div>
 
-                  {/* Meta Information Section */}
+                  {}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
                       Meta Information
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* CONTRIBUTOR */}
+                      {}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">
                           Contributor
@@ -379,7 +379,7 @@ export default function NewsPage() {
                         />
                       </div>
 
-                      {/* DATE */}
+                      {}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">
                           Date <span className="text-red-500">*</span>
@@ -395,7 +395,7 @@ export default function NewsPage() {
                         />
                       </div>
 
-                      {/* CATEGORY */}
+                      {}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">
                           Category <span className="text-red-500">*</span>
@@ -414,7 +414,7 @@ export default function NewsPage() {
                         />
                       </div>
 
-                      {/* SOURCE */}
+                      {}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">
                           Source <span className="text-red-500">*</span>
@@ -432,13 +432,13 @@ export default function NewsPage() {
                     </div>
                   </div>
 
-                  {/* Media Section */}
+                  {}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
                       Media
                     </h3>
 
-                    {/* IMAGE URL */}
+                    {}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Image URL
@@ -453,7 +453,7 @@ export default function NewsPage() {
                       />
                     </div>
 
-                    {/* BANNER IMAGE */}
+                    {}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Banner Image URL
@@ -472,13 +472,13 @@ export default function NewsPage() {
                     </div>
                   </div>
 
-                  {/* Article Section */}
+                  {}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
                       Article
                     </h3>
 
-                    {/* ARTICLE */}
+                    {}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Article Content
@@ -495,14 +495,14 @@ export default function NewsPage() {
                     </div>
                   </div>
 
-                  {/* Social Links Section */}
+                  {}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-[#3b2f1c] pb-2 border-b border-gray-200">
                       Social Links
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {/* YOUTUBE */}
+                      {}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">
                           YouTube Link
@@ -520,7 +520,7 @@ export default function NewsPage() {
                         />
                       </div>
 
-                      {/* INSTAGRAM */}
+                      {}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">
                           Instagram Link
@@ -538,7 +538,7 @@ export default function NewsPage() {
                         />
                       </div>
 
-                      {/* LINKEDIN */}
+                      {}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">
                           LinkedIn Link
@@ -558,7 +558,7 @@ export default function NewsPage() {
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
+                  {}
                   <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
                     <button
                       type="button"
@@ -585,7 +585,7 @@ export default function NewsPage() {
         )}
       </AnimatePresence>
 
-      {/* DELETE CONFIRMATION MODAL */}
+      {}
       <AnimatePresence>
         {showDeleteModal && (
           <motion.div

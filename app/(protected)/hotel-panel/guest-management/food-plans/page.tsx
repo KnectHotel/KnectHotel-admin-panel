@@ -1,4 +1,4 @@
-// KnectHotel-admin-panel/app/(protected)/hotel-panel/guest-management/food-plans/page.tsx
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -89,20 +89,9 @@ export default function MenuItemPage() {
         className="rounded-xl shadow p-8 space-y-10"
         style={{ background: '#fff', border: '1px solid #e8dfd2' }}
       >
-        {/* HOTEL SELECT */}
+        {}
         <div className="flex items-end gap-5">
-          {/* <div className="flex-1">
-            <AnimatedSelect
-              label="HOTEL"
-              name="hotel"
-              value={selectedHotel}
-              searchable={true}
-              onChange={(e: any) => {
-                setSelectedHotel(e.target.value);
-              }}
-              options={hotels.map((h) => h.name)}
-            />
-          </div> */}
+          {}
 
           <button
             onClick={() => setShowMenuList(!showMenuList)}
@@ -114,7 +103,7 @@ export default function MenuItemPage() {
           </button>
         </div>
 
-        {/* MENU LIST TABLE */}
+        {}
         {showMenuList && (
           <div
             className="rounded-md p-6"
@@ -150,7 +139,7 @@ export default function MenuItemPage() {
           </div>
         )}
 
-        {/* MAIN FORM */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
           <AnimatedSelect
             label="CATEGORY"
@@ -186,7 +175,7 @@ export default function MenuItemPage() {
           />
         </div>
 
-        {/* STATUS + IMAGE */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <AnimatedSelect
             label="STATUS"
@@ -222,7 +211,7 @@ export default function MenuItemPage() {
           </div>
         </div>
 
-        {/* DESCRIPTION */}
+        {}
         <div>
           <label className="font-medium text-sm mb-1 block">DESCRIPTION</label>
           <textarea
@@ -245,7 +234,7 @@ export default function MenuItemPage() {
   );
 }
 
-/* INPUT BOX */
+
 function InputBox(props: any) {
   return (
     <div>

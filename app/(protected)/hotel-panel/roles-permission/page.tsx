@@ -16,7 +16,7 @@ interface PermissionWithAccess {
   access: string[];
 }
 
-// Central mapping of API module name -> UI label
+
 const moduleNameMap: Record<string, string> = {
   'dashboard': 'Dashboard',
   'admin-management': 'Employee Management',
@@ -119,7 +119,7 @@ const RolesAndPermissionsPage = () => {
         }
       }
 
-      // Refresh UI
+      
       const response = await apiCall('GET', 'api/role/get-all-roles');
       const allRoles = response.roles;
 
@@ -144,26 +144,26 @@ const RolesAndPermissionsPage = () => {
     }
   };
 
-  // const handleDeleteRole = async (role: string) => {
-  //   try {
-  //     const roleId = roleIds[role];
-  //     if (!roleId) return;
+  
+  
+  
+  
 
-  //     await apiCall('DELETE', `api/role/delete-role/${roleId}`);
+  
 
-  //     const updated = { ...rolesAndPermissions };
-  //     delete updated[role];
-  //     setRolesAndPermissions(updated);
+  
+  
+  
 
-  //     const updatedIds = { ...roleIds };
-  //     delete updatedIds[role];
-  //     setRoleIds(updatedIds);
+  
+  
+  
 
-  //     ToastAtTopRight.fire({ icon: 'success', title: 'Role deleted successfully' });
-  //   } catch (err) {
-  //     ToastAtTopRight.fire({ icon: 'error', title: 'Failed to delete the role.' });
-  //   }
-  // };
+  
+  
+  
+  
+  
   const handleDeleteRole = async () => {
     if (!roleToDelete) return;
 

@@ -22,12 +22,12 @@ interface EmployeesReportRes {
   totalCount: number;
   activeCount: number;
   inactiveCount: number;
-  // optional Excel fields from API
+  
   excelBase64?: string;
   excelFileName?: string;
 }
 
-// ---------- Utils ----------
+
 const toYMD = (d: Date) => format(d, 'yyyy-MM-dd');
 
 function percent(part: number, total: number) {
@@ -36,34 +36,34 @@ function percent(part: number, total: number) {
   return Number.isFinite(p) ? p : 0;
 }
 
-// function downloadBase64File(
-//   base64: string,
-//   filename = 'employees.xlsx',
-//   mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-// ) {
-//   const byteChars = atob(base64);
-//   const byteNumbers = new Array(byteChars.length);
-//   for (let i = 0; i < byteChars.length; i++)
-//     byteNumbers[i] = byteChars.charCodeAt(i);
-//   const byteArray = new Uint8Array(byteNumbers);
-//   const blob = new Blob([byteArray], { type: mime });
-//   const url = URL.createObjectURL(blob);
-//   const a = document.createElement('a');
-//   a.href = url;
-//   a.download = filename;
-//   document.body.appendChild(a);
-//   a.click();
-//   a.remove();
-//   URL.revokeObjectURL(url);
-// }
 
-// ---------- Components ----------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function downloadBase64File(
   base64: string,
   filename = 'employees.xlsx',
   mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 ) {
-  const byteChars = atob(base64); // Decode base64 string
+  const byteChars = atob(base64); 
   const byteNumbers = new Array(byteChars.length);
   for (let i = 0; i < byteChars.length; i++) {
     byteNumbers[i] = byteChars.charCodeAt(i);
@@ -72,14 +72,14 @@ function downloadBase64File(
   const blob = new Blob([byteArray], { type: mime });
   const url = URL.createObjectURL(blob);
 
-  // Create an anchor element to trigger download
+  
   const a = document.createElement('a');
   a.href = url;
   a.download = filename;
   document.body.appendChild(a);
   a.click();
   a.remove();
-  URL.revokeObjectURL(url); // Clean up the object URL
+  URL.revokeObjectURL(url); 
 }
 
 function MetricCard({
@@ -119,9 +119,9 @@ function SplitBar({ left, right }: { left: number; right: number }) {
   );
 }
 
-// ---------- Page ----------
+
 export default function EmployeesReportsPage() {
-  // default: last 30 days
+  
   const [range, setRange] = useState<DateRange | undefined>({
     from: subDays(new Date(), 30),
     to: new Date()
@@ -171,48 +171,48 @@ export default function EmployeesReportsPage() {
     }
   }
 
-  // async function handleDownloadExcel() {
-  //   if (!startDate || !endDate) return;
-  //   setDownloading(true);
-  //   try {
-  //     // Re-fetch to ensure we have a fresh file for the current range
-  //     const res = await apiCall('POST', '/api/reports/employees', {
-  //       range: { startDate, endDate }
-  //     });
-  //     const fresh: EmployeesReportRes = (res?.data ??
-  //       res) as EmployeesReportRes;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
-  //     const base64 = fresh?.excelBase64 ?? data?.excelBase64;
-  //     const filename =
-  //       fresh?.excelFileName ??
-  //       data?.excelFileName ??
-  //       `Employees_${startDate}_to_${endDate}.xlsx`;
+  
+  
+  
+  
+  
 
-  //     if (!base64) {
-  //       alert('Excel file not provided by API response.');
-  //       return;
-  //     }
-  //     downloadBase64File(base64, filename);
-  //   } catch (e) {
-  //     console.error(e);
-  //     alert('Failed to download Excel.');
-  //   } finally {
-  //     setDownloading(false);
-  //   }
-  // }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
-  // initial + whenever dates change
+  
   async function handleDownloadExcel() {
     if (!startDate || !endDate) return;
     setDownloading(true);
 
     try {
-      // Fetch fresh data from API (this could also use cached data if preferred)
+      
       const res = await apiCall('POST', '/api/reports/employees', {
         range: { startDate, endDate }
       });
 
-      // Ensure fresh Excel data
+      
       const fresh: EmployeesReportRes = res?.data ?? {};
 
       const base64 = fresh?.excelBase64 ?? data?.excelBase64;
@@ -226,7 +226,7 @@ export default function EmployeesReportsPage() {
         return;
       }
 
-      // Trigger download with the file name and base64 data
+      
       downloadBase64File(base64, filename);
     } catch (e) {
       console.error(e);
@@ -238,7 +238,7 @@ export default function EmployeesReportsPage() {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [startDate, endDate]);
 
   const total = data?.totalCount ?? 0;
@@ -247,14 +247,14 @@ export default function EmployeesReportsPage() {
 
   return (
     <div className="flex min-h-screen w-full">
-      {/* Main */}
+      {}
       <div className="flex-1 flex flex-col">
         <Navbar />
         <div className="px-6 py-6 mt-16">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <Heading title="Admin Reports" className="mt-0 md:mt-0" />
 
-            {/* Date Range + Actions */}
+            {}
             <div className="flex items-center gap-2">
               <Popover>
                 <PopoverTrigger asChild>
@@ -292,7 +292,7 @@ export default function EmployeesReportsPage() {
                 )}
               </Button>
 
-              {/* Download Excel */}
+              {}
               <Button
                 variant="secondary"
                 onClick={handleDownloadExcel}
@@ -304,14 +304,14 @@ export default function EmployeesReportsPage() {
             </div>
           </div>
 
-          {/* Error */}
+          {}
           {err && (
             <div className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {err}
             </div>
           )}
 
-          {/* Cards */}
+          {}
           <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
             <MetricCard
               title="Total Employees"
@@ -330,7 +330,7 @@ export default function EmployeesReportsPage() {
             />
           </div>
 
-          {/* Split bar visualization */}
+          {}
           <div className="mt-6 rounded-2xl border bg-white p-5 shadow-sm">
             <div className="mb-3 text-sm text-muted-foreground">
               Distribution
@@ -338,7 +338,7 @@ export default function EmployeesReportsPage() {
             <SplitBar left={active} right={inactive} />
           </div>
 
-          {/* Back link */}
+          {}
           <div className="mt-8">
             <Link
               href="/super-admin/analytics-reports"

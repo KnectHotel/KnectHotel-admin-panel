@@ -16,7 +16,7 @@ async function safeFetch(url: string) {
 }
 
 export default function CouponsPage() {
-  // Dummy fallback
+  
   const localDummy = [
     {
       id: 'c1',
@@ -82,7 +82,7 @@ export default function CouponsPage() {
   };
 
   const handleSave = () => {
-    // stub — replace with API call
+    
     alert('Saved (dummy). Check console.');
     console.log('save coupon', { hotel: selectedHotel, ...form });
   };
@@ -99,7 +99,7 @@ export default function CouponsPage() {
         style={{ background: '#fff', border: '1px solid #e8dfd2' }}
       >
         <div className="flex gap-4 items-end mb-4">
-          {/* HOTEL */}
+          {}
           <div className="flex-1">
             <AnimatedSelect
               label="Hotel"
@@ -111,7 +111,7 @@ export default function CouponsPage() {
             />
           </div>
 
-          {/* COUPON CODES */}
+          {}
           <div className="w-60">
             <AnimatedSelect
               label="Select Coupon"
@@ -168,7 +168,7 @@ export default function CouponsPage() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-          {/* CODE */}
+          {}
           <div className="w-full">
             <label className="block font-medium mb-1">Code</label>
             <input
@@ -180,7 +180,7 @@ export default function CouponsPage() {
             />
           </div>
 
-          {/* TYPE */}
+          {}
           <div className="w-full">
             <AnimatedSelect
               label="Type"
@@ -192,7 +192,7 @@ export default function CouponsPage() {
             />
           </div>
 
-          {/* VALUE */}
+          {}
           <div className="w-full">
             <label className="block font-medium mb-1">Value</label>
             <input
@@ -204,7 +204,7 @@ export default function CouponsPage() {
             />
           </div>
 
-          {/* APPLIES TO */}
+          {}
           <div className="w-full">
             <div className="w-full">
               <AnimatedSelect

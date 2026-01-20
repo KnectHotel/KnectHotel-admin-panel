@@ -2,7 +2,7 @@
 
 import Navbar from '@/components/Navbar';
 import { HotelTransactionDataTable } from '@/components/tables/payment-management/client';
-// use your actual path
+
 
 const PaymentManagementPage = () => {
   return (

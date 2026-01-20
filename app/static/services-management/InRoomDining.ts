@@ -2,7 +2,7 @@ import cocacola from '../../../public/assets/cocacola.jpg';
 import vegSymbol from '../../../public/assets/veg.png';
 import nonVegSymbol from '../../../public/assets/non-veg.png';
 
-// **************** In room dining Table data *********************
+
 
 import { StaticImageData } from 'next/image';
 
@@ -307,7 +307,7 @@ export const InRoomDiningData: InRoomDiningDataType[] = [
   }
 ];
 
-// ****************** In room dining Menu page data *****************
+
 
 type ProductType = 'Vegetarian' | 'Non-Vegetarian';
 export type InRoomDiningMenuDataType = {

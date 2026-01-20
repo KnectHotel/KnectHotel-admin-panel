@@ -87,11 +87,11 @@ export const columns: ColumnDef<GuestDataType>[] = [
       const addressLines: string[] = [];
 
       if (address.includes(',')) {
-        // With comma: split by comma
+        
         const parts = address.split(',').map(part => part.trim());
         addressLines.push(...parts);
       } else {
-        // Without comma: break into 4-word lines
+        
         const words = address.trim().split(/\s+/);
         for (let i = 0; i < words.length; i += 4) {
           addressLines.push(words.slice(i, i + 4).join(' '));

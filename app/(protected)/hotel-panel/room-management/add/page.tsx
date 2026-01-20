@@ -1,4 +1,4 @@
-// KnectHotel-admin-panel/app/(protected)/hotel-panel/room-management/add/page.tsx
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -19,7 +19,7 @@ export default function AddRoomPage() {
   const [formData, setFormData] = useState({
     roomNumber: '',
     roomTypeId: '',
-    roomTypeName: '',  // For new room type
+    roomTypeName: '',  
     floorNumber: '1',
     bedType: 'Standard',
     maxOccupancy: 2,
@@ -59,7 +59,7 @@ export default function AddRoomPage() {
     console.log('[AddRoom] Form submit started');
     console.log('[AddRoom] Form data:', formData);
 
-    // Validation
+    
     if (!formData.roomNumber || formData.roomNumber.trim() === '') {
       ToastAtTopRight.fire({
         icon: 'error',
@@ -98,7 +98,7 @@ export default function AddRoomPage() {
 
       console.log('[AddRoom] Sending POST request');
 
-      // Prepare payload based on mode
+      
       const payload = {
         roomNumber: formData.roomNumber,
         floorNumber: formData.floorNumber,
@@ -108,8 +108,8 @@ export default function AddRoomPage() {
         status: formData.status,
         features: formData.features,
         ...(isNewRoomType
-          ? { roomTypeName: formData.roomTypeName }  // New room type
-          : { roomTypeId: formData.roomTypeId }       // Existing room type
+          ? { roomTypeName: formData.roomTypeName }  
+          : { roomTypeId: formData.roomTypeId }       
         )
       };
 
@@ -135,7 +135,7 @@ export default function AddRoomPage() {
             : 'Room created successfully'
         });
 
-        // Refresh room types list if new one was created
+        
         if (isNewRoomType) {
           await refetch();
         }

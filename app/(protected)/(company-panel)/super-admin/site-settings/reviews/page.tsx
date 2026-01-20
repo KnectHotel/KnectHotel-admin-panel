@@ -41,7 +41,7 @@ export default function ReviewsPage() {
 
   return (
     <div className="p-6 w-full">
-      {/* Header */}
+      {}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -71,7 +71,7 @@ export default function ReviewsPage() {
         </motion.button>
       </motion.div>
 
-      {/* Empty State */}
+      {}
       {items.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
@@ -110,7 +110,7 @@ export default function ReviewsPage() {
                 </div>
               </div>
 
-              {/* Dropdown Trigger */}
+              {}
               <button
                 onClick={() => toggleDropdown(item.id)}
                 className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded transition"
@@ -118,7 +118,7 @@ export default function ReviewsPage() {
                 <FiMoreVertical size={18} />
               </button>
 
-              {/* Dropdown Menu */}
+              {}
               <AnimatePresence>
                 {openId === item.id && (
                   <motion.div
@@ -143,7 +143,7 @@ export default function ReviewsPage() {
         </div>
       )}
 
-      {/* Add Review Modal */}
+      {}
       <AnimatePresence>
         {showForm && (
           <motion.div
@@ -189,7 +189,7 @@ export default function ReviewsPage() {
                   />
                 </div>
 
-                {/* Rating */}
+                {}
                 <div>
                   <label className="text-sm font-medium">Rating</label>
                   <div className="flex gap-2 mt-1">

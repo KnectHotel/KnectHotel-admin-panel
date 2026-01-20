@@ -6,7 +6,7 @@ import Image from 'next/image';
 import logo from '../public/assets/logo2.svg';
 
 const NotFound = () => {
-  // Logo animation variants (for your SVG logo)
+  
   const brandLogoVariants = {
     hidden: { opacity: 0, y: -50 },
     visible: {
@@ -16,7 +16,7 @@ const NotFound = () => {
         type: 'spring' as const,
         stiffness: 200,
         damping: 20,
-        // duration: 0.6
+        
       }
     },
     rotate: {
@@ -30,7 +30,7 @@ const NotFound = () => {
     }
   };
 
-  // "Page Not Found" text animation variants
+  
   const textVariants = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: {
@@ -41,7 +41,7 @@ const NotFound = () => {
         stiffness: 260,
         damping: 20,
         duration: 0.8,
-        delay: 0.3 // Delay to let logo animate first
+        delay: 0.3 
       }
     }
   };
@@ -51,7 +51,7 @@ const NotFound = () => {
       <h1 className="absolute top-1/2 scale-150 left-1/2 transform -translate-x-1/2 -translate-y-1/2 lg:text-[10rem] xl:text-[17rem] 2xl:text[20rem] font-bold text-zinc-950 opacity-35">
         404
       </h1>
-      {/* Branding Logo (SVG) */}
+      {}
       <motion.div
         variants={brandLogoVariants}
         initial="hidden"
@@ -61,13 +61,13 @@ const NotFound = () => {
         <Image
           src={logo}
           alt="Brand Logo"
-          width={400} // Adjust as needed
-          height={400} // Adjust as needed
-          priority // Preload for better performance
+          width={400} 
+          height={400} 
+          priority 
         />
       </motion.div>
 
-      {/* Message */}
+      {}
       <motion.h1
         variants={textVariants}
         initial="hidden"
@@ -86,7 +86,7 @@ const NotFound = () => {
         looking for doesn’t exist or has been moved.
       </motion.p>
 
-      {/* Back Home Button */}
+      {}
       <Link href="/">
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -97,14 +97,14 @@ const NotFound = () => {
         </motion.button>
       </Link>
 
-      {/* Background Animation */}
+      {}
       <motion.div
         className="absolute inset-0 z-[-1] overflow-hidden"
         animate={{
           background: [
-            'radial-gradient(circle, rgba(40, 31, 15, 1) 0%, rgba(74, 57, 27, 0.4) 100%)', // coffee to coffeeLight
-            'radial-gradient(circle, rgba(40, 31, 15, 1) 0%, rgba(160, 125, 61, 0.4) 100%)', // coffee to brown
-            'radial-gradient(circle, rgba(40, 31, 15, 1) 0%, rgba(74, 57, 27, 0.4) 100%)' // coffee to coffeeLight
+            'radial-gradient(circle, rgba(40, 31, 15, 1) 0%, rgba(74, 57, 27, 0.4) 100%)', 
+            'radial-gradient(circle, rgba(40, 31, 15, 1) 0%, rgba(160, 125, 61, 0.4) 100%)', 
+            'radial-gradient(circle, rgba(40, 31, 15, 1) 0%, rgba(74, 57, 27, 0.4) 100%)' 
           ]
         }}
         transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}

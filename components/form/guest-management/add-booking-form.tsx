@@ -167,7 +167,7 @@ const AddBookingForm = () => {
           onSubmit={addBookingForm.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          {/* Form Fields */}
+          {}
           <div className="grid grid-cols-3 gap-10">
             <div className="flex flex-col gap-3">
               <FormField
@@ -391,7 +391,7 @@ const AddBookingForm = () => {
             </div>
           </div>
 
-          {/* Buttons */}
+          {}
           <div className="flex items-center gap-3">
             <Button
               type="button"

@@ -496,7 +496,7 @@ export const ConciergeServiceData: ConciergeServiceDataType[] = [
   }
 ];
 
-/// Product details dummy data
+
 
 type Product = {
   visibility: boolean;

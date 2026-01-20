@@ -103,7 +103,7 @@ const IncomeTimeSeriesChart: React.FC<Props> = ({
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [endpoint, JSON.stringify(effectiveBody)]);
 
   const handleDownloadExcel = () => {

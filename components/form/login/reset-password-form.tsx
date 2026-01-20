@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import CardWrapper from './card-wrapper';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { Snackbar, Alert, AlertColor } from '@mui/material'; // Import Material UI components
+import { Snackbar, Alert, AlertColor } from '@mui/material'; 
 import {
   resetPasswordSchema,
   resetPasswordSchemaType,
@@ -37,13 +37,13 @@ enum Mode {
   SetNewPassword = 'set-new-password'
 }
 
-// Reusable styles
+
 const inputClassName =
   'bg-transparent text-black border-black border-opacity-10 placeholder:text-black placeholder:text-xs 2xl:text-sm placeholder:opacity-25';
 const buttonClassName =
   'w-full text-white text-sm font-[400] bg-[#A07D3D] hover:opacity-80 hover:text-black hover:border hover:border-black';
 
-// Email Form Component
+
 const EmailForm = ({
   onSubmit,
   isLoading
@@ -87,7 +87,7 @@ const EmailForm = ({
   );
 };
 
-// OTP Form Component
+
 const OTPForm = ({
   onSubmit,
   email,
@@ -140,7 +140,7 @@ const OTPForm = ({
   );
 };
 
-// New Password Form Component
+
 const NewPasswordForm = ({
   onSubmit,
   email,
@@ -214,21 +214,21 @@ const ResetPasswordForm = () => {
   const [mode, setMode] = useState<Mode>(Mode.EnterEmail);
   const [userEmail, setUserEmail] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  // Snackbar state management
+  
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('info');
   
   const router = useRouter();
 
-  // Custom notification handler to replace toast
+  
   const showNotification = (message: string, severity: AlertColor) => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
   };
 
-  // Handle snackbar close
+  
   const handleSnackbarClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
@@ -246,17 +246,17 @@ const ResetPasswordForm = () => {
       );
       
       if (response && response.status === false) {
-        // Handle specific API error responses
+        
         showNotification(response.message || 'Failed to send OTP', 'error');
         return;
       }
       
       console.log('OTP sent successfully:', response);
       showNotification('OTP sent successfully. Please check your email.', 'success');
-      setUserEmail(data.email); // Store the email for future requests
+      setUserEmail(data.email); 
       setMode(Mode.EnterOTP);
     } catch (error: any) {
-      // Handle different error scenarios
+      
       if (error.response?.data) {
         showNotification(error.response.data.message || 'User not found', 'error');
       } else if (error.message) {
@@ -273,7 +273,7 @@ const ResetPasswordForm = () => {
   const onOtpSubmit = async (data: otpVerificationSchemaType & { email: string }) => {
     setIsLoading(true);
     try {
-      // Include the email in the OTP verification request
+      
       const response = await apiCall('POST', 'api/superAdmin/verify-otp', {
         otp: data.otp,
         email: data.email
@@ -304,7 +304,7 @@ const ResetPasswordForm = () => {
   const onNewPasswordSubmit = async (data: setNewPasswordSchemaType & { email: string }) => {
     setIsLoading(true);
     try {
-      // Include the email in the password reset request
+      
       const response = await apiCall('POST', 'api/superAdmin/reset-password', {
         newPassword: data.newPassword,
         email: data.email
@@ -318,7 +318,7 @@ const ResetPasswordForm = () => {
       console.log('Password reset successful:', response);
       showNotification('Password reset successful. Redirecting to login...', 'success');
       
-      // Delay redirect slightly to allow snackbar to be seen
+      
       setTimeout(() => {
         router.push('/');
       }, 1500);
@@ -355,7 +355,7 @@ const ResetPasswordForm = () => {
         )}
       </CardWrapper>
       
-      {/* Material UI Snackbar */}
+      {}
       <Snackbar 
         open={snackbarOpen} 
         autoHideDuration={6000} 

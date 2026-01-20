@@ -24,12 +24,7 @@ interface UseHotelRoomsResult {
   refetch: () => Promise<void>;
 }
 
-/**
- * Hook to fetch hotel rooms from the backend.
- * Returns all rooms and filtered available rooms for assignment.
- * 
- * @returns {UseHotelRoomsResult} - rooms array, availableRooms, loading state, error, and refetch function
- */
+
 export function useHotelRooms(): UseHotelRoomsResult {
   const [rooms, setRooms] = useState<HotelRoom[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -42,7 +37,7 @@ export function useHotelRooms(): UseHotelRoomsResult {
     try {
       console.debug('[useHotelRooms] Fetching rooms from API');
 
-      // Fetch rooms directly from dedicated endpoint
+      
       const response = await apiCall('GET', '/api/hotel/rooms');
 
       console.debug('[useHotelRooms] API response:', {
@@ -72,7 +67,7 @@ export function useHotelRooms(): UseHotelRoomsResult {
     fetchRooms();
   }, []);
 
-  // Filter only available rooms for assignment
+  
   const availableRooms = rooms.filter(room => room.status === 'Available');
 
   return {

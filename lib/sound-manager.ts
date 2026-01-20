@@ -17,16 +17,16 @@ function removeUnlockListeners() {
 async function unlockOnce() {
   try {
     if (!audio) {
-      audio = new Audio("/public/mixkit-confirmation-tone-2867"); // file in /public/sounds/
+      audio = new Audio("/public/mixkit-confirmation-tone-2867"); 
       audio.preload = "auto";
     }
-    await audio.play(); // play-pause primes autoplay
+    await audio.play(); 
     audio.pause();
     audio.currentTime = 0;
     unlocked = true;
     removeUnlockListeners();
   } catch {
-    // still locked – keep listeners
+    
   } finally {
     locking = false;
   }
@@ -45,7 +45,7 @@ export async function playNotify() {
       audio.preload = "auto";
     }
     if (!unlocked) {
-      // best-effort prime
+      
       await audio.play();
       audio.pause();
       audio.currentTime = 0;
@@ -54,6 +54,6 @@ export async function playNotify() {
     audio.currentTime = 0;
     await audio.play();
   } catch {
-    // silently skip if still blocked
+    
   }
 }

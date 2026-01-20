@@ -33,16 +33,16 @@ const humanizeDuration = (fromIso?: string | null, toIso?: string | null) => {
   return parts.join(" ");
 };
 
-// so we can read resolvedAt without using `any`
+
 type MaybeResolved = { resolvedAt?: string | null };
 
-// prefer resolvedAt; if missing but status is resolved, fall back to updatedAt
+
 const pickResolvedAt = (row: any): string | undefined => {
-  // handle possible API variations too
+  
   const direct =
     row?.resolvedAt ??
-    row?.ResolvedAt ?? // in case backend sent PascalCase
-    row?.closedAt ??   // some APIs use closedAt
+    row?.ResolvedAt ?? 
+    row?.closedAt ??   
     null;
 
   if (direct) return String(direct);
@@ -66,7 +66,7 @@ export const columns: ColumnDef<ComplaintDataType>[] = [
     header: 'Time Duration',
     cell: ({ row }) => {
       const createdAt = row.original.createdAt;
-      const resolvedAt = pickResolvedAt(row.original); // ← use helper
+      const resolvedAt = pickResolvedAt(row.original); 
 
       const createdStr = fmtDateTime(createdAt);
       const resolvedStr = fmtDateTime(resolvedAt);
@@ -88,7 +88,7 @@ export const columns: ColumnDef<ComplaintDataType>[] = [
         </div>
       );
     },
-    // optional sorting by total duration
+    
     sortingFn: (a, b) => {
       const ca = new Date((a.original as any).createdAt ?? 0).getTime();
       const ra = new Date(pickResolvedAt(a.original) ?? Date.now()).getTime();
@@ -111,16 +111,16 @@ export const columns: ColumnDef<ComplaintDataType>[] = [
     cell: ({ row }) => {
       const router = useRouter();
 
-      const raw = row.original.status ?? 'Open'; // "Open" | "Inprogress" | "Resolved"
+      const raw = row.original.status ?? 'Open'; 
       const [open, setOpen] = useState(false);
 
-      // normalize
+      
       const s = String(raw).toLowerCase();
       const isOpenish = s === 'open' || s === 'inprogress';
       const label =
         s === 'inprogress' ? 'Inprogress' : s === 'open' ? 'Open' : 'Resolved';
 
-      // colors: OPEN = red, INPROGRESS = yellow, CLOSED = green
+      
       const colorForBadge =
         s === 'inprogress'
           ? 'text-yellow-600'
@@ -128,7 +128,7 @@ export const columns: ColumnDef<ComplaintDataType>[] = [
             ? 'text-[#E5252A]'
             : 'text-[#78B15099]';
 
-      // ID infer (complaintID preferred; fallback to _id)
+      
       const id =
         (row.original as any).complaintID ??
         (row.original as any)._id ??
@@ -162,11 +162,11 @@ export const columns: ColumnDef<ComplaintDataType>[] = [
                   align="start"
                   className="bg-white rounded-md shadow-md text-sm z-50 px-2 py-1 w-[120px]"
                 >
-                  {/* UI me CLOSED dikhayenge, API ko "Resolved" bhejna hoga */}
+                  {}
                   <DropdownMenu.Item
                     className="text-[#78B15099] px-2 py-1 cursor-pointer outline-none hover:bg-gray-100"
                     onClick={() => {
-                      // handleStatusChange('Resolved' as any)
+                      
                     }}
                   >
                     Resolved
@@ -194,10 +194,10 @@ export const columns: ColumnDef<ComplaintDataType>[] = [
     }
   },
 
-  // {
-  //   accessorKey: 'Remark',
-  //   header: 'Remark'
-  // },
+  
+  
+  
+  
   {
     accessorKey: 'createdAt',
     header: 'Created At',
@@ -210,18 +210,18 @@ export const columns: ColumnDef<ComplaintDataType>[] = [
       return <span>{formatted}</span>;
     }
   },
-  // {
-  //   accessorKey: 'updatedAt',
-  //   header: 'Updated At',
-  //   cell: ({ row }) => {
-  //     const value = row.original.updatedAt;
-  //     const formatted = new Date(value).toLocaleString('en-IN', {
-  //       dateStyle: 'medium',
-  //       timeStyle: 'short'
-  //     });
-  //     return <span>{formatted}</span>;
-  //   }
-  // },
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   {
     id: 'actions',
     header: 'Actions',

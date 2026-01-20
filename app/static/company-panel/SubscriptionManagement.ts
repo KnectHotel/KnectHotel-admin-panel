@@ -29,7 +29,7 @@ export const subscriptionData: Subscription[] = [
     status: 'ACTIVE'
   },
   {
-    subscriptionID: 'SD123453', // Different subscription ID
+    subscriptionID: 'SD123453', 
     planDetails: {
       planName: 'Basic Stay Plan',
       planType: 'CANCELED'
@@ -43,7 +43,7 @@ export const subscriptionData: Subscription[] = [
     status: 'INACTIVE'
   },
   {
-    subscriptionID: 'SD123454', // Different subscription ID
+    subscriptionID: 'SD123454', 
     planDetails: {
       planName: 'Basic Stay Plan',
       planType: 'EXPIRED'
@@ -57,7 +57,7 @@ export const subscriptionData: Subscription[] = [
     status: 'EXPIRED'
   },
   {
-    subscriptionID: 'SD123455', // Different subscription ID
+    subscriptionID: 'SD123455', 
     planDetails: {
       planName: 'Basic Stay Plan',
       planType: 'TRIAL'
@@ -72,7 +72,7 @@ export const subscriptionData: Subscription[] = [
   }
 ];
 
-//Form Dummy data
+
 
 type status = 'Active' | 'Inactive' | 'Cancelled' | 'Expired';
 export type SubscriptionManagementDummyData = {
@@ -95,7 +95,7 @@ export const SubscriptionManagementDummyData: SubscriptionManagementDummyData[] 
       planType: 'Half yearly',
       description: 'Plan 1 description',
       status: 'Active',
-      cost: 100, // Replace with actual cost
+      cost: 100, 
       paymentType: 'Auto Renewal'
     }
   ];

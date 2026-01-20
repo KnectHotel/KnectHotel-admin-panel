@@ -1,6 +1,6 @@
 import { StatusType } from "./Type";
 
-//****************Dummy guest data type definition*****************
+
 type RoleType =
   | 'Reception'
   | 'Housekeeping'

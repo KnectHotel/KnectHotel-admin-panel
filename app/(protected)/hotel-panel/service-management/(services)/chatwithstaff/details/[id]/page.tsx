@@ -6,7 +6,7 @@ const ViewChatDetails = async ({
   params: Promise<{ id: string }>;
 }) => {
   const { id } = await params;
-  // console.log('chat id', id)
+  
 
   return (
     <div className="flex justify-center items-center h-screen w-full pt-28">

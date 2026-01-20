@@ -1,4 +1,4 @@
-//****************Dummy guest data type definition*****************
+
 type RoleType =
   | 'Reception'
   | 'Housekeeping'
@@ -34,7 +34,7 @@ export type AdminDummyDataType = {
   status: StatusType;
 };
 
-// Dummy guest data
+
 export const AdminDummyData: AdminDummyDataType[] = [
   {
     adminID: 'ED123452',

@@ -15,7 +15,7 @@ const ComplaintDetailsFormPageSuper = async ({
 }) => {
   const id = (await params).id;
 
-  // Source fixed only for hotel-toSuper (editable)
+  
   const source: 'hotel-toUser' | 'hotel-toSuper' | 'superadmin' = 'hotel-toSuper';
 
   return (
@@ -23,7 +23,7 @@ const ComplaintDetailsFormPageSuper = async ({
       <Navbar />
       <div className="w-full h-screen pt-8 mt-20">
         <div className="h-full w-full container">
-          {/* Editable form for hotel-toSuper */}
+          {}
           <ComplaintForm mode="edit" complaintID={id} source={source} />
         </div>
       </div>

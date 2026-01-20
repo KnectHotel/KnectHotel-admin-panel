@@ -5,7 +5,7 @@ import FormWrapper from './form-wrapper';
 import { employeeSchema, employeeSchemaType } from 'schema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-// import { EmployeeData } from 'app/static/EmployeeManagement';
+
 import {
   Form,
   FormControl,
@@ -60,7 +60,7 @@ const EditEmployeeForm = ({ employeeID, isEnabled, mode }: Props) => {
           className="flex flex-col gap-10"
         >
           <div className="flex flex-col gap-4">
-            {/* Upper part */}
+            {}
             <div className="flex gap-4">
               <FormField
                 control={employeeForm.control}
@@ -155,7 +155,7 @@ const EditEmployeeForm = ({ employeeID, isEnabled, mode }: Props) => {
                 )}
               />
             </div>
-            {/* Lower part */}
+            {}
             <div className="flex items-center gap-2">
               <FormField
                 control={employeeForm.control}
@@ -233,7 +233,7 @@ const EditEmployeeForm = ({ employeeID, isEnabled, mode }: Props) => {
               />
             </div>
           </div>
-          {/* Buttons */}
+          {}
           <div className="flex items-center gap-3">
             <Button
               type="button"

@@ -94,12 +94,12 @@ const SwimmingPoolRequestDetail: React.FC<Props> = ({ serviceID }) => {
 
   return (
     <div className="mt-24 bg-[#FAF6EF] rounded-md shadow-custom px-6 py-8 flex font-medium flex-col gap-8 w-full mb-4">
-      {/* Header */}
+      {}
       <div className="flex gap-12 text-lg opacity-75">
         <p>Unique ID: {data.uniqueId}</p>
       </div>
 
-      {/* Details */}
+      {}
       <div className="space-y-10">
         <div className="space-y-8">
           <div className="flex flex-wrap gap-8">
@@ -124,20 +124,8 @@ const SwimmingPoolRequestDetail: React.FC<Props> = ({ serviceID }) => {
         </div>
 
         <div className="flex gap-8">
-          {/* Clickable Assigned To */}
-          {/* <div
-            onClick={() => setIsAssignModalOpen(true)}
-            className="cursor-pointer w-full max-w-md"
-          >
-            <TextBlock
-              label="Assigned To"
-              value={
-                data.assignedTo
-                  ? `${data.assignedTo.firstName} ${data.assignedTo.lastName} (${data.assignedTo.mobileNumber})`
-                  : 'Unassigned'
-              }
-            />
-          </div> */}
+          {}
+          {}
           <div className="flex flex-col gap-2 items-start text-sm w-full max-w-md">
             <span className="opacity-75">Assigned To</span>
             <button
@@ -181,10 +169,10 @@ const SwimmingPoolRequestDetail: React.FC<Props> = ({ serviceID }) => {
         </div>
       </div>
 
-      {/* Guest Feedback + Rating (side-by-side) */}
+      {}
       <div className="rounded-lg border border-[#E4D7C4] bg-[#FAF6EF] p-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          {/* Service Feedback */}
+          {}
           <div className="flex items-center gap-3 min-w-0">
             <span className="font-medium text-gray-700 shrink-0 w-32">
               Service Feedback
@@ -197,7 +185,7 @@ const SwimmingPoolRequestDetail: React.FC<Props> = ({ serviceID }) => {
             </div>
           </div>
 
-          {/* Agent Feedback */}
+          {}
           <div className="flex items-center gap-3 md:ml-auto">
             <span className="font-medium text-gray-700 shrink-0 w-32">
               Agent Feedback
@@ -212,7 +200,7 @@ const SwimmingPoolRequestDetail: React.FC<Props> = ({ serviceID }) => {
         </div>
       </div>
 
-      {/* Assign Modal */}
+      {}
       <AssignModal
         onClose={() => setIsAssignModalOpen(false)}
         requestId={isAssignModalOpen ? data._id : undefined}
@@ -223,7 +211,7 @@ const SwimmingPoolRequestDetail: React.FC<Props> = ({ serviceID }) => {
   );
 };
 
-// Reusable Components
+
 const Detail = ({ label, value }: { label: string; value?: string }) => (
   <div className="flex gap-2 items-center text-sm">
     <span className="opacity-75">{label}</span>

@@ -7,7 +7,7 @@ const ViewGuestPendingRequest = async ({
   params: Promise<{ id: string }>;
 }) => {
   const id = (await params).id;
-  // console.log('iiiiiiiiiii', id)
+  
   const mode = 'pending';
 
   return (
