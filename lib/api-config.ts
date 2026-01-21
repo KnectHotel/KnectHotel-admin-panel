@@ -11,5 +11,6 @@ export const ENDPOINTS = {
   NEWS: '/api/news',
   PRODUCT_VIDEOS: '/api/product_videos',
   REVIEWS: '/api/reviews',
-  UPDATES: '/api/updates'
+  UPDATES: '/api/updates',
+  PRICING: '/api/pricing'
 } as const;

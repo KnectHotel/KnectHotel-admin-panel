@@ -7,10 +7,12 @@ import { DataTable } from '@/components/ui/data-table';
 import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Plus } from 'lucide-react';
-import { columns, RoomDataType } from '@/components/tables/room-management/columns';
+import {
+  columns,
+  RoomDataType
+} from '@/components/tables/room-management/columns';
 import AnimatedList, { AnimatedListItem } from '@/components/ui/AnimatedList';
-import axios from 'axios';
-import { getSessionStorageItem } from 'utils/localstorage';
+import apiCall from '@/lib/axios';
 
 export default function HotelRoomPage() {
   const router = useRouter();
@@ -29,33 +31,28 @@ export default function HotelRoomPage() {
     setError(null);
 
     try {
-      const admin = getSessionStorageItem<any>('admin');
-      const token = admin?.token;
+      // apiCall automatically handles authentication via interceptor
+      const response = await apiCall<{ success: boolean; rooms: any[] }>(
+        'GET',
+        'api/hotel/rooms'
+      );
 
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
+      console.log('[RoomManagement] API response:', response);
 
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}api/hotel/rooms`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log('[RoomManagement] API response:', response.data);
-
-      if (response.data?.success && Array.isArray(response.data.rooms)) {
-        const formattedRooms: RoomDataType[] = response.data.rooms.map((room: any) => ({
-          id: room._id,
-          roomNumber: room.roomNumber,
-          roomType: room.roomTypeName,
-          roomCategory: room.roomTypeName, // Mapping to Room Type as Category is not separately defined
-          floorNumber: room.floorNumber,
-          bedType: room.bedType,
-          maxOccupancy: room.maxOccupancy,
-          baseRate: room.baseRate,
-          status: room.status,
-        }));
+      if (response?.success && Array.isArray(response.rooms)) {
+        const formattedRooms: RoomDataType[] = response.rooms.map(
+          (room: any) => ({
+            id: room._id,
+            roomNumber: room.roomNumber,
+            roomType: room.roomTypeName,
+            roomCategory: 'Standard',
+            floorNumber: room.floorNumber,
+            bedType: room.bedType,
+            maxOccupancy: room.maxOccupancy,
+            baseRate: room.baseRate,
+            status: room.status
+          })
+        );
 
         console.log('[RoomManagement] Formatted rooms:', formattedRooms);
         setData(formattedRooms);
@@ -80,7 +77,7 @@ export default function HotelRoomPage() {
         roomNumber: room.roomNumber,
         roomType: room.roomType,
         floorNumber: room.floorNumber,
-        status: 'Vacant & Cleaned',
+        status: 'Vacant & Cleaned'
       }));
   }, [data]);
 
@@ -112,9 +109,14 @@ export default function HotelRoomPage() {
   return (
     <div className="flex flex-col w-full p-8 gap-6">
       <div className="flex w-full items-end justify-between">
-        <Heading title={`Rooms (${data.length})`} description="Manage rooms for your hotel" />
+        <Heading
+          title={`Rooms (${data.length})`}
+          description="Manage rooms for your hotel"
+        />
         <div className="flex items-center justify-end">
-          <Button onClick={() => router.push('/hotel-panel/room-management/add')}>
+          <Button
+            onClick={() => router.push('/hotel-panel/room-management/add')}
+          >
             <Plus className="mr-2 h-4 w-4" /> Add New Room
           </Button>
         </div>
