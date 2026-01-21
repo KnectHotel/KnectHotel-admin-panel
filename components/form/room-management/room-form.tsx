@@ -42,7 +42,7 @@ const formSchema = z.object({
   maxOccupancy: z.coerce.number().min(1, 'Max occupancy must be at least 1'),
   roomSize: z.string().optional(),
   baseRate: z.coerce.number().min(0, 'Base rate must be positive'),
-  amenities: z.string().optional(), 
+  amenities: z.string().optional(),
 });
 
 type RoomFormValues = z.infer<typeof formSchema>;

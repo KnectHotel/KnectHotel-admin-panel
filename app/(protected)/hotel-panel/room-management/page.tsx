@@ -49,7 +49,7 @@ export default function HotelRoomPage() {
           id: room._id,
           roomNumber: room.roomNumber,
           roomType: room.roomTypeName,
-          roomCategory: 'Standard',
+          roomCategory: room.roomTypeName, // Mapping to Room Type as Category is not separately defined
           floorNumber: room.floorNumber,
           bedType: room.bedType,
           maxOccupancy: room.maxOccupancy,
