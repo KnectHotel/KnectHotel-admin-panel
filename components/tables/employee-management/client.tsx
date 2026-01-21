@@ -36,7 +36,6 @@ export const EmployeeTable: React.FC = () => {
           status: boolean;
           employees: any[];
         }>('GET', 'api/employee/');
-        console.log(response);
 
         if (response.status && Array.isArray(response.employees)) {
           

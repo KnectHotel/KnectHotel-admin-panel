@@ -44,7 +44,6 @@ const AddMenuModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   });
 
   const onSubmit = (data: AddMenuSchemaType) => {
-    console.log('Submitted Data:', data);
     addMenuForm.reset();
   };
   

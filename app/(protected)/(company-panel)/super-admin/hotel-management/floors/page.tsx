@@ -53,7 +53,6 @@ export default function FloorsPage() {
       });
   };
   const save = () => {
-    console.log('save floor', { hotel: selectedHotel, ...form });
     alert('Saved (dummy)');
   };
 

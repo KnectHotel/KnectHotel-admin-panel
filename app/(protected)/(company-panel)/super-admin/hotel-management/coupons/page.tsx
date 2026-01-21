@@ -84,7 +84,6 @@ export default function CouponsPage() {
   const handleSave = () => {
     
     alert('Saved (dummy). Check console.');
-    console.log('save coupon', { hotel: selectedHotel, ...form });
   };
 
   return (

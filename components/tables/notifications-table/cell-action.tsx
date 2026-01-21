@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 
 const CellAction = (props: any) => {
   const { data } = props;
-  console.log(data.guestId);
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -21,9 +20,6 @@ const CellAction = (props: any) => {
     }
   };
 
-  const handleEditUser = () => {
-    console.log('success');
-  };
 
   const handleViewUser = () => {
     router.push(`notifications/view/${data.notificationID}`);

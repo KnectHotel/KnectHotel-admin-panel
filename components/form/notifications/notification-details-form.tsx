@@ -77,7 +77,6 @@ const NotificationDetailsForm = ({
   });
 
   const onSubmit = (data: any) => {
-    console.log(data);
     addNotificationForm.reset({
       notificationID: '',
       date: '',

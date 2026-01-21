@@ -107,7 +107,6 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
       setLoading(true);
       try {
         const res = await apiCall('GET', `/api/chat/rooms/${chatId}`);
-        console.log(res)
         if (res.success && res.data) {
           setChatRoom(res.data.chatRoom);
           setMessages(res.data.messages || []);
@@ -196,7 +195,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
     setRefreshKey((prevKey) => prevKey + 1);
 
     socket.on('chat:guestJoined', (data) => {
-      console.log('👤 Guest joined:', data);
+      console.log("Guest joined");
     });
 
     socket.on('message:receive', (msg: Message) => {
@@ -204,7 +203,6 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
     });
 
     socket.on('chat:closed', (data) => {
-      console.log("chat:closed", data);
 
       if (chatRoom.status?.toLowerCase() === 'closed' || endedDuration !== null) {
         return;

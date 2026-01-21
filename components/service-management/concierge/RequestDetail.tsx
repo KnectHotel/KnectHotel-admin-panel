@@ -138,7 +138,6 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
           'get',
           `/api/services/concierge/requests/${serviceID}`
         );
-        console.log(res);
         if (res?.success) setRequest(res.data);
       } catch (err) {
         console.error('Failed to fetch request details', err);

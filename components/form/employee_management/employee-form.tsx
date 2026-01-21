@@ -51,7 +51,6 @@ const EmployeeForm = ({ employeeID, isEnabled, mode, employeeData }: Props) => {
           'GET',
           'api/role/get-all-roles'
         );
-        console.log('aaaaaaaaaa', response);
         if (response.status) {
           setRoles(response.roles); 
         }
@@ -142,7 +141,6 @@ const EmployeeForm = ({ employeeID, isEnabled, mode, employeeData }: Props) => {
         role: '',
         status: 'Active'
       });
-      console.log('Form state after reset:', employeeForm.getValues());
       setIsSubmitted(false);
     }
   }, [isSubmitted, employeeForm]);

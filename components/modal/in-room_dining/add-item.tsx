@@ -210,12 +210,10 @@ const AddItemModal: React.FC<ModalProps> = ({
     if (editMode && productId) {
       (async () => {
         try {
-          console.log('Fetching product ID:', productId);
           const res = await apiCall(
             'PUT',
             `api/services/inroomdining/products/${productId}`
           );
-          console.log('Product fetch response:', res);
           const product = res?.data;
 
           if (product) {
@@ -259,7 +257,6 @@ const AddItemModal: React.FC<ModalProps> = ({
       const method = editMode ? 'PUT' : 'POST';
 
       const response = await apiCall(method, endpoint, payload);
-      console.log(payload)
 
       if (response?.success) {
         

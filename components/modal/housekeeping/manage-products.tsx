@@ -749,7 +749,6 @@ const AddItemModal: React.FC<ModalProps> = ({ isOpen, onClose, product }) => {
     try {
       if (product) {
         await apiCall('PUT', `api/services/housekeeping/items/${product._id}`, payload);
-        console.log(payload)
         ToastAtTopRight.fire('Service item updated successfully', 'success');
         onClose();
       } else {

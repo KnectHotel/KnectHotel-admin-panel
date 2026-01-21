@@ -151,7 +151,6 @@ export const HotelTransactionDataTable: React.FC = () => {
       );
 
       const resData = response;
-      console.log('aaaaaa', resData)
 
       if (resData?.success) {
         setData(resData.data || []);

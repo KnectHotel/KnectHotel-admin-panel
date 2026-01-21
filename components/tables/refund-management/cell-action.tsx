@@ -44,13 +44,11 @@ import React from 'react';
 
 const CellAction = (props: any) => {
   const { data } = props;
-  console.log(data.guestId);
 
   const router = useRouter();
 
   const handleEditUser = () => {
     router.push(`refund-management/edit/${data._id}`);
-    console.log('success');
   };
 
   return (

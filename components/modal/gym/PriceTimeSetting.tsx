@@ -50,7 +50,6 @@ const PriceTimeSettingGym: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
   const onSubmit = async (data: PriceTimeSettingGymSchemaType) => {
     try {
-      console.log('Price settings submitted:', data);
       form.reset();
       onClose();
     } catch (error) {

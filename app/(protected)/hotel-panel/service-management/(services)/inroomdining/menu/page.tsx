@@ -35,7 +35,6 @@ const MenuPage: React.FC = () => {
     try {
       setLoading(true);
       const res = await apiCall('GET', 'api/services/inroomdining/products');
-      console.log(res)
       if (res.success) {
         setMenuData(res.data || []);
       } else {

@@ -79,7 +79,6 @@ const AdminForm = ({ adminID, mode }: Props) => {
   }, [roles, employee]);
 
   const onSubmit = async (data: AdminSchemaType) => {
-    console.log('Form Data:', data);
     setLoading(true);
     try {
       if (mode === 'add') {

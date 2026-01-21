@@ -907,7 +907,6 @@ const CreateCouponForm: React.FC<CreateCouponFormProps> = ({
       };
       if (isEditMode && couponId) {
         await apiCall('PUT', `api/coupon/${couponId}`, payload);
-        console.log(payload);
         ToastAtTopRight.fire('Coupon updated successfully!', 'success');
       } else {
         await apiCall('POST', 'api/coupon', payload);
@@ -976,7 +975,6 @@ const CreateCouponForm: React.FC<CreateCouponFormProps> = ({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit, (errors) => {
-            console.log('Validation Errors:', errors);
             ToastAtTopRight.fire('Please fix the errors in the form.', 'error');
           })}
           className="w-full relative h-full max-w-4xl mx-auto rounded-lg"

@@ -103,19 +103,9 @@ export const ComplaintSuperAdminTable: React.FC = () => {
         'GET',
         `/api/complaint/hotel/my-complaints?page=${pageNo}&limit=${limit}`
       );
-      console.log('hotel panel super admin', res)
       const complaints = res.complaints;
       const pagination = res.pagination;
-
-      
-      
-      
-      
-      
-      
-      
-      
-      
+    
       
       const normalizedData: ComplaintSuperAdminType[] = complaints.map(
         (item: any) => ({

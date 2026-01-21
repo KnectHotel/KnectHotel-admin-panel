@@ -86,7 +86,6 @@ const CreateHotelIdForm = ({ hotelID, isEnabled = true, mode }: Props) => {
   }, [preview]);
 
   const onSubmit = async (data: CreateHotelIdFormSchemaType) => {
-    console.log('is submitting');
     setIsSubmitting(true);
     setSubmitStatus('idle');
     try {
@@ -109,7 +108,6 @@ const CreateHotelIdForm = ({ hotelID, isEnabled = true, mode }: Props) => {
         'api/superAdmin/hotel/add-hotel',
         formData
       );
-      console.log('API response:', response);
       setSubmitStatus('success');
       form.reset();
       router.push('/hotels'); 

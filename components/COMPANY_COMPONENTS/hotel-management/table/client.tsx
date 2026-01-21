@@ -246,7 +246,6 @@ export const HotelManagementHome: React.FC = () => {
           'GET',
           `api/hotel/get-hotels?page=${pageNo}&limit=${limit}&_t=${Date.now()}`
         );
-        console.log(response);
 
         if (response.status) {
           const hotels: HotelDataType[] = response.hotels.map((hotel: any) => {
@@ -255,17 +254,7 @@ export const HotelManagementHome: React.FC = () => {
               hotel.subscriptionPaymentStatus === 'paid' &&
               !!hotel.subscriptionStartDate &&
               !!hotel.subscriptionEndDate;
-
-            
-            console.log('HOTEL STATUS DEBUG', {
-              hotelName: hotel.name,
-              backendStatus: hotel.status,
-              paymentStatus: hotel.subscriptionPaymentStatus,
-              subscriptionStartDate: hotel.subscriptionStartDate,
-              subscriptionEndDate: hotel.subscriptionEndDate,
-              derivedStatus: isActive ? 'ACTIVE' : 'INACTIVE'
-            });
-
+              
             return {
               hotelID: hotel._id || '',
               serviceID: hotel.HotelId,

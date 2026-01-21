@@ -165,7 +165,6 @@ const InRoomDiningAvailabilityModal: React.FC<ModalProps> = ({
         'api/hotel/service-availability',
         payload
       );
-      console.log('Updated successfully:', res);
       onClose();
     } catch (err) {
       console.error('Error saving availability:', err);

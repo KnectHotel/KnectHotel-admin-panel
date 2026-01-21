@@ -30,9 +30,6 @@ export default function AddRoomPage() {
 
   const [submitting, setSubmitting] = useState(false);
 
-  console.log('[AddRoom] RoomTypes loaded:', roomTypes);
-  console.log('[AddRoom] Mode:', isNewRoomType ? 'Create New' : 'Select Existing');
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -55,9 +52,6 @@ export default function AddRoomPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log('[AddRoom] Form submit started');
-    console.log('[AddRoom] Form data:', formData);
 
     
     if (!formData.roomNumber || formData.roomNumber.trim() === '') {
@@ -96,8 +90,6 @@ export default function AddRoomPage() {
         throw new Error('No authentication token found');
       }
 
-      console.log('[AddRoom] Sending POST request');
-
       
       const payload = {
         roomNumber: formData.roomNumber,
@@ -113,8 +105,6 @@ export default function AddRoomPage() {
         )
       };
 
-      console.log('[AddRoom] Payload:', payload);
-
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}api/hotel/rooms`,
         payload,
@@ -124,8 +114,6 @@ export default function AddRoomPage() {
           },
         }
       );
-
-      console.log('[AddRoom] Response:', response.data);
 
       if (response.data.success) {
         ToastAtTopRight.fire({

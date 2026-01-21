@@ -39,9 +39,7 @@ export default function BlogsPage() {
   const fetchBlogs = async () => {
     try {
       const data = await apiCall('GET', ENDPOINTS.BLOGS);
-      console.log('Blog API Response:', data);
 
-      
       if (data.data) {
         setItems(data.data);
       } else if (data.blogs) {
@@ -49,7 +47,6 @@ export default function BlogsPage() {
       } else if (Array.isArray(data)) {
         setItems(data);
       } else {
-        console.log('Unexpected response format:', data);
         setItems([]);
       }
     } catch (err) {

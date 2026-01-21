@@ -24,7 +24,6 @@ export default function HotelRoomPage() {
   }, []);
 
   const fetchRooms = async () => {
-    console.log('[RoomManagement] Fetching rooms from API');
     setLoading(true);
     setError(null);
 
@@ -42,8 +41,6 @@ export default function HotelRoomPage() {
         },
       });
 
-      console.log('[RoomManagement] API response:', response.data);
-
       if (response.data?.success && Array.isArray(response.data.rooms)) {
         const formattedRooms: RoomDataType[] = response.data.rooms.map((room: any) => ({
           id: room._id,
@@ -57,14 +54,13 @@ export default function HotelRoomPage() {
           status: room.status,
         }));
 
-        console.log('[RoomManagement] Formatted rooms:', formattedRooms);
         setData(formattedRooms);
       } else {
-        console.warn('[RoomManagement] No rooms found in response');
+        console.warn("No rooms found in response");
         setData([]);
       }
     } catch (err: any) {
-      console.error('[RoomManagement] Error fetching rooms:', err);
+      console.error('Error fetching rooms:', err);
       setError(err.message || 'Failed to fetch rooms');
       setData([]);
     } finally {
@@ -86,7 +82,6 @@ export default function HotelRoomPage() {
 
   const handleRoomSelect = (item: AnimatedListItem) => {
     setSelectedRoomId(item.id);
-    console.log('[RoomManagement] Selected room:', item);
   };
 
   if (loading) {

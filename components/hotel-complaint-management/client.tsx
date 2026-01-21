@@ -169,7 +169,6 @@ export const ComplaintTable: React.FC = () => {
         'GET',
         `/api/complaint/hotel/complaints?page=${pageNo}&limit=${limit}`
       );
-      console.log('complain data', response);
       const complaints = response.complaints;
       const pagination = response.pagination;
 

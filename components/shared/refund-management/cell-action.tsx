@@ -7,13 +7,11 @@ import React from 'react';
 
 const CellAction = (props: any) => {
   const { data } = props;
-  console.log(data.guestId);
 
   const router = useRouter();
 
   const handleEditUser = () => {
     router.push(`refund-management/edit/${data.hotelID}`);
-    console.log('success');
   };
 
   return (

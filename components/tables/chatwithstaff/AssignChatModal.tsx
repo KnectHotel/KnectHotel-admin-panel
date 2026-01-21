@@ -40,7 +40,6 @@ const AssignChatModal = ({
           'GET',
           '/api/employee/by-module?moduleName=chat-management'
         );
-        console.log(res);
         setEmployees(res?.employees || []);
       } catch (err) {
         console.error('Error fetching employees:', err);
@@ -55,9 +54,6 @@ const AssignChatModal = ({
 
   const handleAssign = async () => {
     if (!selectedEmployeeId || !roomId) return;
-
-    console.log('📤 Assigning Employee:', selectedEmployeeId);
-
     setAssigning(true);
     try {
       await apiCall('PUT', `/api/chat/rooms/assignEmployee/${roomId}`, {

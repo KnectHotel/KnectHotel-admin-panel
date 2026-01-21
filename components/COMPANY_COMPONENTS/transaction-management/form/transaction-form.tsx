@@ -84,7 +84,6 @@ const TransactionForm = ({ _id, mode, isHotelPanel = false }: Props) => {
     const fetchTransaction = async () => {
       try {
         const res = await apiCall('GET', `api/transactions/${_id}`);
-        console.log(res);
         setTransactionData(res.data);
       } catch (error) {
         console.error('Error fetching transaction:', error);

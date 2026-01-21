@@ -32,7 +32,6 @@ export const SOSManagementDataTable: React.FC = () => {
     try {
       const response = await apiCall('GET', 'api/sos');
       const dataArray = response?.data;
-      console.log(response?.data)
 
       if (Array.isArray(dataArray)) {
         setData(dataArray);

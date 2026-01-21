@@ -103,7 +103,6 @@ const ServiceAvailabilityModal: React.FC<ModalProps> = ({ isOpen, onClose }) => 
 
     try {
       await apiCall('PUT', 'api/hotel/service-availability', payload);
-      console.log('Availability (time only) saved ✅');
     } catch (err: any) {
       if (err?.response) {
         console.error('API Error:', err.response.status, err.response.data);

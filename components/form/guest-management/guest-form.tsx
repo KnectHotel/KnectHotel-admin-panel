@@ -281,12 +281,8 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         try {
           setLoading(true);
           const res = await apiCall('GET', `/api/booking/hotel/${guestId}`);
-          console.log('Fetched guest data:', res.booking);
           const guest = res.booking;
-          console.log('aaabbcc', res.booking.paymentStatus);
 
-
-          console.debug('[BOOKING_FETCH] bookingId:', guest?._id, 'roomStaysCount:', guest?.roomStays?.length || 0, 'roomStays:', guest?.roomStays);
 
           if (guest) {
             if (guest.preCheckInRejectionMessage) {
@@ -415,7 +411,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
 
             if (guest.services) {
               setServices(guest.services);
-              console.log('Fetched services:', guest.services);
             }
           }
         } catch (err) {
@@ -438,7 +433,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           rejectionMessage: message
         }
       );
-      console.log('Response', response);
 
       if (response.status === 200 || response.success) {
         toast.success('Request rejected successfully');
@@ -572,13 +566,11 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
 
     try {
       setFetchingByPhone(true);
-      console.log("[DEBUG] Fetching guest by phone:", onlyDigits);
 
       const response = await apiCall(
         'GET',
         `api/booking/fetch-guest/${onlyDigits}`
       );
-      console.log("[DEBUG] Fetch Guest Response:", response);
       const guest = response?.guest;
 
       if (!guest) {
@@ -685,7 +677,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         setLoading(true);
         const res = await apiCall('GET', `/api/booking/hotel/${id}`);
         const guest = res.booking;
-        console.log(guest);
         const normalizedGuests = (guest.guests ?? [])
           .slice(1)
           .map((g: any) => ({
@@ -813,7 +804,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
 
           if (guest.services) {
             setServices(guest.services);
-            console.log('Services:', guest.services);
           }
         }
       } catch (err) {
@@ -825,9 +815,7 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
   };
 
   const onSubmit = async (data: GuestSchemaType) => {
-    console.log("[DEBUG] onSubmit called with data:", data);
 
-    console.log('[Validation] Checking roomTypeId:', data.roomTypeId);
     if (!data.roomTypeId || data.roomTypeId.trim() === '') {
       console.error('[Validation] roomTypeId is missing or empty');
       ToastAtTopRight.fire({
@@ -838,7 +826,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
       return;
     }
 
-    console.log('[Validation] Checking roomStays:', data.roomStays);
     if (data.roomStays && data.roomStays.length > 0) {
       const invalidRoomStay = data.roomStays.find(rs => !rs.roomTypeId || rs.roomTypeId.trim() === '');
       if (invalidRoomStay) {
@@ -850,21 +837,12 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         return;
       }
     }
-    console.log('[Validation] All checks passed');
-
     if (!data.checkInDate) {
       data.checkInDate = null;
     }
     if (!data.checkOutDate) {
       data.checkOutDate = null;
     }
-
-
-
-
-
-
-
 
     const guestsFromForm = (data.guests ?? []).map((g) => ({
       ...g,
@@ -1121,12 +1099,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                 const adminData = JSON.parse(item);
 
                 const hotelId = adminData?.user?.HotelId || adminData?.HotelId || adminData?._id;
-                console.log('[DEBUG] Hotel context (FULL):', {
-                  'adminData.user.HotelId': adminData?.user?.HotelId,
-                  'adminData.HotelId': adminData?.HotelId,
-                  'adminData._id': adminData?._id,
-                  'resolved': hotelId
-                });
                 return hotelId;
               }
             } catch (e) {
@@ -1190,9 +1162,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
           externalRoomIds: data.externalRoomIds
         };
 
-        console.log('Submit data', data);
-        console.log('[DEBUG] Sending AddBooking Payload:', JSON.stringify(payload, null, 2));
-
 
         if (!payload.hotelId) {
           console.error('[CRITICAL] hotelId is missing - booking blocked');
@@ -1206,7 +1175,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
 
 
         const res = await apiCall('POST', '/api/booking/external/addBooking', payload);
-        console.log('[DEBUG] AddBooking Response:', res);
 
         ToastAtTopRight.fire({
           icon: 'success',
@@ -1288,7 +1256,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
         `/api/booking/approve-precheckin/${guestId}`,
         { assignedRoomNumber: roomNumber }
       );
-      console.log('yyyyyy', response);
       if (response.status === 200 || response.success) {
         toast.success('Request approved successfully');
 
@@ -3327,7 +3294,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                             size="sm"
                             variant="outline"
                             onClick={() => {
-                              console.log('[AddRoomStay] Button clicked, roomTypes.length:', roomTypes.length);
                               if (roomTypes.length === 0) {
                                 ToastAtTopRight.fire({
                                   icon: 'error',
@@ -3337,7 +3303,6 @@ const GuestForm: React.FC<Props> = ({ guestId, isEnabled, mode }) => {
                                 return;
                               }
                               const defaultRoomType = roomTypes[0];
-                              console.log('[AddRoomStay] Adding room stay with roomTypeId:', defaultRoomType?.roomTypeId);
                               appendRoomStay({
                                 roomTypeId: defaultRoomType?.roomTypeId || '',
                                 ratePlanId: '',

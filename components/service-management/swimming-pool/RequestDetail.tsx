@@ -62,7 +62,6 @@ const SwimmingPoolRequestDetail: React.FC<Props> = ({ serviceID }) => {
           'GET',
           `/api/services/swimming-pool/requests/${serviceID}`
         );
-        console.log(res);
         if (res.success) setData(res.data);
       } catch (error) {
         console.error('Error fetching request:', error);

@@ -21,7 +21,6 @@ export const ChatWithStaffTable: React.FC = () => {
     setLoading(true);
     try {
       const res = await apiCall('GET', '/api/chat/rooms');
-      console.log('asdfghjk', res)
       if (res?.data) {
         const mapped = res.data.map((chat: any) => ({
           chatId: chat._id || '',

@@ -179,7 +179,6 @@ const RequestDetail = <T extends Record<string, any>>({
             'GET',
             `api/services/inroomdining/bookings/${requestId}`
           );
-          console.log('API Response:', result);
           if (result.success) {
             setApiData(result.data);
           }

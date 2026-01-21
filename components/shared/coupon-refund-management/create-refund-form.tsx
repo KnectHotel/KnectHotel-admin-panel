@@ -90,7 +90,6 @@ const CreateRefundForm: React.FC<RefundFormProps> = ({
         try {
           const response = await apiCall('get', `/api/refund/${HotelId}`);
           const refundData = response?.refund;
-          console.log('ssssss', refundData); 
           if (refundData) {
             form.reset({
               HotelId: refundData.hotel?._id || '',
@@ -118,7 +117,6 @@ const CreateRefundForm: React.FC<RefundFormProps> = ({
         try {
           const response = await apiCall('get', `/api/refund/${GuestId}`);
           const refundData = response?.refund;
-          console.log('Hotel Panel Refund Data:', refundData);
 
           if (refundData) {
             form.reset({

@@ -48,7 +48,6 @@ const EditEmployeeForm = ({ employeeID, isEnabled, mode }: Props) => {
   });
 
   const onSubmit = (data: any) => {
-    console.log(data);
     employeeForm.reset();
   };
 

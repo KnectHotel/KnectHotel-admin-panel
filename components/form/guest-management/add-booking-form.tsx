@@ -126,8 +126,6 @@ const AddBookingForm = () => {
         }]
       };
 
-      console.log('[AddBookingForm] Submitting payload:', payload);
-
       const res = await apiCall('POST', '/api/booking/external/addBooking', payload);
 
       if (res?.success || res?.status === 200 || res?.booking) {

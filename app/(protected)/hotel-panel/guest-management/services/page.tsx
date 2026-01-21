@@ -74,7 +74,6 @@ export default function ServicesPage() {
   };
 
   const save = () => {
-    console.log('save service', { hotel: selectedHotel, ...form });
     alert('Saved (dummy)');
   };
 

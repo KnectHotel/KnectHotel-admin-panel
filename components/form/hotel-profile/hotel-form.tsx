@@ -511,9 +511,7 @@ const HotelForm = ({
       roomTypes: data.roomTypes || [],
       about: data?.about || ''
     };
-    console.log('Payload:', payload);
-    console.log('imagePreviews:', imagePreviews);
-
+    
     
     if (
       isChainHotelChecked &&
@@ -534,7 +532,6 @@ const HotelForm = ({
 
     const method = mode === 'edit' ? 'PUT' : 'POST';
 
-    console.log('hotel id', url);
 
     try {
       const response = await apiCall(method, url, payload);
@@ -550,7 +547,6 @@ const HotelForm = ({
         if (mode === 'add' || mode === 'edit') {
           router.push('/super-admin/guest-management');
         }
-        console.log('Hotel data:', response);
       } else {
         ToastAtTopRight.fire(response.message || 'Operation failed', 'error');
       }
@@ -583,7 +579,6 @@ const HotelForm = ({
       const fetchHotel = async () => {
         try {
           const res = await apiCall('GET', `api/hotel/get-hotel/${hotelId}`);
-          console.log(res);
           if (!res?.hotel) {
             ToastAtTopRight.fire('Hotel not found', 'error');
             return;
@@ -591,7 +586,6 @@ const HotelForm = ({
           setFetchedHotelData(res.hotel);
           setIsBrandedHotelChecked(!!res.hotel.brandedHotel);
           setIsChainHotelChecked(!!res.hotel.chainHotel);
-          console.log('reeeee', res.hotel.subscriptionPlan);
           form.reset({
             name: res.hotel.name || '',
             address: res.hotel.address || '',
@@ -743,7 +737,6 @@ const HotelForm = ({
           'GET',
           `api/hotel/pending-request/${hotelId}`
         );
-        console.log('Pending', res);
         const d = res?.request?.hotelData;
         if (!d) {
           ToastAtTopRight.fire('Hotel not found or empty response', 'error');
@@ -884,7 +877,6 @@ const HotelForm = ({
         gstPercentage: gstPercentage || 18,
       };
 
-      console.log('Approval Payload:', payload);
 
       
       const response = await apiCall(
@@ -992,7 +984,6 @@ const HotelForm = ({
     try {
       const response = await apiCall('GET', 'api/subscription?status=Active');
       if (response.success && response.data) {
-        console.log('Subscription plans:', response.data);
         setSubscriptionPlans(response.data);
       } else {
         console.error('Failed to fetch subscription plans:', response);

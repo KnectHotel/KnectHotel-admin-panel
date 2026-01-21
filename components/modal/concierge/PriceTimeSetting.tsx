@@ -53,7 +53,6 @@ const PriceTimeSettingConciergeModal: React.FC<ModalProps> = ({
 
   const onSubmit = async (data: PriceTimeSettingConciergeSchemaType) => {
     try {
-      console.log('Price settings submitted:', data);
       form.reset();
       onClose();
     } catch (error) {

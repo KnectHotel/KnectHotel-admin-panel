@@ -163,7 +163,6 @@ const PriceTimeSettingHouseKeeping: React.FC<ModalProps> = ({
         'api/hotel/service-availability',
         payload
       );
-      console.log('Housekeeping availability updated:', res);
       onClose();
     } catch (err) {
       console.error('Error saving housekeeping availability:', err);

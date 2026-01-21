@@ -58,7 +58,6 @@ export const HotelRefundDetailsTable: React.FC = () => {
           : `/api/refund?page=${currentPage}&limit=${pageLimit}`;
 
       const res = await apiCall('get', url);
-      console.log('asdfghjk', res)
 
       if (res?.success) {
         const responseData = res.data || res.refunds || [];

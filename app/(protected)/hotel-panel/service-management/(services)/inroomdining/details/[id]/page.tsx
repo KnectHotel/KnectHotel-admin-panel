@@ -5,19 +5,8 @@ type Params = {
 };
 
 
-
-
-
-
-
-
-
-
-
-
 const ViewDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
-  console.log('Received requestId:', id);
   if (!id) {
     console.error('Request ID is missing');
     return <div>Error: Request ID is missing</div>;

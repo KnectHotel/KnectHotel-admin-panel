@@ -91,11 +91,9 @@ const SubHotelIdForm = ({ subHotelID, mode }: Props) => {
   useEffect(() => {
     const fetchHotelData = async () => {
       if (!subHotelID || mode !== 'view') return;
-      console.log('asdfghj', subHotelID)
       try {
         const res = await apiCall('GET', `api/hotel/get-hotel/${subHotelID}`);
         const data = res?.hotel;
-        console.log('Date:', res?.hotel)
         if (data) {
           form.reset({
             parentHotelID: data?.parentHotel || '',
@@ -126,7 +124,6 @@ const SubHotelIdForm = ({ subHotelID, mode }: Props) => {
   const onSubmit = async (data: CreateSubHotelIdFormSchemaType) => {
     setIsSubmitting(true);
     try {
-      console.log('Submitted data:', data);
       setSubmitStatus('success');
       if (mode === 'create') {
         form.reset();

@@ -50,7 +50,6 @@ export const Transactions: React.FC = () => {
         `/api/transactions?page=${pageNo}&limit=${limit}`
       );
       const resData = response;
-      console.log('daataaa', resData);
 
       if (resData?.success) {
         setData(resData.data); 

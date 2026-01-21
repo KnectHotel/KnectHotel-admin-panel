@@ -45,7 +45,6 @@ const ManageProductsModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   });
 
   const onSubmit = (data: GymManageProductsModalFormSchemaType) => {
-    console.log('Submitted Data:', data);
     form.reset();
     setPreview(null);
     ToastAtTopRight.fire({

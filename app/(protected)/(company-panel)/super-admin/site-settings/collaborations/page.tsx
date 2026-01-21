@@ -25,7 +25,6 @@ export default function CollaborationPage() {
   const fetchCollaborations = async () => {
     try {
       const data = await apiCall('GET', ENDPOINTS.COLLABORATIONS);
-      console.log('Collaboration API Response:', data);
 
       if (data.data) {
         setItems(data.data);
@@ -34,7 +33,6 @@ export default function CollaborationPage() {
       } else if (Array.isArray(data)) {
         setItems(data);
       } else {
-        console.log('Unexpected response format:', data);
         setItems([]);
       }
     } catch (err) {

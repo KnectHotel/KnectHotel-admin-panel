@@ -150,8 +150,6 @@ const LoginForm = () => {
         
         const redirectPath = determineRedirectPath(response.user);
         router.push(redirectPath);
-        console.log('Login successful:', response);
-        console.log('Allowed modules:', allowedModules);
         
       } else {
         throw new Error('Invalid login credentials');

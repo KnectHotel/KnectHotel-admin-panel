@@ -251,7 +251,6 @@ const ResetPasswordForm = () => {
         return;
       }
       
-      console.log('OTP sent successfully:', response);
       showNotification('OTP sent successfully. Please check your email.', 'success');
       setUserEmail(data.email); 
       setMode(Mode.EnterOTP);
@@ -283,8 +282,6 @@ const ResetPasswordForm = () => {
         showNotification(response.message || 'Invalid OTP', 'error');
         return;
       }
-      
-      console.log('OTP verified successfully:', response);
       showNotification('OTP verified successfully', 'success');
       setMode(Mode.SetNewPassword);
     } catch (error: any) {
@@ -315,7 +312,6 @@ const ResetPasswordForm = () => {
         return;
       }
       
-      console.log('Password reset successful:', response);
       showNotification('Password reset successful. Redirecting to login...', 'success');
       
       

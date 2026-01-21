@@ -68,7 +68,6 @@ export default function RoomCategoriesPage() {
   };
 
   const save = () => {
-    console.log('save category', { hotel: selectedHotel, ...form });
     alert('Saved (dummy)');
   };
 

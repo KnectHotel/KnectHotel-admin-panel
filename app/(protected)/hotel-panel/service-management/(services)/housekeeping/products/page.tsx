@@ -31,7 +31,6 @@ const ProductDetailsPage = () => {
     (async () => {
       try {
         const response = await apiCall<{ data: ServiceData }>('GET', 'api/services/housekeeping/items');
-        console.log('Response', response)
         setHousekeepingData(response.data || {});
       } catch (err) {
         console.error('Failed to fetch housekeeping items:', err);
