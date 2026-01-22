@@ -16,7 +16,6 @@ interface User {
 
 interface LoginResponse {
   status: boolean;
-  // message: string;
   token: string;
   user: User;
 }

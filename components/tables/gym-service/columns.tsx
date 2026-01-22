@@ -110,7 +110,7 @@ export const columns: ColumnDef<GymServiceDataType>[] = [
                 : status === 'Completed'
                   ? 'text-[#78B150]'
                   : status === 'Cancelled'
-                    ? 'text-red-500' // ✅ Cancelled in red
+                    ? 'text-red-500'
                     : 'text-gray-500'
             }`}
         >

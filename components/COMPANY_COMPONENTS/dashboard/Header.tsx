@@ -27,8 +27,8 @@ const Header: React.FC = () => {
             onClick={() => handleLinkClick(link)}
             className={`text-sm font-medium transition-colors ${
               activeLink === link
-                ? 'text-white border-b-2 border-[#6F4E37]' // Active: white with coffee underline
-                : 'text-white/60 hover:text-white/80' // Inactive: white with 60% opacity
+                ? 'text-white border-b-2 border-[#6F4E37]'
+                : 'text-white/60 hover:text-white/80'
             } pb-1`}
           >
             {link}

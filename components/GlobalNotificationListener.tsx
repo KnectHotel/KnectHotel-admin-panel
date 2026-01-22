@@ -176,7 +176,6 @@ export default function GlobalNotificationListener() {
     const s = getSocket();
     if (!s || bound.current) return;
     bound.current = true;
-    // ⬇️ REPLACE THIS WHOLE HANDLER
     const handler = (p: FacilityNotification) => {
       const { link, message, moduleName } = p || {};
       const icon = pickIcon(moduleName);
@@ -188,9 +187,7 @@ export default function GlobalNotificationListener() {
 
       ToastAtTopRight.fire({
         icon: icon as any,
-        // title ko clean/bold rakho (CSS me style hoga)
         title: safeMsg,
-        // module ko pretty badge me dikhate hain
         html: mod
           ? `
         <div class="tv-modline">
@@ -201,7 +198,6 @@ export default function GlobalNotificationListener() {
         </div>`
           : '',
         didOpen: (el) => {
-          // clickable toast (agar link mila)
           if (link) {
             el.classList.add('tv-toast--clickable');
             el.addEventListener('click', () => (window.location.href = link));
@@ -209,7 +205,6 @@ export default function GlobalNotificationListener() {
         }
       });
 
-      // Optional: OS notification
       if ('Notification' in window && Notification.permission === 'granted') {
         new Notification(message || 'Notification', {
           body: moduleName ? `Module: ${moduleName}` : undefined,

@@ -11,7 +11,7 @@ const FALLBACK = '/fallback.png';
 
 const keyToUrl = (value?: string | null) => {
   if (!value) return null;
-  if (/^https?:\/\
+  if (/^https?:\/\//.test(value)) return value;
   return `${S3_BASE}/${value.replace(/^\/+/, '')}`;
 };
 const resolveImage = (value?: string | null) => keyToUrl(value) || FALLBACK;
@@ -30,15 +30,15 @@ type ConciergeRequestDetail = {
   requestType: string;
   status: string;
   requestTime: string;
-  estimatedDeliveryTime?: string; 
-  roomNumber?: string; 
+  estimatedDeliveryTime?: string;
+  roomNumber?: string;
 
   assignedTo?: {
     _id: string;
     firstName: string;
     lastName: string;
     phoneNumber?: string;
-    mobileNumber?: string; 
+    mobileNumber?: string;
   };
 
   guest: {
@@ -58,7 +58,7 @@ type ConciergeRequestDetail = {
     serviceType?: string;
     location?: string;
     distance?: number;
-    imageUrl?: string | null; 
+    imageUrl?: string | null;
   };
 
   feedback?: {
@@ -176,9 +176,9 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
   return (
     <>
       <div className="mt-24 w-full">
-        {}
+        { }
         <div className="mx-auto max-w-6xl bg-[#FAF6EF] rounded-2xl border border-[#E6D6C2] shadow-[0_1px_0_rgba(0,0,0,0.04)]">
-          {}
+          { }
           <div className="flex items-center justify-between px-6 py-4 border-b border-[#E6D6C2]">
             <div className="flex items-center gap-3">
               <div className="h-6 w-1 rounded bg-[#7A5C3E]" />
@@ -198,9 +198,9 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
             </div>
           </div>
 
-          {}
+          { }
           <div className="px-6 py-8 grid gap-10">
-            {}
+            { }
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <InfoPill label="Guest name" value={guestName} />
               <InfoPill
@@ -231,9 +231,9 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
               />
             </div>
 
-            {}
+            { }
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {}
+              { }
               <div className="grid gap-6">
                 <TextBlock
                   label="Request Detail"
@@ -245,13 +245,13 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
                 />
               </div>
 
-              {}
+              { }
               <div className="grid gap-6">
                 <div className="flex flex-col gap-1">
                   <span className="text-xs uppercase tracking-wide text-[#6a5a45]/70">
                     Request Assigned to
                   </span>
-                  {}
+                  { }
                   <button
                     type="button"
                     className="bg-[#6E511D] border border-[#5a4118] hover:bg-[#5f441b] text-white transition-colors rounded-md px-4 py-2 shadow-sm text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A07C3E]"
@@ -271,7 +271,7 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
                 />
               </div>
 
-              {}
+              { }
               <div className="grid gap-6">
                 <InfoPill label="Requested Time" value={requestTimeStr} />
                 <InfoPill
@@ -281,7 +281,7 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
               </div>
             </div>
 
-            {}
+            { }
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8 items-start">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <InfoPill
@@ -310,18 +310,18 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
                 />
               </div>
 
-              {}
-              {}
+              { }
+              { }
             </div>
 
-            {}
+            { }
             <div className="border-t pt-6 space-y-4">
               <h3 className="text-lg font-semibold text-gray-700">
                 Guest Feedback
               </h3>
 
               <div className="grid md:grid-cols-2 gap-6 mt-2">
-                {}
+                { }
                 <div className="bg-[#FAF6EF] p-4 rounded-lg shadow-sm">
                   <h4 className="text-gray-600 font-medium mb-2">
                     Service Feedback
@@ -335,7 +335,7 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
                   </div>
                 </div>
 
-                {}
+                { }
                 <div className="bg-[#FAF6EF] p-4 rounded-lg shadow-sm">
                   <h4 className="text-gray-600 font-medium mb-2">
                     Agent Feedback
@@ -353,11 +353,11 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
           </div>
         </div>
 
-        {}
+        { }
         <div className="h-8" />
       </div>
 
-      {}
+      { }
       <AssignModal
         onClose={() => setIsAssignModalOpen(false)}
         requestId={isAssignModalOpen ? serviceID : undefined}

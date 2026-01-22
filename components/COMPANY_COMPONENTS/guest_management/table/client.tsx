@@ -21,7 +21,6 @@ export const CompanyPanelGuestManagementHome: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      // Construct query string with search
       const queryParams = new URLSearchParams({
         page: pageNo.toString(),
         limit: limit.toString(),
@@ -49,10 +48,9 @@ export const CompanyPanelGuestManagementHome: React.FC = () => {
   };
 
   useEffect(() => {
-    // Debounce search API calls
     const handler = setTimeout(() => {
       fetchData();
-    }, 500); // 500ms debounce
+    }, 500);
 
     return () => {
       clearTimeout(handler);
@@ -67,7 +65,7 @@ export const CompanyPanelGuestManagementHome: React.FC = () => {
 
   const handleSearchChange = (searchValue: string) => {
     setSearchQuery(searchValue);
-    setPageNo(1); // Reset to page 1 on new search
+    setPageNo(1);
   };
 
   return (
@@ -89,7 +87,6 @@ export const CompanyPanelGuestManagementHome: React.FC = () => {
         />
       )}
 
-      {/* Pagination Controls */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-6 px-3 py-4 border-t">
         <div className="text-sm">
           Showing{' '}
