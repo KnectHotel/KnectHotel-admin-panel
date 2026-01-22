@@ -23,7 +23,7 @@ export default function CompanyPage() {
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
 
-  // Form data
+  
   const [mission, setMission] = useState('');
   const [leaderForm, setLeaderForm] = useState({
     name: '',
@@ -33,18 +33,18 @@ export default function CompanyPage() {
   });
   const [valueForm, setValueForm] = useState({ title: '', description: '' });
 
-  // LOAD DATA
+  
   const fetchCompany = async () => {
     try {
       const json = await apiCall('GET', ENDPOINTS.COMPANY_SECTION);
-      // If data is null/undefined, use default empty object so UI renders
+      
       const data = json.data ||
         json || { mission: '', leadership: [], values: [] };
       setCompany(data);
       setMission(data.mission || '');
     } catch (err) {
       console.error('Error loading company:', err);
-      // Initialize with empty data on error so user can try to create
+      
       setCompany({ mission: '', leadership: [], values: [] });
     }
   };
@@ -53,7 +53,7 @@ export default function CompanyPage() {
     fetchCompany();
   }, []);
 
-  // UPSERT COMPANY
+  
   const saveCompany = async (payload: any) => {
     try {
       await apiCall('PUT', ENDPOINTS.COMPANY_SECTION, payload);
@@ -63,7 +63,7 @@ export default function CompanyPage() {
     }
   };
 
-  // HANDLERS
+  
   const saveMission = () => {
     saveCompany({ ...company, mission });
     setShowMissionForm(false);
@@ -117,7 +117,7 @@ export default function CompanyPage() {
 
   return (
     <div className="p-6 w-full">
-      {/* HEADER */}
+      {}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -137,7 +137,7 @@ export default function CompanyPage() {
         </div>
       </motion.div>
 
-      {/* MISSION */}
+      {}
       <section className="mb-8">
         <div className="flex justify-between items-center mb-2">
           <h2 className="font-semibold text-lg text-[#3b2f1c]">
@@ -155,7 +155,7 @@ export default function CompanyPage() {
         <p className="text-gray-700">{company.mission}</p>
       </section>
 
-      {/* LEADERSHIP */}
+      {}
       <section className="mb-10">
         <div className="flex justify-between items-center">
           <h2 className="font-semibold text-lg text-[#3b2f1c]">
@@ -226,7 +226,7 @@ export default function CompanyPage() {
         </div>
       </section>
 
-      {/* VALUES */}
+      {}
       <section>
         <div className="flex justify-between items-center">
           <h2 className="font-semibold text-lg text-[#3b2f1c]">
@@ -296,7 +296,7 @@ export default function CompanyPage() {
         </div>
       </section>
 
-      {/* MISSION MODAL */}
+      {}
       <Modal
         visible={showMissionForm}
         onClose={() => setShowMissionForm(false)}
@@ -316,7 +316,7 @@ export default function CompanyPage() {
         </button>
       </Modal>
 
-      {/* LEADER MODAL */}
+      {}
       <Modal
         visible={showLeadersForm}
         onClose={() => setShowLeadersForm(false)}
@@ -348,7 +348,7 @@ export default function CompanyPage() {
         </button>
       </Modal>
 
-      {/* VALUE MODAL */}
+      {}
       <Modal visible={showValuesForm} onClose={() => setShowValuesForm(false)}>
         <h2 className="text-lg font-semibold mb-3">
           {editIndex !== null ? 'Edit Value' : 'Add Value'}
@@ -392,7 +392,7 @@ export default function CompanyPage() {
   );
 }
 
-/* Simple Modal Component */
+
 function Modal({
   visible,
   children,

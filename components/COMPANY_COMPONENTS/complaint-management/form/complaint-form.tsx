@@ -28,7 +28,7 @@ import {
 import { ChevronDown } from 'lucide-react';
 import apiCall from '@/lib/axios';
 
-// Toasts
+
 import type { SweetAlertIcon } from 'sweetalert2';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 
@@ -47,7 +47,7 @@ const fmtDateTime = (iso?: string | null) => {
   if (!iso) return '—';
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '—';
-  // en-IN format, date + time (24h/AM-PM handled by locale)
+  
   return d.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
 };
 
@@ -58,7 +58,7 @@ type FeedbackBlock = {
   agentRating: number;
 };
 
-// ⭐ Editable star input (used when canEdit = true), else read-only
+
 const StarInput: React.FC<{
   value?: number;
   onChange?: (v: number) => void;
@@ -127,7 +127,7 @@ const ComplaintForm = ({
     hotelName: ''
   });
 
-  // Only hotel-toSuper can edit (incl. feedback)
+  
   const canEdit = source === 'hotel-toSuper';
   const isDisabled = useMemo(() => !canEdit && mode !== 'add', [canEdit, mode]);
 
@@ -139,7 +139,7 @@ const ComplaintForm = ({
       hotelID: '',
       complaintCategory: 'Subscription',
       description: '',
-      feedback: '', // schema keeps a string – we won't use this field for object feedback
+      feedback: '', 
       status: 'Open',
       assignedStaff: '',
       dateAndTime: '',
@@ -155,7 +155,7 @@ const ComplaintForm = ({
     }
   });
 
-  // Fetch complaint and hydrate
+  
   useEffect(() => {
     if (!complaintID) return;
 
@@ -185,7 +185,7 @@ const ComplaintForm = ({
           ? complaint.raisedByGuest
           : complaint.raisedByAdmin;
 
-        // Feedback normalize
+        
         const fb = complaint.feedback;
         if (fb && typeof fb === 'object') {
           const normalized: FeedbackBlock = {
@@ -255,7 +255,7 @@ const ComplaintForm = ({
     setIsSaving(true);
     try {
       if (mode === 'add') {
-        // Build payload for add
+        
         if (source === 'hotel-toUser') {
           await apiCall('POST', `api/complaint/hotel/complaints`, {
             complaintType: data.complaintCategory,
@@ -275,7 +275,7 @@ const ComplaintForm = ({
         return;
       }
 
-      // EDIT / UPDATE
+      
       const id = data.complaintID;
       if (!id) {
         showToast('error', 'Complaint ID missing.');
@@ -288,12 +288,12 @@ const ComplaintForm = ({
           ? `/api/complaint/hotel/complaints/${id}`
           : `/api/complaint/platform/complaints/${id}`;
 
-      // Minimal safe payload – include feedback object
+      
       const payload: any = {
         complaintType: data.complaintType || data.complaintCategory,
         description: data.description,
         status: data.status,
-        assignedStaff: data.assignedStaff, // if backend ignores, safe to send
+        assignedStaff: data.assignedStaff, 
         feedback: {
           complaintFeedback: feedbackBlock.complaintFeedback,
           complaintRating: feedbackBlock.complaintRating,
@@ -345,9 +345,9 @@ const ComplaintForm = ({
           )}
           className="w-full h-full rounded-lg"
         >
-          {/* Main Grid */}
+          {}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
-            {/* Left */}
+            {}
             <div className="flex flex-col gap-3">
               {source === 'hotel-toUser' && (
                 <>
@@ -421,7 +421,7 @@ const ComplaintForm = ({
                 </>
               )}
 
-              {/* Complaint Unique ID (always view) */}
+              {}
               <FormField
                 control={form.control}
                 name="uniqueId"
@@ -469,12 +469,12 @@ const ComplaintForm = ({
                 )}
               />
 
-              {/* Hotel ID */}
+              {}
               {(mode === 'view' ||
                 (mode === 'add' && source === 'superadmin') ||
                 (mode !== 'add' && source !== 'hotel-toUser')) && (
                 <div className="flex flex-col gap-3">
-                  {/* Hotel ID - Editable only for superadmin or hotel-toSuper */}
+                  {}
                   {(mode === 'add' || mode === 'edit') &&
                     source === 'superadmin' && (
                       <FormField
@@ -503,7 +503,7 @@ const ComplaintForm = ({
                         )}
                       />
                     )}
-                  {/* Display Hotel Name */}
+                  {}
                   <FormField
                     control={form.control}
                     name="hotelName"
@@ -518,7 +518,7 @@ const ComplaintForm = ({
                               type="text"
                               {...field}
                               value={hotelDetails.hotelName}
-                              // disabled
+                              
                               className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none outline-none focus:ring-0 text-xs 2xl:text-sm"
                             />
                           </FormControl>
@@ -553,45 +553,45 @@ const ComplaintForm = ({
                 )}
               />
 
-              {/* Complaint Type: Select in ADD, Input otherwise */}
+              {}
               {mode === 'add' &&
               (source === 'superadmin' || source === 'hotel-toSuper') ? (
-                // <FormField
-                //   control={form.control}
-                //   name="complaintCategory"
-                //   render={({ field }) => (
-                //     <FormItem className="relative">
-                //       <FormLabel>Complaint Type</FormLabel>
-                //       <FormControl>
-                //         <Select
-                //           onValueChange={field.onChange}
-                //           value={field.value}
-                //         >
-                //           <SelectTrigger className="min-w-32 bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none">
-                //             <SelectValue placeholder="Select type" />
-                //           </SelectTrigger>
-                //           <SelectContent className="bg-[#362913] rounded-2xl text-white border-2 shadow-md border-white">
-                //             {[
-                //               'Subscription',
-                //               'Payment',
-                //               ' Account',
-                //               'Booking',
-                //               'Refund',
-                //               'Coupon',
-                //               'Other'
-                //             ].map((value) => (
-                //               <SelectItem key={value} value={value}>
-                //                 {value}
-                //               </SelectItem>
-                //             ))}
-                //           </SelectContent>
-                //         </Select>
-                //       </FormControl>
-                //       <FormMessage />
-                //       <ChevronDown className="absolute right-1 top-[2.2rem] text-black w-4 h-4" />
-                //     </FormItem>
-                //   )}
-                // />
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
                 <FormField
                   control={form.control}
                   name="complaintCategory"
@@ -600,7 +600,7 @@ const ComplaintForm = ({
                       <FormLabel>Complaint Type</FormLabel>
                       <FormControl>
                         <Select
-                          // 👇 trim the selected value to be safe
+                          
                           onValueChange={(v) => field.onChange(v.trim())}
                           value={field.value}
                         >
@@ -611,7 +611,7 @@ const ComplaintForm = ({
                             {[
                               'Subscription',
                               'Payment',
-                              'Account', // 👈 fixed (no leading space)
+                              'Account', 
                               'Booking',
                               'Refund',
                               'Coupon',
@@ -654,7 +654,7 @@ const ComplaintForm = ({
                 />
               )}
 
-              {/* Description */}
+              {}
               <FormField
                 control={form.control}
                 name="description"
@@ -678,7 +678,7 @@ const ComplaintForm = ({
                 )}
               />
 
-              {/* Status */}
+              {}
               <FormField
                 control={form.control}
                 name="status"
@@ -718,9 +718,9 @@ const ComplaintForm = ({
               />
             </div>
 
-            {/* Right */}
+            {}
             <div className="flex flex-col items-center md:items-start space-y-8 w-full">
-              {/* Assigned Staff (editable only for hotel-toSuper) */}
+              {}
 
               <FormField
                 control={form.control}
@@ -745,13 +745,13 @@ const ComplaintForm = ({
                 )}
               />
 
-              {/* —— Feedback & Ratings —— */}
+              {}
               <div className="w-full rounded-xl border border-[#E7D9C4] bg-[#F6EEE0] p-4 shadow-sm">
                 <h3 className="text-sm 2xl:text-base font-semibold text-[#362913] mb-3">
                   Feedback & Ratings
                 </h3>
 
-                {/* Complaint rating + feedback */}
+                {}
                 <div className="mb-4">
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-xs 2xl:text-sm text-gray-700">
@@ -782,7 +782,7 @@ const ComplaintForm = ({
 
                 <div className="h-px bg-[#E7D9C4] my-3" />
 
-                {/* Agent rating + feedback */}
+                {}
                 <div>
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-xs 2xl:text-sm text-gray-700">
@@ -814,7 +814,7 @@ const ComplaintForm = ({
             </div>
           </div>
 
-          {/* Actions */}
+          {}
           {mode === 'add' ? (
             <div className="mt-8 flex flex-col sm:flex-row justify-end gap-3">
               <Button type="submit" className="btn-primary" disabled={isSaving}>

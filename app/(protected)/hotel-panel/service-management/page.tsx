@@ -1,149 +1,149 @@
-// 'use client';
-
-// import React, { useEffect, useState } from 'react';
-// import Image from 'next/image';
-// import ToggleButton from '@/components/ui/toggleButton';
-// import { useRouter } from 'next/navigation';
-// import Navbar from '@/components/Navbar';
-// import { Heading } from '@/components/ui/heading';
-// import apiCall from '@/lib/axios';
-// import { getSessionStorageItem } from 'utils/localstorage';
-// import { all } from 'axios';
-// import { allServices } from 'utils/allservices';
 
 
 
-// // static list of all services
-
-// const ServiceManagementPage = () => {
-//   const router = useRouter();
-//   const [highlightedKey, setHighlightedKey] = useState<string | null>(null);
-//   const [enabledServices, setEnabledServices] = useState<
-//     Record<string, boolean>
-//   >({});
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState('');
-//   const [allowedModules, setAllowedModules] = useState<any>(null);
-
-//   useEffect(() => {
-//     setAllowedModules(getSessionStorageItem<any>('admin').allowedModules);
-//   }, []);
 
 
-//   const handleNavigation = (href: string, isEnabled: boolean) => {
-//     if (!isEnabled) return;
-//     const key = href.split('/').pop();
-//     if (key) {
-//       localStorage.setItem('lastClickedService', key);
-//       setHighlightedKey(key);
-//       router.push(href);
-//     }
-//   };
 
-//   const handleToggleService = (key: string, newState: boolean) => {
-//     setEnabledServices((prev) => ({
-//       ...prev,
-//       [key]: newState
-//     }));
-//   };
 
-//   useEffect(() => {
-//     const lastClicked = localStorage.getItem('lastClickedService');
-//     if (lastClicked) {
-//       setHighlightedKey(lastClicked);
-//       setTimeout(() => {
-//         setHighlightedKey(null);
-//         localStorage.removeItem('lastClickedService');
-//       }, 10000);
-//     }
-//   }, []);
 
-//   useEffect(() => {
-//     if (getSessionStorageItem<any>('admin')?.allowedModules?.[0] === null) {
-//       const initialStatus: Record<string, boolean> = {};
-//       allServices.forEach((service) => {
-//         initialStatus[service.name] = true
-//       });
-//       setEnabledServices(initialStatus);
-//       setLoading(false);
-//     } else {
-//       const initialStatus: Record<string, boolean> = {};
-//       allServices.forEach((service: any) => {
-//         initialStatus[service.name] = allServices
-//           .filter(service => getSessionStorageItem<any>('admin').allowedModules?.includes(service.name))
-//           .map(service => service.name).includes(
-//             service.name
-//           );
-//       });
-//       setEnabledServices(initialStatus);
-//       setLoading(false);
-//     }
 
-//   }, []);
 
-//   return (
-//     <div className="flex flex-col w-full">
-//       <Navbar />
-//       <div className="overflow-hidden flex flex-col justify-evenly py-4 gap-6 mt-14">
-//         <Heading title="Service Management" className="px-6 mb-0 md:mb-0" />
 
-//         {loading ? (
-//           <p className="text-center text-gray-500">Loading services...</p>
-//         ) : error ? (
-//           <p className="text-center text-red-500">{error}</p>
-//         ) : (
-//           <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-6">
-//             {allServices.map((service) => {
-//               const isEnabled = enabledServices[service.name] ?? false;
-//               const isHighlighted = highlightedKey === service.name;
 
-//               return (
-//                 <div
-//                   key={service.id}
-//                   className={`flex flex-col gap-2 group ${isEnabled ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'} ${isHighlighted ? 'shadow-sm bg-gray-100 rounded-md' : ''
-//                     }`}
-//                 >
-//                   <div
-//                     onClick={() => handleNavigation(service.href, isEnabled)}
-//                   >
-//                     <Image
-//                       src={service.imgSrc}
-//                       alt={service.displayName}
-//                       width={1000}
-//                       height={1000}
-//                       className="rounded"
-//                     />
-//                   </div>
 
-//                   <div className="w-full flex justify-between items-center">
-//                     <h2
-//                       onClick={() => handleNavigation(service.href, isEnabled)}
-//                       className={`px-2 py-1 text-sm rounded-lg group-hover:bg-[#453519] group-hover:text-white transition-all duration-300 ${isHighlighted
-//                         ? 'bg-[#453519] text-white'
-//                         : 'bg-[#EFE9DF]'
-//                         }`}
-//                     >
-//                       {service.displayName}
-//                     </h2>
-//                     <ToggleButton
-//                       serviceName={service.name}
-//                       enabled={isEnabled}
-//                       onCheckedChange={(newState) =>
-//                         handleToggleService(service.name, newState)
-//                       }
-//                     />
-//                   </div>
-//                 </div>
-//               );
-//             })}
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
 
-// export default ServiceManagementPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -168,7 +168,7 @@ const GST_WHITELIST = new Set(['housekeeping', 'inroomdining', 'gym', 'swimmingp
 const normalize = (s: string) => s?.toLowerCase().replace(/\s+|_/g, '') || '';
 const ALIASES: Record<string, string> = { inroomdining: 'inroomdining' };
 
-// GET shape helpers
+
 function pickDocs(res: any): GstDoc[] {
   if (Array.isArray(res)) return res;
   if (Array.isArray(res?.data)) return res.data;
@@ -176,9 +176,9 @@ function pickDocs(res: any): GstDoc[] {
   return [];
 }
 
-// POST shape helpers (aapke sample ke hisaab se)
+
 function pickUpdatedListFromPost(res: any): GstItem[] | null {
-  // sample: { success, message, data: { gstPercentageForServices: [...] } }
+  
   const list =
     res?.data?.gstPercentageForServices ??
     res?.data?.data?.gstPercentageForServices ??
@@ -199,14 +199,14 @@ const ServiceManagementPage = () => {
   const [loadingGst, setLoadingGst] = useState(true);
   const [error, setError] = useState('');
 
-  // Modal state
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editServiceKey, setEditServiceKey] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>('18');
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
 
-  // --- Load allowedModules + initialize enabled map
+  
   useEffect(() => {
     try {
       const admin = getSessionStorageItem<any>('admin');
@@ -228,7 +228,7 @@ const ServiceManagementPage = () => {
     }
   }, []);
 
-  // --- GET GST
+  
   useEffect(() => {
     const fetchGst = async () => {
       setLoadingGst(true);
@@ -254,7 +254,7 @@ const ServiceManagementPage = () => {
     fetchGst();
   }, []);
 
-  // --- Remember last clicked service for highlight
+  
   useEffect(() => {
     const lastClicked = localStorage.getItem('lastClickedService');
     if (lastClicked) {
@@ -283,7 +283,7 @@ const ServiceManagementPage = () => {
 
   const isLoading = loadingServices || loadingGst;
 
-  // GST map for UI (hide for non-whitelist)
+  
   const serviceGstMap = useMemo(() => {
     const out: Record<string, { value: number | null; isDefault: boolean }> = {};
     allServices.forEach((svc: any) => {
@@ -298,10 +298,10 @@ const ServiceManagementPage = () => {
     return out;
   }, [gstMap]);
 
-  // --- Modal open
+  
   const openEditModal = (serviceName: string) => {
     const canon = ALIASES[normalize(serviceName)] || normalize(serviceName);
-    if (!GST_WHITELIST.has(canon)) return; // safety
+    if (!GST_WHITELIST.has(canon)) return; 
     const current = gstMap[canon] ?? DEFAULT_GST;
     setEditServiceKey(canon);
     setEditValue(String(current));
@@ -317,7 +317,7 @@ const ServiceManagementPage = () => {
     setSaveError('');
   };
 
-  // --- POST save
+  
   const saveGst = async () => {
     if (!editServiceKey) return;
     const num = parseFloat(editValue);
@@ -330,12 +330,12 @@ const ServiceManagementPage = () => {
     setSaveError('');
 
     try {
-      // POST to api/services/gstPercentage/<service>
+      
       const url = `api/services/gstPercentage/${editServiceKey}`;
       const payload = { gstPercentage: num };
       const res = await apiCall<any>('POST', url, payload);
 
-      // Try to rebuild gstMap from response if provided
+      
       const updatedList = pickUpdatedListFromPost(res);
       if (updatedList) {
         const newMap: Record<string, number> = {};
@@ -385,13 +385,13 @@ const ServiceManagementPage = () => {
                     className="relative"
                     onClick={() => handleNavigation(service.href, isEnabled)}
                   >
-                    {/* GST badge (only for whitelist) */}
+                    {}
                     {gstInfo?.value !== null && (
                       <button
                         type="button"
                         className="absolute top-2 right-2 z-10 rounded-md px-2 py-1 text-[11px] leading-none bg-black/70 text-white"
                         onClick={(e) => {
-                          e.stopPropagation(); // prevent navigation
+                          e.stopPropagation(); 
                           openEditModal(service.name);
                         }}
                         title="Edit GST"
@@ -431,19 +431,19 @@ const ServiceManagementPage = () => {
         )}
       </div>
 
-      {/* Edit GST Modal */}
+      {}
       {isModalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center"
           aria-modal="true"
           role="dialog"
         >
-          {/* Backdrop */}
+          {}
           <div
             className="absolute inset-0 bg-black/40"
             onClick={closeModal}
           />
-          {/* Dialog */}
+          {}
           <div className="relative z-10 w-[92%] max-w-sm rounded-xl bg-white p-5 shadow-xl">
             <h3 className="text-lg font-semibold mb-3">
               Edit GST {editServiceKey ? `for ${editServiceKey}` : ''}

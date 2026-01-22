@@ -11,7 +11,7 @@ import pic3 from '../../public/assets/payment_management/pic3.png';
 import pic4 from '../../public/assets/payment_management/pic4.png';
 import pic5 from '../../public/assets/payment_management/pic5.png';
 
-// ***************Coupon details data************//
+
 export type CouponsDataType = {
   id?: string;
   title: string;
@@ -134,7 +134,7 @@ export const FixedAmountCouponsData: CouponsDataType[] = [
   }
 ];
 
-// *************Refund details data**************//
+
 type StatusType = 'REJECTED' | 'IN-PROGRESS' | 'COMPLETED' | 'INITIATED';
 export type RefundDataType = {
   refundID: string;

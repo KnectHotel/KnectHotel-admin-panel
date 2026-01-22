@@ -14,7 +14,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
       <body className="w-full bg-background overflow-hidden">
-        {/* Remove extension-injected attributes early to avoid React hydration mismatches */}
+        {}
         <RemoveInjectedAttributes />
         <SoundGate />
         <GlobalSOSListener />

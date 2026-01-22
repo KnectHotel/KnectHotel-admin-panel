@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 import { Heading } from '@/components/ui/heading';
-import { apiCall } from '@/lib/axios'; // Assuming you have this helper
+import { apiCall } from '@/lib/axios'; 
 import { columns } from './columns';
 
-// types/TransactionDataType.ts
+
 export interface TransactionDataType {
   _id: string;
   transactionId: string;
@@ -53,7 +53,7 @@ export const Transactions: React.FC = () => {
       console.log('daataaa', resData);
 
       if (resData?.success) {
-        setData(resData.data); // 👈 Don't format it
+        setData(resData.data); 
         setTotalRecords(resData.total || 0);
       }
     } catch (error) {

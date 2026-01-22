@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 import type { SweetAlertIcon } from 'sweetalert2';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 
-/** Toast helper (same style as your pool modal) */
+
 const showToast = (icon: SweetAlertIcon, title: string, ms = 2200) =>
   ToastAtTopRight.fire({
     icon,
@@ -18,11 +18,11 @@ const showToast = (icon: SweetAlertIcon, title: string, ms = 2200) =>
     timerProgressBar: true,
   });
 
-/** -------------------- Types -------------------- */
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  hotelId?: string; // optional (passed to API if provided)
+  hotelId?: string; 
 }
 
 const weekdays = [
@@ -48,7 +48,7 @@ type ExistingSlotRow = {
   isEditing?: boolean;
 };
 
-/** -------------------- Helpers -------------------- */
+
 const emptyWeek = (): Record<Weekday, DayInputs> =>
   weekdays.reduce((acc, day) => {
     acc[day] = { checked: false, from: '', to: '', maxPersons: '', price: '' };
@@ -61,7 +61,7 @@ const emptyGroups = (): Record<Weekday, ExistingSlotRow[]> =>
     return acc;
   }, {} as Record<Weekday, ExistingSlotRow[]>);
 
-// Normalize variants like "wednessday", "wed", etc. -> canonical weekday
+
 const normalizeDay = (d: string): Weekday | null => {
   const s = (d || '').toLowerCase();
   if (s.startsWith('mon')) return 'Monday';
@@ -74,9 +74,7 @@ const normalizeDay = (d: string): Weekday | null => {
   return null;
 };
 
-/** =======================================================
- * ManageSlotsModal — Spa/Salon
- * ======================================================= */
+
 const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) => {
   const [loading, setLoading] = useState(false);
 
@@ -86,7 +84,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
   const [updatingSlotId, setUpdatingSlotId] = useState<string | null>(null);
   const [deletingSlotId, setDeletingSlotId] = useState<string | null>(null);
 
-  // Group existing slots by weekday for inline rendering
+  
   const groupedExisting = useMemo(() => {
     const g = emptyGroups();
     existingSlots.forEach((s) => {
@@ -96,7 +94,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
     return g;
   }, [existingSlots]);
 
-  /** -------------------- Refetch helper (GET) -------------------- */
+  
   const refetchSlots = async () => {
     try {
       const endpoint = hotelId
@@ -105,7 +103,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
 
       const res = await apiCall('GET', endpoint);
 
-      // Your GET returns a bare array, so prioritize that shape:
+      
       const arr: any[] = Array.isArray(res?.data)
         ? res.data
         : Array.isArray(res?.data?.data)
@@ -130,7 +128,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
 
       setExistingSlots(parsed);
 
-      // pre-tick days that already have at least one slot
+      
       const next = emptyWeek();
       parsed.forEach((s) => {
         const n = normalizeDay(String(s.dayOfWeek));
@@ -144,7 +142,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
     }
   };
 
-  /** -------------------- Load on open -------------------- */
+  
   useEffect(() => {
     if (!isOpen) return;
     (async () => {
@@ -152,10 +150,10 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
       await refetchSlots();
       setLoading(false);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [isOpen, hotelId]);
 
-  /** -------------------- Handlers -------------------- */
+  
   const handleDayToggle = (day: Weekday) => {
     setDayInputs((prev) => ({
       ...prev,
@@ -176,35 +174,35 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
 
   const handleAddSlotNow = async (day: Weekday) => {
     const { from, to, maxPersons, price } = dayInputs[day];
-    // if (!from || !to || !maxPersons || !price) {
+    
     if (!from || !to || !maxPersons) {
       return showToast('warning', 'Please fill From, To, and  Max Allowed.');
     }
 
-    // one slot object
+    
     const slot = {
       dayOfWeek: day,
-      startTime: from,                    // "HH:mm"
-      endTime: to,                        // "HH:mm"
-      // price: parseFloat(price.replace(/[^\d.]/g, '')) || 0,
+      startTime: from,                    
+      endTime: to,                        
+      
       maxCapacity: parseInt(maxPersons.replace(/[^\d]/g, ''), 10) || 0,
       ...(hotelId ? { HotelId: hotelId } : {}),
     };
 
-    // controller expects { slots: [...] }
+    
     const body: any = {
       slots: [slot],
-      ...(hotelId ? { HotelId: hotelId } : {}), // include also at top-level for safety
+      ...(hotelId ? { HotelId: hotelId } : {}), 
     };
 
     setAddingForDay(day);
     try {
       await apiCall('POST', 'api/services/spa-salon-slots/add', body);
 
-      // refresh list from server
+      
       await refetchSlots();
 
-      // clear inputs for this day
+      
       setDayInputs((prev) => ({
         ...prev,
         [day]: { checked: true, from: '', to: '', maxPersons: '', price: '' },
@@ -238,9 +236,9 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
           const nd = normalizeDay(value) ?? value;
           return { ...s, dayOfWeek: nd as any };
         }
-        // if (field === 'price') {
-        //   return { ...s, price: parseFloat(value.replace(/[^\d.]/g, '')) || 0 };
-        // }
+        
+        
+        
         if (field === 'maxCapacity') {
           return {
             ...s,
@@ -259,7 +257,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
         dayOfWeek: String(slot.dayOfWeek),
         startTime: slot.startTime,
         endTime: slot.endTime,
-        // price: slot.price,
+        
         maxCapacity: slot.maxCapacity,
       };
       if (hotelId) payload.HotelId = hotelId;
@@ -287,7 +285,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
     }
   };
 
-  /** -------------------- Render -------------------- */
+  
   if (!isOpen) return null;
 
   return (
@@ -304,19 +302,19 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
           <div className="py-12 text-center text-gray-600">Loading…</div>
         ) : (
           <>
-            {/* Header row */}
+            {}
             <div className="grid grid-cols-12 font-semibold text-gray-700 text-sm px-1 mb-2 gap-x-4">
               <span className="col-span-2">Select Availability</span>
               <span className="col-span-4">Select Time</span>
               <span className="col-span-2">Max Allowed</span>
-              {/* <span className="col-span-4">Price (Excluding GST)</span> */}
+              {}
             </div>
 
-            {/* Per-day inputs + inline list */}
+            {}
             <div className="space-y-4">
               {weekdays.map((day) => (
                 <div key={day} className="grid grid-cols-12 gap-x-4 items-start">
-                  {/* Checkbox + label */}
+                  {}
                   <label className="flex items-center gap-2 col-span-2">
                     <input
                       type="checkbox"
@@ -327,7 +325,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
                     <span className="text-gray-700">{day}</span>
                   </label>
 
-                  {/* From */}
+                  {}
                   <input
                     type="time"
                     value={dayInputs[day].from}
@@ -335,7 +333,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
                     className="rounded border border-gray-300 px-3 py-1 bg-[#EFE9DF] col-span-2"
                   />
 
-                  {/* To */}
+                  {}
                   <div className="col-span-2">
                     <input
                       type="time"
@@ -345,7 +343,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
                     />
                   </div>
 
-                  {/* Max Allowed */}
+                  {}
                   <input
                     type="number"
                     placeholder="e.g. 20"
@@ -354,15 +352,9 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
                     className="rounded border border-gray-300 px-3 py-1 bg-[#EFE9DF] text-center col-span-2"
                   />
 
-                  {/* Price + Add */}
+                  {}
                   <div className="col-span-4 flex items-center gap-3">
-                    {/* <input
-                      type="text"
-                      placeholder="1000/-"
-                      value={dayInputs[day].price}
-                      onChange={(e) => handleInputChange(day, 'price', e.target.value)}
-                      className="rounded border border-gray-300 px-3 py-1 w-[160px] bg-[#EFE9DF] text-center"
-                    /> */}
+                    {}
                     <button
                       onClick={() => handleAddSlotNow(day)}
                       disabled={addingForDay === day}
@@ -373,12 +365,12 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
                     </button>
                   </div>
 
-                  {/* Existing slots (this day) */}
+                  {}
                   {groupedExisting[day].length > 0 && (
                     <div className="col-span-12 mt-3 space-y-2">
                       {groupedExisting[day].map((s) => (
                         <div key={s._id} className="grid grid-cols-12 gap-3 items-center border rounded p-3">
-                          {/* Day */}
+                          {}
                           <div className="col-span-2">
                             {s.isEditing ? (
                               <select
@@ -395,7 +387,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
                             )}
                           </div>
 
-                          {/* Start */}
+                          {}
                           <div className="col-span-2">
                             {s.isEditing ? (
                               <input
@@ -409,7 +401,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
                             )}
                           </div>
 
-                          {/* End */}
+                          {}
                           <div className="col-span-2">
                             {s.isEditing ? (
                               <input
@@ -423,7 +415,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
                             )}
                           </div>
 
-                          {/* Max */}
+                          {}
                           <div className="col-span-2">
                             {s.isEditing ? (
                               <input
@@ -437,21 +429,10 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
                             )}
                           </div>
 
-                          {/* Price */}
-                          {/* <div className="col-span-2">
-                            {s.isEditing ? (
-                              <input
-                                type="text"
-                                value={String(s.price)}
-                                onChange={(e) => updateEditableSlot(s._id, 'price', e.target.value)}
-                                className="w-full border rounded px-2 py-1 bg-[#EFE9DF]"
-                              />
-                            ) : (
-                              <span>{s.price}</span>
-                            )}
-                          </div> */}
+                          {}
+                          {}
 
-                          {/* Actions */}
+                          {}
                           <div className="col-span-2 flex gap-2 justify-end">
                             {s.isEditing ? (
                               <button
@@ -493,7 +474,7 @@ const ManageSlotsModal: React.FC<ModalProps> = ({ isOpen, onClose, hotelId }) =>
               ))}
             </div>
 
-            {/* Footer */}
+            {}
             <div className="flex justify-end gap-3 mt-10">
               <button
                 onClick={onClose}

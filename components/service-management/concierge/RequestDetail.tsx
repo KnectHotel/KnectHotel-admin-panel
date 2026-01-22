@@ -5,17 +5,17 @@ import apiCall from '@/lib/axios';
 import AssignModal from '@/components/shared/AssignModal';
 import Image from 'next/image';
 
-/* ---------- Image helpers (URL or S3 Key → URL) ---------- */
+
 const S3_BASE = 'https://dibstestbucket0403.s3.ap-south-1.amazonaws.com';
 const FALLBACK = '/fallback.png';
 
 const keyToUrl = (value?: string | null) => {
   if (!value) return null;
-  if (/^https?:\/\//i.test(value)) return value;
+  if (/^https?:\/\
   return `${S3_BASE}/${value.replace(/^\/+/, '')}`;
 };
 const resolveImage = (value?: string | null) => keyToUrl(value) || FALLBACK;
-/* -------------------------------------------------------- */
+
 
 type ConciergeRequestDetail = {
   _id: string;
@@ -30,15 +30,15 @@ type ConciergeRequestDetail = {
   requestType: string;
   status: string;
   requestTime: string;
-  estimatedDeliveryTime?: string; // present in your sample
-  roomNumber?: string; // present in your sample
+  estimatedDeliveryTime?: string; 
+  roomNumber?: string; 
 
   assignedTo?: {
     _id: string;
     firstName: string;
     lastName: string;
     phoneNumber?: string;
-    mobileNumber?: string; // your sample uses mobileNumber
+    mobileNumber?: string; 
   };
 
   guest: {
@@ -58,7 +58,7 @@ type ConciergeRequestDetail = {
     serviceType?: string;
     location?: string;
     distance?: number;
-    imageUrl?: string | null; // may be URL or S3 key
+    imageUrl?: string | null; 
   };
 
   feedback?: {
@@ -177,9 +177,9 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
   return (
     <>
       <div className="mt-24 w-full">
-        {/* Card wrapper */}
+        {}
         <div className="mx-auto max-w-6xl bg-[#FAF6EF] rounded-2xl border border-[#E6D6C2] shadow-[0_1px_0_rgba(0,0,0,0.04)]">
-          {/* Header */}
+          {}
           <div className="flex items-center justify-between px-6 py-4 border-b border-[#E6D6C2]">
             <div className="flex items-center gap-3">
               <div className="h-6 w-1 rounded bg-[#7A5C3E]" />
@@ -199,9 +199,9 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
             </div>
           </div>
 
-          {/* Body */}
+          {}
           <div className="px-6 py-8 grid gap-10">
-            {/* Top row: guest quick info */}
+            {}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <InfoPill label="Guest name" value={guestName} />
               <InfoPill
@@ -232,9 +232,9 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
               />
             </div>
 
-            {/* Middle: request meta */}
+            {}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Col 1 */}
+              {}
               <div className="grid gap-6">
                 <TextBlock
                   label="Request Detail"
@@ -246,23 +246,13 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
                 />
               </div>
 
-              {/* Col 2 */}
+              {}
               <div className="grid gap-6">
                 <div className="flex flex-col gap-1">
                   <span className="text-xs uppercase tracking-wide text-[#6a5a45]/70">
                     Request Assigned to
                   </span>
-                  {/* <button
-                    className="bg-[#F6EEE0] hover:bg-[#F0E6D6] text-[#3E3428] transition-colors rounded-md px-4 py-2 shadow-sm text-left"
-                    onClick={() => setIsAssignModalOpen(true)}
-                  >
-                    {assignedTo}
-                    {assignedTo !== 'Unassigned' && (
-                      <span className="ml-2 text-[#6a5a45]/80 text-sm">
-                        ({assignedToPhone})
-                      </span>
-                    )}
-                  </button> */}
+                  {}
                   <button
                     type="button"
                     className="bg-[#6E511D] border border-[#5a4118] hover:bg-[#5f441b] text-white transition-colors rounded-md px-4 py-2 shadow-sm text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A07C3E]"
@@ -282,7 +272,7 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
                 />
               </div>
 
-              {/* Col 3 */}
+              {}
               <div className="grid gap-6">
                 <InfoPill label="Requested Time" value={requestTimeStr} />
                 <InfoPill
@@ -292,7 +282,7 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
               </div>
             </div>
 
-            {/* Concierge Item section */}
+            {}
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8 items-start">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <InfoPill
@@ -321,28 +311,18 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
                 />
               </div>
 
-              {/* Image */}
-              {/* <div className="bg-[#FFF9F0] rounded-xl p-3 border border-[#E6D6C2] shadow-inner">
-                <div className="relative w-full aspect-[4/3] overflow-hidden rounded-lg">
-                  <Image
-                    src={itemImg}
-                    alt={request.conciergeItem?.name || 'Concierge item'}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 280px"
-                    className="object-cover"
-                  />
-                </div>
-              </div> */}
+              {}
+              {}
             </div>
 
-            {/* Guest Feedback (same pattern as Spa/Salon) */}
+            {}
             <div className="border-t pt-6 space-y-4">
               <h3 className="text-lg font-semibold text-gray-700">
                 Guest Feedback
               </h3>
 
               <div className="grid md:grid-cols-2 gap-6 mt-2">
-                {/* Service Feedback */}
+                {}
                 <div className="bg-[#FAF6EF] p-4 rounded-lg shadow-sm">
                   <h4 className="text-gray-600 font-medium mb-2">
                     Service Feedback
@@ -356,7 +336,7 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
                   </div>
                 </div>
 
-                {/* Agent Feedback */}
+                {}
                 <div className="bg-[#FAF6EF] p-4 rounded-lg shadow-sm">
                   <h4 className="text-gray-600 font-medium mb-2">
                     Agent Feedback
@@ -374,11 +354,11 @@ const ConciergeServiceRequestDetail: React.FC<Props> = ({ serviceID }) => {
           </div>
         </div>
 
-        {/* Bottom spacing */}
+        {}
         <div className="h-8" />
       </div>
 
-      {/* Assign Modal */}
+      {}
       <AssignModal
         onClose={() => setIsAssignModalOpen(false)}
         requestId={isAssignModalOpen ? serviceID : undefined}

@@ -71,7 +71,7 @@ export type HousekeepingDataType = {
 };
 
 
-/// Product details dummy data
+
 
 type Product = {
   visibility: boolean;

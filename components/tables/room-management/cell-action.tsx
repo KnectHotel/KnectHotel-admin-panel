@@ -15,7 +15,7 @@ import { RoomDataType } from './columns';
 
 interface CellActionProps {
   data: RoomDataType;
-  basePath?: string; // Optional prop to override the base path
+  basePath?: string; 
 }
 
 import { apiCall } from '@/lib/axios';
@@ -25,19 +25,19 @@ export const CellAction: React.FC<CellActionProps> = ({ data, basePath }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Determine the base path based on current route or prop
+  
   const getBasePath = () => {
     if (basePath) {
       return basePath;
     }
 
-    // Check if we're in hotel-panel or super-admin context
+    
     if (pathname?.startsWith('/hotel-panel')) {
-      // Use hotel-panel room-management route
+      
       return '/hotel-panel/room-management';
     }
 
-    // Default to super-admin
+    
     return '/super-admin/hotel-management/rooms';
   };
 

@@ -27,12 +27,12 @@ interface ModalProps {
   productId?: string;
 }
 
-// ================= Image helpers =================
+
 const S3_BASE = 'https://dibstestbucket0403.s3.ap-south-1.amazonaws.com';
 
 const keyToUrl = (value?: string | null) => {
   if (!value) return null;
-  if (/^https?:\/\//i.test(value)) return value;
+  if (/^https?:\/\
   return `${S3_BASE}/${value.replace(/^\/+/, '')}`;
 };
 
@@ -262,7 +262,7 @@ const AddItemModal: React.FC<ModalProps> = ({
       console.log(payload)
 
       if (response?.success) {
-        //alert(`Product ${editMode ? 'updated' : 'added'} successfully!`);
+        
         ToastAtTopRight.fire({
           icon: 'success',
           title: `Product ${editMode ? 'updated' : 'added'} successfully!`
@@ -271,7 +271,7 @@ const AddItemModal: React.FC<ModalProps> = ({
         setPreview(null);
         onClose();
       } else {
-        //alert(`Failed: ${response?.message || 'Something went wrong'}`);
+        
         ToastAtTopRight.fire({
           icon: 'error',
           title: `Failed: ${response?.message || 'Something went wrong'}`
@@ -301,7 +301,7 @@ const AddItemModal: React.FC<ModalProps> = ({
             onSubmit={addItemForm.handleSubmit(onSubmit)}
             className="flex flex-col gap-6 text-sm"
           >
-            {/* Upper part of the form */}
+            {}
             <div className="flex w-full md:w-[80%] lg:w-[75%] 2xl:w-[70%] gap-6 px-10">
               <FormField
                 control={addItemForm.control}
@@ -323,12 +323,12 @@ const AddItemModal: React.FC<ModalProps> = ({
                 )}
               />
             </div>
-            {/* Line */}
+            {}
             <div className="w-full h-[1px] bg-black opacity-20" />
-            {/* Lower part of the form */}
+            {}
             <div className="flex justify-between items-start px-10">
               <div className="w-[60%] flex flex-col gap-6">
-                {/* Product name */}
+                {}
                 <FormField
                   control={addItemForm.control}
                   name="productName"
@@ -351,7 +351,7 @@ const AddItemModal: React.FC<ModalProps> = ({
                   )}
                 />
 
-                {/* Description */}
+                {}
                 <FormField
                   control={addItemForm.control}
                   name="description"
@@ -374,7 +374,7 @@ const AddItemModal: React.FC<ModalProps> = ({
                   )}
                 />
 
-                {/* Cost */}
+                {}
                 <FormField
                   control={addItemForm.control}
                   name="cost"
@@ -401,7 +401,7 @@ const AddItemModal: React.FC<ModalProps> = ({
                   )}
                 />
 
-                {/* Type */}
+                {}
                 <FormField
                   control={addItemForm.control}
                   name="foodType"
@@ -441,11 +441,8 @@ const AddItemModal: React.FC<ModalProps> = ({
                   )}
                 />
 
-                {/* Visibility */}
-                {/* <div className="flex gap-[87px]">
-                  <span>Visibility</span>
-                  <ToggleButton />
-                </div> */}
+                {}
+                {}
                 <FormField
                   control={addItemForm.control}
                   name="visibility"
@@ -477,7 +474,7 @@ const AddItemModal: React.FC<ModalProps> = ({
                 />
               </div>
 
-              {/* Product Image Upload */}
+              {}
               <div className="w-[30%] pt-7">
                 <FormField
                   control={addItemForm.control}
@@ -542,7 +539,7 @@ const AddItemModal: React.FC<ModalProps> = ({
               </div>
             </div>
             <div className="w-full h-[1px] bg-black opacity-15" />
-            {/* Submit Button */}
+            {}
             <div className="flex items-center gap-4 px-10">
               <Button type="button" onClick={onClose} className="btn-secondary">
                 Cancel

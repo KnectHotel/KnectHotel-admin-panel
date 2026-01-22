@@ -1,4 +1,4 @@
-// Dummy data for subhotel table
+
 export type SubHotelDataType = {
   hotelID: string;
   hotelName: string;
@@ -25,7 +25,7 @@ export const dummySubHotelData: SubHotelDataType[] = [
   }
 ];
 
-// Dummy data for subhotel form
+
 
 export type DummySubHotelFormDataType = {
   parentHotelID: string;

@@ -6,7 +6,7 @@ import apiCall from '@/lib/axios';
 import type { SweetAlertIcon } from 'sweetalert2';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 
-/** -------------------- Toast helper (same as Gym) -------------------- */
+
 const notify = (icon: SweetAlertIcon, title: string, ms = 2200) =>
   ToastAtTopRight.fire({
     icon,
@@ -19,7 +19,7 @@ const notify = (icon: SweetAlertIcon, title: string, ms = 2200) =>
   });
 const DEFAULT_HALL_NAME = 'Community Hall';
 
-/** -------------------- Types & Constants -------------------- */
+
 const weekdays = [
   'Monday',
   'Tuesday',
@@ -96,33 +96,33 @@ const extractErr = (err: any) => ({
   data: err?.response?.data
 });
 
-// unwrap various apiCall response shapes safely
+
 const unwrap = (res: any) => res?.data?.data ?? res?.data ?? res;
 
 const CommunityFacilityManager: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
-  // facility id + raw doc from GET
+  
   const [facilityId, setFacilityId] = useState<string | null>(null);
   const [facilityDoc, setFacilityDoc] = useState<any>(null);
 
-  // Images
+  
   const [images, setImages] = useState<string[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
   const [savingImages, setSavingImages] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  // Day inputs (inline add)
+  
   const [dayInputs, setDayInputs] =
     useState<Record<Weekday, DayInputs>>(emptyWeek());
   const [addingForDay, setAddingForDay] = useState<Weekday | null>(null);
 
-  // Existing slots (flat) + UI state
+  
   const [existingSlots, setExistingSlots] = useState<HallSlotRow[]>([]);
   const [updatingSlotId, setUpdatingSlotId] = useState<string | null>(null);
   const [deletingSlotId, setDeletingSlotId] = useState<string | null>(null);
 
-  // Derived: grouped by weekday
+  
   const groupedExisting = useMemo(() => {
     const g = emptyGroups();
     existingSlots.forEach((s) => {
@@ -132,7 +132,7 @@ const CommunityFacilityManager: React.FC = () => {
     return g;
   }, [existingSlots]);
 
-  /** -------------------- Load Community Hall (images + slots) -------------------- */
+  
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -140,7 +140,7 @@ const CommunityFacilityManager: React.FC = () => {
         const res = await apiCall('GET', 'api/services/facility/items');
         const facilities: any[] = unwrap(res) || [];
 
-        // Match your backend naming
+        
         const hall = facilities.find(
           (f) => f?.facilityType === 'CommunityHall'
         );
@@ -158,14 +158,14 @@ const CommunityFacilityManager: React.FC = () => {
         setFacilityId(hall._id || null);
         setFacilityDoc(hall);
 
-        // images
+        
         const imgs = Array.isArray(hall.images)
           ? hall.images.filter(Boolean)
           : [];
         setImages(imgs);
         setPreview(imgs[0] ?? null);
 
-        // slots -> support slotsByDay (grouped) OR slots (flat)
+        
         const flat: HallSlotRow[] = [];
 
         const slotsByDay = hall.slotsByDay;
@@ -201,7 +201,7 @@ const CommunityFacilityManager: React.FC = () => {
 
         setExistingSlots(flat);
 
-        // pre-check days having slots
+        
         const pre = emptyWeek();
         flat.forEach((s) => {
           const d = normalizeDay(String(s.dayOfWeek));
@@ -224,10 +224,10 @@ const CommunityFacilityManager: React.FC = () => {
     })();
   }, []);
 
-  /** -------------------- Upload helpers (same as Gym) -------------------- */
+  
   const uploadFile = async (file: File): Promise<string> => {
     const fd = new FormData();
-    fd.append('file', file); // keep field name your backend expects
+    fd.append('file', file); 
     const res = await apiCall('POST', 'api/upload/admin', fd);
     const body = unwrap(res);
     const url = body?.data?.url || body?.url || '';
@@ -261,7 +261,7 @@ const CommunityFacilityManager: React.FC = () => {
     }
   };
 
-  /** -------------------- Images Handlers (server uploads) -------------------- */
+  
   const addImage = () => {
     if (uploading) return;
     const input = document.createElement('input');
@@ -331,58 +331,58 @@ const CommunityFacilityManager: React.FC = () => {
     notify('info', 'Image removed');
   };
 
-  // PUT full doc with new images; sync with server response (same as Gym)
-  // const saveImages = async () => {
-  //   if (!facilityId) {
-  //     notify('warning', 'Community Hall ID missing');
-  //     return;
-  //   }
-  //   if (!facilityDoc) {
-  //     notify('warning', 'Community Hall document missing');
-  //     return;
-  //   }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
-  //   const imgs = images.filter(Boolean);
-  //   const base = scrubForUpdate(facilityDoc);
-  //   const payload = {
-  //     ...base,
-  //     facilityType: base.facilityType ?? 'CommunityHall',
-  //     images: imgs
-  //   };
+  
+  
+  
+  
+  
+  
+  
 
-  //   setSavingImages(true);
-  //   try {
-  //     const res = await apiCall(
-  //       'PUT',
-  //       `api/services/facility/update-facility/${facilityId}`,
-  //       payload
-  //     );
-  //     const updated = unwrap(res);
-  //     if (updated?.images) {
-  //       const nextImgs = (updated.images as string[]).filter(Boolean);
-  //       setImages(nextImgs);
-  //       setPreview((p) => nextImgs[0] ?? p ?? null);
-  //     }
-  //     if (updated) setFacilityDoc(updated);
-  //     notify('success', 'Images saved');
-  //   } catch (e) {
-  //     const info = extractErr(e);
-  //     console.warn('saveImages PUT failed', info, payload);
-  //     notify('error', 'Failed to save images. See console for details.');
-  //   } finally {
-  //     setSavingImages(false);
-  //   }
-  // };
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   const saveImages = async () => {
     const imgs = images.filter(Boolean);
 
-    // ensure a hall exists (create with images if missing)
+    
     const id = facilityId ?? (await ensureHall({ images: imgs }));
 
     const base = scrubForUpdate(facilityDoc || {});
     const payload = {
       ...base,
-      name: base.name ?? facilityDoc?.name ?? DEFAULT_HALL_NAME, // ensure name on PUT too
+      name: base.name ?? facilityDoc?.name ?? DEFAULT_HALL_NAME, 
       facilityType: base.facilityType ?? 'CommunityHall',
       images: imgs
     };
@@ -410,7 +410,7 @@ const CommunityFacilityManager: React.FC = () => {
     }
   };
 
-  /** -------------------- Inline add per-day -------------------- */
+  
   const handleDayToggle = (day: Weekday) => {
     setDayInputs((p) => ({
       ...p,
@@ -426,96 +426,96 @@ const CommunityFacilityManager: React.FC = () => {
     setDayInputs((p) => ({ ...p, [day]: { ...p[day], [field]: value } }));
   };
 
-  // const handleAddSlotNow = async (day: Weekday) => {
-  //   if (!facilityId) {
-  //     notify('warning', 'Community Hall ID missing');
-  //     return;
-  //   }
-  //   const { from, to, maxPersons, price } = dayInputs[day];
-  //   if (!from || !to || !maxPersons || !price) {
-  //     notify('warning', 'Please fill From, To, Max Allowed, and Price.');
-  //     return;
-  //   }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
-  //   const newSlot = {
-  //     startTime: from,
-  //     endTime: to,
-  //     price: parseFloat(price.replace(/[^\d.]/g, '')),
-  //     maxCapacity: parseInt(maxPersons.replace(/[^\d]/g, ''), 10),
-  //     dayOfWeek: day
-  //   };
+  
+  
+  
+  
+  
+  
+  
 
-  //   setAddingForDay(day);
-  //   try {
-  //     const base = scrubForUpdate(facilityDoc || {});
-  //     const payload = {
-  //       ...base,
-  //       facilityType: base.facilityType ?? 'CommunityHall',
-  //       slots: [newSlot]
-  //     };
+  
+  
+  
+  
+  
+  
+  
+  
 
-  //     const res = await apiCall(
-  //       'PUT',
-  //       `api/services/facility/items/${facilityId}`,
-  //       payload
-  //     );
+  
+  
+  
+  
+  
 
-  //     // SYNC with server result
-  //     const body = unwrap(res);
-  //     const updated = body?.data ?? body; // support both shapes
-  //     if (updated) {
-  //       setFacilityDoc(updated);
+  
+  
+  
+  
+  
 
-  //       if (updated.images) {
-  //         const nextImgs = (updated.images as string[]).filter(Boolean);
-  //         setImages(nextImgs);
-  //         setPreview((p) => nextImgs[0] ?? p ?? null);
-  //       }
+  
+  
+  
+  
+  
 
-  //       if (Array.isArray(updated.slots)) {
-  //         const flatFromServer: HallSlotRow[] = updated.slots.map((s: any) => ({
-  //           _id: s._id,
-  //           dayOfWeek: normalizeDay(String(s.dayOfWeek)) || String(s.dayOfWeek),
-  //           startTime: s.startTime,
-  //           endTime: s.endTime,
-  //           price: Number(s.price || 0),
-  //           maxCapacity: Number(s.maxCapacity || 0)
-  //         })) as any;
-  //         setExistingSlots(flatFromServer);
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
-  //         const pre = emptyWeek();
-  //         flatFromServer.forEach((s) => {
-  //           const d = normalizeDay(String(s.dayOfWeek));
-  //           if (d) pre[d].checked = true;
-  //         });
-  //         setDayInputs(pre);
-  //       } else {
-  //         // optimistic fallback
-  //         const row: HallSlotRow = {
-  //           _id: `temp-${Date.now()}`,
-  //           dayOfWeek: day,
-  //           startTime: newSlot.startTime,
-  //           endTime: newSlot.endTime,
-  //           price: newSlot.price,
-  //           maxCapacity: newSlot.maxCapacity
-  //         };
-  //         setExistingSlots((prev) => [...prev, row]);
-  //         setDayInputs((p) => ({
-  //           ...p,
-  //           [day]: { ...emptyWeek()[day], checked: true }
-  //         }));
-  //       }
-  //     }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
-  //     notify('success', `Slot added to ${day}`);
-  //   } catch (e) {
-  //     const info = extractErr(e);
-  //     console.warn('Add slot PUT failed', info);
-  //     notify('error', 'Failed to add slot');
-  //   } finally {
-  //     setAddingForDay(null);
-  //   }
-  // };
+  
+  
+  
+  
+  
+  
+  
+  
+  
   const handleAddSlotNow = async (day: Weekday) => {
     const { from, to, maxPersons, price } = dayInputs[day];
     if (!from || !to || !maxPersons || !price) {
@@ -533,7 +533,7 @@ const CommunityFacilityManager: React.FC = () => {
 
     setAddingForDay(day);
     try {
-      // ensure hall exists first
+      
       const id =
         facilityId ??
         (await ensureHall({ name: facilityDoc?.name || DEFAULT_HALL_NAME }));
@@ -585,7 +585,7 @@ const CommunityFacilityManager: React.FC = () => {
     }
   };
 
-  /** -------------------- Edit / Save / Delete existing -------------------- */
+  
   const toggleEditSlot = (id: string, on: boolean) => {
     setExistingSlots((prev) =>
       prev.map((s) => (s._id === id ? { ...s, isEditing: on } : s))
@@ -716,7 +716,7 @@ const CommunityFacilityManager: React.FC = () => {
     if (facilityId) return facilityId;
 
     const payload = {
-      name: initial?.name || facilityDoc?.name || DEFAULT_HALL_NAME, // REQUIRED by schema
+      name: initial?.name || facilityDoc?.name || DEFAULT_HALL_NAME, 
       facilityType: 'CommunityHall',
       images: [] as string[],
       slots: [] as any[],
@@ -761,7 +761,7 @@ const CommunityFacilityManager: React.FC = () => {
     }
   };
 
-  /** -------------------- Render -------------------- */
+  
   return (
     <div className="p-4 sm:p-6 rounded-lg shadow-md bg-[#FAF6EF] w-full mx-auto">
       <div className="flex items-center justify-between mb-4">
@@ -772,10 +772,10 @@ const CommunityFacilityManager: React.FC = () => {
         <div className="py-12 text-center text-gray-600">Loading…</div>
       ) : (
         <>
-          {/* ========== IMAGES (same layout as Gym) ========== */}
+          {}
           <h3 className="text-base font-semibold mb-3">Images</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Preview */}
+            {}
             <div>
               <h4 className="text-sm font-semibold mb-2">Preview</h4>
               <div className="relative h-44 w-full max-w-[260px] rounded-lg bg-[#F6EEE0] overflow-hidden">
@@ -792,7 +792,7 @@ const CommunityFacilityManager: React.FC = () => {
               </div>
             </div>
 
-            {/* Grid */}
+            {}
             <div className="md:col-span-2">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-semibold mb-2">Gallery</h4>
@@ -860,7 +860,7 @@ const CommunityFacilityManager: React.FC = () => {
               <div className="flex justify-end gap-3 mt-4">
                 <button
                   onClick={saveImages}
-                  // disabled={savingImages || !facilityId}
+                  
                   className="bg-[#A07D3D] text-white font-medium py-2 px-6 rounded hover:bg-[#8c6e35] disabled:opacity-60"
                 >
                   {savingImages ? 'Saving…' : 'Save Images'}
@@ -869,7 +869,7 @@ const CommunityFacilityManager: React.FC = () => {
             </div>
           </div>
 
-          {/* ========== SLOTS (identical UX as Gym) ========== */}
+          {}
           <h3 className="text-base font-semibold mt-10 mb-3">Slots</h3>
 
           <div className="grid grid-cols-12 font-semibold text-gray-700 text-sm px-1 mb-2 gap-x-4">
@@ -882,7 +882,7 @@ const CommunityFacilityManager: React.FC = () => {
           <div className="space-y-4">
             {weekdays.map((day) => (
               <div key={day} className="grid grid-cols-12 gap-x-4 items-start">
-                {/* Checkbox + Day */}
+                {}
                 <label className="flex items-center gap-2 col-span-2">
                   <input
                     type="checkbox"
@@ -893,7 +893,7 @@ const CommunityFacilityManager: React.FC = () => {
                   <span className="text-gray-700">{day}</span>
                 </label>
 
-                {/* From */}
+                {}
                 <input
                   type="time"
                   value={dayInputs[day].from}
@@ -903,7 +903,7 @@ const CommunityFacilityManager: React.FC = () => {
                   className="rounded border border-gray-300 px-3 py-1 bg-[#EFE9DF] col-span-2"
                 />
 
-                {/* To */}
+                {}
                 <input
                   type="time"
                   value={dayInputs[day].to}
@@ -911,7 +911,7 @@ const CommunityFacilityManager: React.FC = () => {
                   className="rounded border border-gray-300 px-3 py-1 bg-[#EFE9DF] col-span-2"
                 />
 
-                {/* Max Allowed */}
+                {}
                 <input
                   type="number"
                   placeholder="e.g. 50"
@@ -922,7 +922,7 @@ const CommunityFacilityManager: React.FC = () => {
                   className="rounded border border-gray-300 px-3 py-1 bg-[#EFE9DF] text-center col-span-2"
                 />
 
-                {/* Price + Plus */}
+                {}
                 <div className="col-span-4 flex items-center gap-3">
                   <input
                     type="text"
@@ -935,7 +935,7 @@ const CommunityFacilityManager: React.FC = () => {
                   />
                   <button
                     onClick={() => handleAddSlotNow(day)}
-                    // disabled={addingForDay === day || !facilityId}
+                    
                     className="w-6 h-6 flex items-center justify-center text-white bg-[#A07D3D] hover:bg-[#8c6e35] rounded-sm text-sm disabled:opacity-60"
                     title="Add slot now"
                   >
@@ -943,7 +943,7 @@ const CommunityFacilityManager: React.FC = () => {
                   </button>
                 </div>
 
-                {/* Existing Slots (for this day) */}
+                {}
                 {groupedExisting[day].length > 0 && (
                   <div className="col-span-12 mt-3 space-y-2">
                     {groupedExisting[day].map((s) => (
@@ -951,7 +951,7 @@ const CommunityFacilityManager: React.FC = () => {
                         key={s._id}
                         className="grid grid-cols-12 gap-3 items-center border rounded p-3"
                       >
-                        {/* Day */}
+                        {}
                         <div className="col-span-2">
                           {s.isEditing ? (
                             <select
@@ -978,7 +978,7 @@ const CommunityFacilityManager: React.FC = () => {
                           )}
                         </div>
 
-                        {/* Start */}
+                        {}
                         <div className="col-span-2">
                           {s.isEditing ? (
                             <input
@@ -998,7 +998,7 @@ const CommunityFacilityManager: React.FC = () => {
                           )}
                         </div>
 
-                        {/* End */}
+                        {}
                         <div className="col-span-2">
                           {s.isEditing ? (
                             <input
@@ -1018,7 +1018,7 @@ const CommunityFacilityManager: React.FC = () => {
                           )}
                         </div>
 
-                        {/* Max */}
+                        {}
                         <div className="col-span-2">
                           {s.isEditing ? (
                             <input
@@ -1038,7 +1038,7 @@ const CommunityFacilityManager: React.FC = () => {
                           )}
                         </div>
 
-                        {/* Price */}
+                        {}
                         <div className="col-span-2">
                           {s.isEditing ? (
                             <input
@@ -1058,7 +1058,7 @@ const CommunityFacilityManager: React.FC = () => {
                           )}
                         </div>
 
-                        {/* Actions */}
+                        {}
                         <div className="col-span-2 flex gap-2 justify-end">
                           {s.isEditing ? (
                             <button

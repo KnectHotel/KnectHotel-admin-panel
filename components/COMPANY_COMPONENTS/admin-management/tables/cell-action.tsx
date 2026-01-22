@@ -17,9 +17,9 @@ const CellAction = (props: any) => {
 
   return (
     <>
-      {/* Action Buttons */}
+      {}
       <div className="flex items-center space-x-2">
-        {/* Edit User */}
+        {}
         <button
           onClick={() => handleViewUser()}
           className="p-1 rounded-md group hover:bg-[#a07d3d5e]"

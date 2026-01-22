@@ -89,7 +89,7 @@ export function DonutChart({ chartData }: { chartData: ChartDataType[] }) {
             </Pie>
           </PieChart>
         </ChartContainer>
-        {/*Chart's Legend section*/}
+        {}
         <div className="flex flex-wrap justify-center items-center gap-4 mt-4">
           <div className="flex flex-col items-start gap-3">
             <div className={`flex items-center gap-2 `}>

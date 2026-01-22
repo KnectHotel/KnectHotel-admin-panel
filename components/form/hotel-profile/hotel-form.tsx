@@ -18,7 +18,7 @@ import {
 import { CiCamera } from 'react-icons/ci';
 import { useFieldArray } from 'react-hook-form';
 import { Trash2, Plus } from 'lucide-react';
-import { toast } from 'sonner'; // or your preferred toast lib
+import { toast } from 'sonner'; 
 
 import {
   Form,
@@ -105,7 +105,7 @@ const HotelForm = ({
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<any>(null);
   const gstImageRef = useRef<HTMLInputElement>(null);
-  // Refs for file inputs
+  
   const roomImageRef = useRef<HTMLInputElement>(null);
   const hotelLicenseImageRef = useRef<HTMLInputElement>(null);
   const legalBusinessLicenseImageRef = useRef<HTMLInputElement>(null);
@@ -146,7 +146,7 @@ const HotelForm = ({
 
       if (response.status === 200 || response.success) {
         toast.success('Request rejected successfully');
-        // setShowRejectModal(false);
+        
         router.push('/super-admin/hotel-management');
       } else {
         toast.error('Failed to reject request');
@@ -156,7 +156,7 @@ const HotelForm = ({
       toast.error(error?.response?.data?.message || 'Something went wrong');
     }
   };
-  // State for image previews
+  
   const [imagePreviews, setImagePreviews] = useState<{
     [key: string]: string[];
   }>({
@@ -171,7 +171,7 @@ const HotelForm = ({
     gstImage: []
   });
 
-  // const form = useForm<HotelSchemaType>({
+  
   const form = useForm<HotelSchemaType & { merchantId?: string }>({
     defaultValues: {
       name: '',
@@ -205,7 +205,7 @@ const HotelForm = ({
       pinCode: '',
       parentHotelId: '',
       roomImage: undefined,
-      // roomConfigs: [{ roomType: 'Single', feature: 'Sea Side' }],
+      
       roomConfigs: [{ roomType: 'Single', features: ['Sea Side'] }],
       numberOfRooms: 0,
       checkInTime: '12:00',
@@ -247,12 +247,12 @@ const HotelForm = ({
   );
 
   const rawNetRef = useRef<number>(0);
-  // Max 5 MB per image (fixing your earlier 100*1024 check)
+  
   const MAX_IMAGE_SIZE = 100 * 1024;
 
   const handleMultiImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    fieldName: ImageFieldName // 'roomImage' here
+    fieldName: ImageFieldName 
   ) => {
     const files = e.target.files;
     if (!files || !files.length) return;
@@ -278,17 +278,17 @@ const HotelForm = ({
           const fd = new FormData();
           fd.append('file', file, file.name);
           const res = await apiCall('POST', 'api/upload/admin', fd);
-          return res?.data?.url as string; // expecting { data: { url } }
+          return res?.data?.url as string; 
         })
       );
 
-      // Merge with existing previews
+      
       setImagePreviews((prev) => ({
         ...prev,
         [fieldName]: [...(prev[fieldName] || []), ...uploads]
       }));
 
-      // If your form schema has roomImage: string[]
+      
       if (fieldName === 'roomImage') {
         const existing = (form.getValues('roomImage') as string[]) || [];
         form.setValue('roomImage', [...existing, ...uploads], {
@@ -302,7 +302,7 @@ const HotelForm = ({
       ToastAtTopRight.fire('Failed to upload images', 'error');
     } finally {
       setIsLoading(false);
-      // allow selecting same files again if needed
+      
       if (e.target) e.target.value = '';
     }
   };
@@ -321,7 +321,7 @@ const HotelForm = ({
     }
 
     if (file.size > 100 * 1024) {
-      // 5MB file size limit
+      
       ToastAtTopRight.fire('File size exceeds 5MB.', 'error');
       return;
     }
@@ -335,13 +335,13 @@ const HotelForm = ({
       const { url } = res.data;
 
       if (url) {
-        // Update the image preview state
+        
         setImagePreviews((prev) => ({
           ...prev,
-          [fieldName]: [url] // Store the uploaded image URL in the specific field
+          [fieldName]: [url] 
         }));
 
-        // Update the form field value (for form submission)
+        
         form.setValue(fieldName, url);
 
         ToastAtTopRight.fire('Image uploaded successfully', 'success');
@@ -359,8 +359,8 @@ const HotelForm = ({
     for (const k of keys) {
       const val = form.getValues(k as any);
       if (!ensureNonEmpty(val)) {
-        // mark one field and stop
-        // @ts-ignore
+        
+        
         form.setError(k, { type: 'required', message: 'Required' });
         ToastAtTopRight.fire('Please fill the required field', 'error');
         return false;
@@ -377,7 +377,7 @@ const HotelForm = ({
       ToastAtTopRight.fire('Invalid Subscription Start Date', 'error');
       return;
     }
-    // Example: pick what truly must be filled in your UX
+    
     const ok = requireFieldsOrToast([
       'name',
       'address',
@@ -392,7 +392,7 @@ const HotelForm = ({
     ]);
     if (!ok) return;
 
-    // Extra rule: parentHotelId required when chainHotel is checked
+    
     if (
       isChainHotelChecked &&
       !ensureNonEmpty(form.getValues('parentHotelId'))
@@ -411,7 +411,7 @@ const HotelForm = ({
     const formattedStartDate = subscriptionStartDate
       .toISOString()
       .split('T')[0];
-    // const formattedEndDate = subscriptionEndDate.toISOString().split('T')[0];
+    
 
     const payload = {
       name: data.name,
@@ -444,7 +444,7 @@ const HotelForm = ({
       parentHotelId: data.parentHotelId || '',
       checkInTime: data.checkInTime,
       subscriptionStartDate: formattedStartDate,
-      // subscriptionEndDate: formattedEndDate,
+      
       subscriptionPrice: data.subscriptionPrice,
       subscriptionPlanName: data.subscriptionPlanName,
 
@@ -453,11 +453,11 @@ const HotelForm = ({
       brandedHotel: isBrandedHotelChecked,
       subscriptionPlan: data.subscriptionPlan,
 
-      // roomImage: imagePreviews.roomImage || [],
+      
       servingDepartment: data.servingDepartment,
       logo: imagePreviews.logoImage?.[0] || '',
       images: imagePreviews.roomImage,
-      // gst: data.gst,
+      
       gstImage: {
         gstValue: data.gst || '',
         imageUrl:
@@ -487,19 +487,19 @@ const HotelForm = ({
       },
       internetConnectivity: data.internetConnectivity,
       softwareCompatibility: data.softwareCompatibility,
-      // rooms: data.roomConfigs
-      //   ? data.roomConfigs.map((room: any) => ({
-      //     roomName: room.roomType,
-      //     roomType: room.roomType,
-      //     features: [room.feature],
-      //     // images: imagePreviews.roomImage,
-      //   }))
-      //   : [],
+      
+      
+      
+      
+      
+      
+      
+      
       rooms: data.roomConfigs
         ? data.roomConfigs.map((room: any) => ({
           roomName: room.roomType,
           roomType: room.roomType,
-          features: Array.isArray(room.features) ? room.features : [] // ✅ full array
+          features: Array.isArray(room.features) ? room.features : [] 
         }))
         : [],
       wifi: {
@@ -514,7 +514,7 @@ const HotelForm = ({
     console.log('Payload:', payload);
     console.log('imagePreviews:', imagePreviews);
 
-    // Validate parentHotelId when chain hotel is selected
+    
     if (
       isChainHotelChecked &&
       (!data.parentHotelId || data.parentHotelId.trim() === '')
@@ -526,7 +526,7 @@ const HotelForm = ({
       return;
     }
 
-    // Determine URL and HTTP method based on mode
+    
     const url =
       mode === 'edit'
         ? `api/hotel/update-hotel/${hotelId}`
@@ -539,7 +539,7 @@ const HotelForm = ({
     try {
       const response = await apiCall(method, url, payload);
 
-      // Check response status and handle success/failure
+      
       if (response.status) {
         ToastAtTopRight.fire(
           mode === 'edit'
@@ -561,8 +561,8 @@ const HotelForm = ({
 
       if (fieldErrors) {
         Object.entries(fieldErrors).forEach(([path, msg]) => {
-          // Supports nested paths like "rooms.0.roomType"
-          // @ts-ignore
+          
+          
           form.setError(path, {
             type: 'server',
             message: String(msg || 'Invalid')
@@ -578,7 +578,7 @@ const HotelForm = ({
   };
 
   useEffect(() => {
-    // if (hotelId) {
+    
     if ((mode === 'edit' || mode === 'view') && hotelId) {
       const fetchHotel = async () => {
         try {
@@ -643,27 +643,27 @@ const HotelForm = ({
               res.hotel.subscriptionEndDate?.split('T')[0] || '',
             subscriptionStartDate:
               res.hotel.subscriptionStartDate?.split('T')[0] || '',
-            // subscriptionPlan: res.hotel.subscriptionPlan || '',
-            // subscriptionPlanName: res.hotel.subscriptionPlanName || '',
-            // subscriptionPrice: res.hotel.subscriptionPrice || 0,
+            
+            
+            
             netPrice: res.hotel.netPrice || 0,
-            // gst: res.hotel.gst || '',
-            // couponCode: res.hotel.applyCoupon || '',
+            
+            
             about: res.hotel.about || '',
             servingDepartment: res.hotel.servingDepartment || [],
             roomTypes: res.hotel.roomTypes || [{ roomTypeName: 'Single', roomCount: 1, amenities: [] }],
             internetConnectivity: res.hotel.internetConnectivity || false,
             softwareCompatibility: res.hotel.softwareCompatibility || false,
             wifi: res.hotel.wifi || { wifiName: '', password: '', scanner: {} },
-            // roomConfigs:
-            //   res.hotel.rooms?.map((room: any) => ({
-            //     roomType: room.roomType,
-            //     feature: room.features?.[0] || ''
-            //   })) || [],
+            
+            
+            
+            
+            
             roomConfigs: Array.isArray(res?.hotel?.rooms)
               ? res.hotel.rooms.map((room: any) => ({
                 roomType: room?.roomType ?? '',
-                // map features[] -> string[]
+                
                 features: Array.isArray(room?.features)
                   ? Array.from(
                     new Set(
@@ -687,7 +687,7 @@ const HotelForm = ({
             gst: res.hotel?.gstImage?.gstValue || res.hotel?.gst || ''
           });
 
-          // Set images
+          
           setImagePreviews({
             logoImage: res.hotel.logo ? [res.hotel.logo] : [],
             roomImage: res.hotel.images || [],
@@ -711,7 +711,7 @@ const HotelForm = ({
             gstImage: res.hotel?.gstImage?.imageUrl
               ? [res.hotel.gstImage.imageUrl]
               : []
-            // roomImage: res.hotel.rooms?.[0]?.images || []
+            
           });
         } catch (err: any) {
           console.error(
@@ -775,19 +775,16 @@ const HotelForm = ({
           email: d.email || '',
           number: d.phoneNo || '',
           hotelCategory: d.hotelCategory || '',
-          // No gstPercentage in pending payload; keep default
           gstPercentage: d.gstPercentage,
           gst: d.gst || '',
-          // gstImage: d.gstImage.imageUrl ? [res.hotel.gstImage.imageUrl] : [],
           totalStaff: d.totalStaff ?? 0,
           city: res?.request?.hotelData?.city || 'na',
-          merchantId: res.hotel.merchantId || '',
+          merchantId: d.merchantId || '',
           state: d.state || '',
           country: d.country || '',
           pinCode: d.pincode || '',
           parentHotelId: d.parentHotel || '',
 
-          // Convert "14:00" -> "2:00 PM" to match your <Select> items
           checkInTime: to12h(d.checkInTime),
           checkOutTime: to12h(d.checkOutTime),
 
@@ -809,13 +806,13 @@ const HotelForm = ({
           roomConfigs: Array.isArray(d.rooms)
             ? d.rooms.map((room: any) => ({
               roomType: room.roomType ?? '',
-              feature: room.features?.[0] ?? '' // ✅ singular key
+              feature: room.features?.[0] ?? ''
             }))
             : []
         });
         setSelectedState(d.state || '');
-        // If you want to preview images in pending: logoImage: res.hotel.logo ? [res.hotel.logo] : [],
-        // roomImage: res.hotel.images || [],
+        
+        
         setImagePreviews({
           logoImage: d.logo ? [d.logo] : [],
           additionalImage: Array.isArray(d.images) ? d.images : [],
@@ -856,15 +853,16 @@ const HotelForm = ({
     }
 
     try {
-      // Fetch values from the form state
+      
       const subscriptionPlan = form.getValues('subscriptionPlan');
       const subscriptionStartDate = form.getValues('subscriptionStartDate');
       const couponCode =
         form.getValues('couponCode') === 'Choose coupon'
           ? ''
           : form.getValues('couponCode');
+      const gstPercentage = form.getValues('gstPercentage');
 
-      // Validate if required values are present
+      
       if (!subscriptionPlan || !subscriptionStartDate) {
         ToastAtTopRight.fire(
           'Subscription Plan and Start Date are required',
@@ -873,23 +871,29 @@ const HotelForm = ({
         return;
       }
 
+      
+      const subscriptionPlanId = typeof subscriptionPlan === 'object' && subscriptionPlan?._id
+        ? subscriptionPlan._id
+        : subscriptionPlan;
+
       const payload = {
         requestId: hotelId,
-        subscriptionPlan: subscriptionPlan,
-        couponCode: couponCode,
-        subscriptionStartDate: subscriptionStartDate
+        subscriptionPlan: subscriptionPlanId,
+        couponCode: couponCode || '',
+        subscriptionStartDate: subscriptionStartDate,
+        gstPercentage: gstPercentage || 18,
       };
 
-      console.log('Payload:', payload);
+      console.log('Approval Payload:', payload);
 
-      // Send the request to approve the hotel
+      
       const response = await apiCall(
         'POST',
         'api/hotel/approve-request',
         payload
       );
 
-      if (response.status) {
+      if (response.success) {
         ToastAtTopRight.fire('Hotel approved successfully', 'success');
         router.push('/super-admin/hotel-management/pending');
       } else {
@@ -898,9 +902,12 @@ const HotelForm = ({
           'error'
         );
       }
-    } catch (error) {
-      console.error(error);
-      ToastAtTopRight.fire('Server error during approval', 'error');
+    } catch (error: any) {
+      console.error('Approval error:', error);
+      ToastAtTopRight.fire(
+        error?.response?.data?.message || 'Server error during approval',
+        'error'
+      );
     }
   };
 
@@ -912,32 +919,32 @@ const HotelForm = ({
     const file = e.target.files?.[0];
 
     if (fieldOnChange) {
-      fieldOnChange(file); // Call field's onChange if provided (useful for form state)
+      fieldOnChange(file); 
     }
 
     if (file) {
-      // Create a FormData to send the file to the server
+      
       const formData = new FormData();
-      formData.append('file', file, file.name); // Append file to FormData
+      formData.append('file', file, file.name); 
 
       try {
-        // Upload the file to your server (e.g., AWS S3)
-        setIsLoading(true); // Optional: Show loading state during upload
+        
+        setIsLoading(true); 
 
-        // Make API call to upload the image (replace '/upload/to-s3' with your endpoint)
+        
         const response = await apiCall('POST', 'api/upload/admin', formData);
 
         if (response.data.url) {
-          // Get the public URL of the uploaded image
+          
           const uploadedImageUrl = response.data.url;
 
-          // Update imagePreviews state with the new URL
+          
           setImagePreviews((prevState) => ({
             ...prevState,
-            [fieldName]: [uploadedImageUrl] // Store the URL instead of blob
+            [fieldName]: [uploadedImageUrl] 
           }));
 
-          // Optionally update form field with image URL (use field.onChange)
+          
           fieldOnChange && fieldOnChange(uploadedImageUrl);
 
           ToastAtTopRight.fire('Image uploaded successfully', 'success');
@@ -945,7 +952,7 @@ const HotelForm = ({
       } catch (error) {
         ToastAtTopRight.fire('Failed to upload image', 'error');
       } finally {
-        setIsLoading(false); // Optional: Hide loading state after upload
+        setIsLoading(false); 
       }
     }
   };
@@ -1003,36 +1010,36 @@ const HotelForm = ({
     fetchSubscriptionPlans();
   }, []);
 
-  // Sync room management data with hotel form roomConfigs
+  
   const syncRoomData = useCallback(() => {
     if (mode === 'add') {
       const roomSyncData = getRoomSyncData();
       if (roomSyncData && roomSyncData.roomType) {
         const roomConfig = convertToRoomConfigs(roomSyncData);
-        // Ensure roomConfig has valid values
+        
         if (!roomConfig.roomType || !Array.isArray(roomConfig.features)) {
           return;
         }
 
         const currentRoomConfigs = form.getValues('roomConfigs') || [];
 
-        // Check if this room type already exists in roomConfigs
+        
         const existingIndex = currentRoomConfigs.findIndex(
           (rc: any) => rc && rc.roomType === roomConfig.roomType
         );
 
         if (existingIndex >= 0) {
-          // Update existing room config - ensure values are defined
+          
           form.setValue(`roomConfigs.${existingIndex}.roomType`, roomConfig.roomType || '');
           form.setValue(`roomConfigs.${existingIndex}.features`, roomConfig.features || []);
         } else {
-          // Add new room config if it doesn't exist
+          
           const currentConfigs = form.getValues('roomConfigs') || [];
           if (currentConfigs.length === 0 || (currentConfigs.length === 1 && currentConfigs[0]?.roomType === 'Single')) {
-            // Replace default if it's the default value
+            
             form.setValue('roomConfigs', [roomConfig], { shouldValidate: false });
           } else {
-            // Append to existing - ensure the config is valid
+            
             append(roomConfig, { shouldFocus: false });
           }
         }
@@ -1041,12 +1048,12 @@ const HotelForm = ({
   }, [mode, form, append]);
 
   useEffect(() => {
-    // Wait for form to be initialized before syncing
+    
     const timeoutId = setTimeout(() => {
       syncRoomData();
     }, 100);
 
-    // Listen for storage changes (when room data is updated in another tab/window)
+    
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'room_management_sync_data') {
         syncRoomData();
@@ -1055,10 +1062,10 @@ const HotelForm = ({
 
     window.addEventListener('storage', handleStorageChange);
 
-    // Also check periodically for changes (for same-tab updates)
+    
     const intervalId = setInterval(() => {
       syncRoomData();
-    }, 2000); // Check every 2 seconds (reduced frequency)
+    }, 2000); 
 
     return () => {
       clearTimeout(timeoutId);
@@ -1072,7 +1079,7 @@ const HotelForm = ({
 
     if (selectedPlan) {
       form.setValue('subscriptionPrice', selectedPlan.cost);
-      // form.setValue('subscriptionPlan', selectedPlan._id);
+      
       form.setValue('subscriptionPlanName', selectedPlan.planName);
     }
   };
@@ -1087,10 +1094,10 @@ const HotelForm = ({
 
     if (!planId) return;
 
-    // 1) Start with plan price
+    
     let discounted = price;
 
-    // 2) If coupon selected, try server calc
+    
     if (code && code !== 'Choose coupon') {
       try {
         const res = await apiCall('POST', 'api/hotel/calculateNetPrice', {
@@ -1098,11 +1105,11 @@ const HotelForm = ({
           gstPercentage: gstPct,
           couponCode: code
         });
-        // assume API returns discounted BEFORE GST
+        
         if (res?.success && typeof res.netPrice === 'number') {
           discounted = Number(res.netPrice);
         } else {
-          // fallback client-side if API says no
+          
           const c = coupons.find((c) => c.code === code);
           if (c) {
             discounted =
@@ -1112,7 +1119,7 @@ const HotelForm = ({
           }
         }
       } catch {
-        // fallback client-side if API fails
+        
         const c = coupons.find((c) => c.code === code);
         if (c) {
           discounted =
@@ -1123,10 +1130,10 @@ const HotelForm = ({
       }
     }
 
-    // store pre-GST value if you need it for payload
+    
     rawNetRef.current = round2(discounted);
 
-    // 3) Add GST and write the final amount
+    
     const total = round2(discounted * (1 + gstPct / 100));
     form.setValue('netPrice', total, { shouldDirty: true });
   };
@@ -1155,14 +1162,14 @@ const HotelForm = ({
     try {
       const response = await apiCall('GET', 'api/coupon/hotels?status=Active');
       if (response.success && response.coupons) {
-        setCoupons(response.coupons); // Store the coupons in state
+        setCoupons(response.coupons); 
       } else {
         console.error('Failed to fetch coupons:', response);
-        setCoupons([]); // Handle failure gracefully
+        setCoupons([]); 
       }
     } catch (error) {
       console.error('Error fetching coupons:', error);
-      setCoupons([]); // Set empty array if error occurs
+      setCoupons([]); 
     } finally {
       setIsLoading(false);
     }
@@ -1175,7 +1182,7 @@ const HotelForm = ({
   const handleCouponChange = (value: string) => {
     const selectedCoupon = coupons.find((coupon) => coupon.code === value);
     if (selectedCoupon) {
-      // Set the coupon code and value in the form
+      
       form.setValue('couponCode', selectedCoupon.code);
     }
   };
@@ -1198,12 +1205,12 @@ const HotelForm = ({
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`; // "YYYY-MM-DD" in local time
+    return `${y}-${m}-${day}`; 
   }
   function ymdToLocalDate(ymd: string) {
-    // Expect "YYYY-MM-DD"
+    
     const [y, m, d] = ymd.split('-').map(Number);
-    return new Date(y, (m ?? 1) - 1, d ?? 1); // local Date
+    return new Date(y, (m ?? 1) - 1, d ?? 1); 
   }
   const [merchantSaving, setMerchantSaving] = useState(false);
 
@@ -1231,7 +1238,7 @@ const HotelForm = ({
 
       if (resp?.success) {
         ToastAtTopRight.fire(resp?.message || 'Merchant ID saved!', 'success');
-        // Optional: reflect on UI state
+        
         setFetchedHotelData((prev: any) => ({
           ...(prev || {}),
           merchantId: mId
@@ -1271,7 +1278,7 @@ const HotelForm = ({
       }
     };
 
-    // fetch for view (and edit too if you want it visible there)
+    
     if (mode === 'view') {
       fetchMerchantId();
     }
@@ -1294,15 +1301,15 @@ const HotelForm = ({
     };
     if (mode === 'view' || mode === 'edit') fetchMerchantId();
   }, [mode, hotelId]);
-  // Show a single global toast on any invalid form submit
+  
   const onInvalid = (
     errors: FieldErrors<HotelSchemaType & { merchantId?: string }>
   ) => {
     ToastAtTopRight.fire('Please fill the required field', 'error');
     const firstKey = Object.keys(errors)[0];
     if (firstKey) {
-      // supports nested paths too
-      // @ts-ignore
+      
+      
       form.setFocus(firstKey);
     }
   };
@@ -1340,12 +1347,12 @@ const HotelForm = ({
         >
           {mode !== 'pending' && (
             <div className="flex gap-4">
-              {/* Room Image Uploader */}
+              {}
               <div>
-                {/* ✅ MULTI IMAGE UPLOADER FOR ROOM IMAGES */}
+                {}
                 <FormField
                   control={form.control}
-                  name="roomImage" // array<string> recommended
+                  name="roomImage" 
                   render={() => (
                     <FormItem className="w-fit relative">
                       <FormLabel className="text-coffee font-medium">
@@ -1353,7 +1360,7 @@ const HotelForm = ({
                       </FormLabel>
 
                       <div className="flex items-center gap-2">
-                        {/* Clickable tile to add images */}
+                        {}
                         <div
                           className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled
                             ? 'cursor-not-allowed opacity-50'
@@ -1393,7 +1400,7 @@ const HotelForm = ({
                           />
                         </FormControl>
 
-                        {/* “Add more” icon */}
+                        {}
                         <Upload
                           className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${!isDisabled
                             ? 'text-black cursor-pointer'
@@ -1408,7 +1415,7 @@ const HotelForm = ({
 
                       <FormMessage className="text-[10px]" />
 
-                      {/* Thumbnails grid */}
+                      {}
                       {!!imagePreviews.roomImage?.length && (
                         <div className="flex flex-wrap gap-3 mt-4">
                           {imagePreviews.roomImage.map((image, index) => (
@@ -1458,7 +1465,7 @@ const HotelForm = ({
                       >
                         {imagePreviews.logoImage?.length > 0 ? (
                           <img
-                            src={imagePreviews.logoImage[0]} // Display the uploaded image
+                            src={imagePreviews.logoImage[0]} 
                             alt="Logo Preview"
                             className="w-full h-full object-cover rounded-md"
                           />
@@ -1474,7 +1481,7 @@ const HotelForm = ({
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (file) {
-                              handleImageUpload(file, 'logoImage'); // Pass only if file is valid
+                              handleImageUpload(file, 'logoImage'); 
                             }
                           }}
                           className="hidden"
@@ -1488,7 +1495,7 @@ const HotelForm = ({
             </div>
           )}
           <div className="w-full flex flex-col gap-6">
-            {/* Chunk 1: Basic Hotel Info */}
+            {}
             <div className="flex flex-col gap-4 2xl:gap-5 bg-[#FAF6EF] shadow-custom p-6 2xl:p-8 rounded-lg">
               <div className="flex justify-end">
                 {mode === 'pending' ? (
@@ -1748,27 +1755,7 @@ const HotelForm = ({
                         State <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        {/* <Select
-                          value={field.value}
-                          onValueChange={(value) => {
-                            handleStateChange(value);
-                            field.onChange(value);
-                          }}
-                          disabled={isDisabled}
-                        >
-                          <SelectTrigger className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm relative pr-8">
-                            <SelectValue placeholder="Select state" />
-                            <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4 pointer-events-none" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {indiaStates.map((state) => (
-                              <SelectItem key={state} value={state}>
-                                {state}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select> */}
+                        {}
                         <Select
                           value={field.value}
                           onValueChange={(value) => {
@@ -1782,7 +1769,7 @@ const HotelForm = ({
                             <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 h-4 w-4 pointer-events-none" />
                           </SelectTrigger>
 
-                          {/* 👇 add these classes */}
+                          {}
                           <SelectContent
                             position="popper"
                             className="max-h-60 overflow-y-auto"
@@ -1874,8 +1861,8 @@ const HotelForm = ({
                             const value = e.currentTarget.value.replace(
                               /\D/g,
                               ''
-                            ); // remove non-digits
-                            if (value.length <= 6) field.onChange(value); // restrict to 6 digits
+                            ); 
+                            if (value.length <= 6) field.onChange(value); 
                           }}
                           disabled={isDisabled}
                           className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
@@ -1955,7 +1942,7 @@ const HotelForm = ({
                 />
               </div>
 
-              {/* Show both fields when either checkbox is checked */}
+              {}
               {isChainHotelChecked && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <>
@@ -1983,7 +1970,7 @@ const HotelForm = ({
               )}
             </div>
 
-            {/* Chunk 2: Room Details */}
+            {}
             <div className="flex flex-col gap-4 2xl:gap-5 bg-[#FAF6EF] shadow-custom p-6 2xl:p-8 rounded-lg">
               <div className="flex flex-col gap-3">
                 {fields.map((field, index) => (
@@ -1999,8 +1986,8 @@ const HotelForm = ({
                           <FormControl>
                             <Input
                               type="text"
-                              value={field.value || ''} // current value from RHF
-                              onChange={field.onChange} // updates form state
+                              value={field.value || ''} 
+                              onChange={field.onChange} 
                               disabled={isDisabled}
                               placeholder="Room Type"
                               className="w-40 bg-[#F6EEE0] text-gray-700 p-2 rounded-md"
@@ -2040,14 +2027,14 @@ const HotelForm = ({
                             e.preventDefault();
                             const input = e.currentTarget as HTMLInputElement;
                             add(input.value);
-                            input.value = ''; // clear without useState
+                            input.value = ''; 
                           }
                         };
 
                         const onPaste: React.ClipboardEventHandler<
                           HTMLInputElement
                         > = (e) => {
-                          // allow pasting: "WiFi,TV\nAC"
+                          
                           const text = e.clipboardData.getData('text');
                           if (!text) return;
                           e.preventDefault();
@@ -2069,7 +2056,7 @@ const HotelForm = ({
                               <span className="text-red-500">*</span>
                             </FormLabel>
 
-                            {/* chips */}
+                            {}
                             <div className="flex flex-wrap gap-2 mb-2">
                               {features?.map((f, i) => (
                                 <span
@@ -2096,7 +2083,7 @@ const HotelForm = ({
                               )}
                             </div>
 
-                            {/* single input (type & press Enter / comma). No Add button */}
+                            {}
                             <Input
                               type="text"
                               onKeyDown={onKeyDown}
@@ -2112,7 +2099,7 @@ const HotelForm = ({
                       }}
                     />
 
-                    {/* Delete Button */}
+                    {}
                     {fields.length > 1 && (
                       <button
                         type="button"
@@ -2126,13 +2113,13 @@ const HotelForm = ({
                   </div>
                 ))}
 
-                {/* Append Button */}
+                {}
                 <button
                   type="button"
-                  // onClick={() =>
-                  //   !isDisabled &&
-                  //   append({ roomType: 'Single', feature: 'Sea Side' })
-                  // }
+                  
+                  
+                  
+                  
                   onClick={() =>
                     !isDisabled &&
                     append({ roomType: 'Single', features: ['Sea Side'] })
@@ -2144,7 +2131,7 @@ const HotelForm = ({
                 </button>
               </div>
 
-              {/* Property Amenities */}
+              {}
               <FormField
                 control={form.control}
                 name="propertyAmenities"
@@ -2192,7 +2179,7 @@ const HotelForm = ({
                 }}
               />
 
-              {/* Room Type Amenities */}
+              {}
               <FormField
                 control={form.control}
                 name="roomTypeAmenities"
@@ -2269,7 +2256,7 @@ const HotelForm = ({
 
                   return (
                     <FormItem>
-              
+
                       <div className="flex flex-wrap gap-2 mb-2">
                         {roomIds?.map((id, i) => (
                           <span
@@ -2296,7 +2283,7 @@ const HotelForm = ({
                 }}
               />
 
-            
+
               <div className="flex flex-col gap-4 bg-[#F9F4EA] p-5 rounded-lg border border-[#E8DCC4] mt-4">
                 <div className="flex justify-between items-center border-b border-[#E8DCC4] pb-3 mb-2">
                   <h3 className="text-sm 2xl:text-base font-semibold text-gray-800">Room Types Configuration</h3>
@@ -2330,7 +2317,7 @@ const HotelForm = ({
                                       if (val !== 'Custom') {
                                         field.onChange(val);
                                       } else {
-                                        field.onChange(''); // Clear to show input
+                                        field.onChange(''); 
                                       }
                                     }}
                                     value={['Single', 'Double', 'Deluxe', 'Suite'].includes(field.value) ? field.value : (field.value === '' ? 'Custom' : 'Custom')}
@@ -2461,7 +2448,7 @@ const HotelForm = ({
                 </div>
               </div>
 
-              {/* Pricing and Occupancy */}
+              {}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 <FormField
                   control={form.control}
@@ -2688,9 +2675,9 @@ const HotelForm = ({
                           placeholder="Enter number of rooms"
                           {...field}
                           disabled={isDisabled}
-                          // onChange={(e) =>
-                          //   field.onChange(parseInt(e.target.value, 10))
-                          // }
+                          
+                          
+                          
                           className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
                         />
                       </FormControl>
@@ -2713,9 +2700,9 @@ const HotelForm = ({
                           placeholder="Enter total staff"
                           {...field}
                           disabled={isDisabled}
-                          // onChange={(e) =>
-                          //   field.onChange(parseInt(e.target.value, 10))
-                          // }
+                          
+                          
+                          
                           className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
                         />
                       </FormControl>
@@ -2792,60 +2779,7 @@ const HotelForm = ({
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {/* <FormField
-                  control={form.control}
-                  name="planName"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                        Allocate Subscription
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        {mode === 'view' || mode === 'edit' ? (
-                          <input
-                            type="text"
-                            value={
-                              field.value
-                                ? subscriptionPlans.find(
-                                    (plan) => plan._id === field.value
-                                  )?.planName
-                                : ''
-                            }
-                            disabled
-                            className="bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm w-full"
-                          />
-                        ) : (
-                          <Select
-                            value={field.value || ''}
-                            onValueChange={(value) => {
-                              field.onChange(value);
-                              handleSubscriptionPlanChange(value);
-                            }}
-                            disabled={isDisabled && mode !== 'pending'}
-                          >
-                            <SelectTrigger className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm relative pr-8">
-                              <SelectValue placeholder="Select category" />
-                              <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4 pointer-events-none" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-coffee  max-h-80 max-w-60 overflow-y-auto">
-                              {subscriptionPlans.map((plan) => (
-                                <SelectItem
-                                  key={plan._id}
-                                  value={plan._id}
-                                  className="text-white"
-                                >
-                                  {plan.planName}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        )}
-                      </FormControl>
-                      <FormMessage className="text-[10px]" />
-                    </FormItem>
-                  )}
-                /> */}
+                {}
                 <FormField
                   control={form.control}
                   name="subscriptionPlan"
@@ -2871,7 +2805,7 @@ const HotelForm = ({
                                 (p) => p._id === id
                               );
                               if (!plan) return;
-                              // store full object per schema
+                              
                               field.onChange({
                                 _id: plan._id,
                                 planName: plan.planName,
@@ -2909,7 +2843,7 @@ const HotelForm = ({
                   )}
                 />
 
-                {/* Subscription Price (Auto-filled based on selected plan) */}
+                {}
                 <FormField
                   control={form.control}
                   name="subscriptionPrice"
@@ -2924,7 +2858,7 @@ const HotelForm = ({
                           type="number"
                           min="0"
                           placeholder="Enter Subscription Price"
-                          {...field} // Ensure this is connected to the form control
+                          {...field} 
                           disabled={
                             mode === 'view' || mode === 'edit' || isDisabled
                           }
@@ -2983,11 +2917,7 @@ const HotelForm = ({
                               field.onChange(value);
                               handleCouponChange(value);
                             }}
-                            disabled={
-                              mode === 'view' ||
-                              mode === 'edit' ||
-                              (isDisabled && mode !== 'pending')
-                            }
+                            disabled={mode === 'view' || mode === 'edit'}
                           >
                             <SelectTrigger className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm pr-8 relative">
                               <SelectValue placeholder="Choose coupon" />
@@ -3087,21 +3017,18 @@ const HotelForm = ({
                   render={({ field }) => {
                     const [open, setOpen] = React.useState(false);
 
-                    // today (local) at midnight
+                    
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
 
-                    // parse field value safely in local time
+                    
                     const valueAsDate = field.value
                       ? ymdToLocalDate(field.value)
                       : undefined;
 
-                    // do not shadow your outer isDisabled
+                    
                     const outerIsDisabled = isDisabled;
-                    const computedDisabled =
-                      mode === 'view' ||
-                      mode === 'edit' ||
-                      (outerIsDisabled && mode !== 'pending');
+                    const computedDisabled = mode === 'view' || mode === 'edit';
 
                     return (
                       <FormItem className="w-full">
@@ -3138,21 +3065,21 @@ const HotelForm = ({
                               selected={valueAsDate}
                               onSelect={(d) => {
                                 if (!d) return;
-                                field.onChange(formatYMDLocal(d)); // local YYYY-MM-DD (no UTC shift)
+                                field.onChange(formatYMDLocal(d)); 
                                 setOpen(false);
                               }}
-                              /* --- behaviour --- */
-                              showOutsideDays={false} // pichle/agle mahine ke din hide
-                              weekStartsOn={0} // 0=Sunday, 1=Monday (agar Monday chahiye to 1 kar do)
+                              
+                              showOutsideDays={false} 
+                              weekStartsOn={0} 
                               disabled={(date) => {
                                 const d = new Date(date);
                                 d.setHours(0, 0, 0, 0);
-                                return d < today; // aaj se pehle sab disable
+                                return d < today; 
                               }}
-                              /* --- visual polish --- */
+                              
                               className="p-2"
                               classNames={{
-                                /* Month container */
+                                
                                 months: 'space-y-2',
                                 month: 'space-y-2',
                                 caption:
@@ -3162,36 +3089,36 @@ const HotelForm = ({
                                 nav: 'flex items-center gap-1',
                                 nav_button:
                                   'h-8 w-8 rounded-md hover:bg-[#8B4513]/10',
-                                /* Weekday header */
+                                
                                 head_row: 'grid grid-cols-7',
                                 head_cell:
                                   'text-[11px] font-semibold text-[#8B4513]/80 h-8 w-8 grid place-items-center',
-                                /* Grid of days */
+                                
                                 table: 'w-full border-collapse',
                                 row: 'grid grid-cols-7 gap-0',
                                 cell: 'h-10 w-10 text-center p-0',
-                                /* Day button */
+                                
                                 day: [
                                   'h-9 w-9 rounded-full p-0 grid place-items-center',
                                   'text-[13px] font-medium',
                                   'hover:bg-[#8B4513]/10 hover:text-[#2a1a0d]',
                                   'focus:outline-none focus:ring-2 focus:ring-[#8B4513]/40'
                                 ].join(' '),
-                                /* Selected day */
+                                
                                 day_selected:
                                   'bg-[#8B4513] text-white hover:bg-[#7a3e10] hover:text-white',
-                                /* Today indicator (small dot) */
+                                
                                 day_today:
                                   "relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:h-1 after:w-1 after:rounded-full after:bg-[#8B4513]",
-                                /* Disabled & outside days */
-                                day_outside: 'hidden', // outside days hide
+                                
+                                day_outside: 'hidden', 
                                 day_disabled:
                                   'text-gray-300 opacity-70 cursor-not-allowed'
                               }}
-                              /* Weekend color tweak (Sun/Sat) */
+                              
                               modifiers={{
                                 weekend: (d) =>
-                                  d.getDay() === 0 || d.getDay() === 6 // ✅
+                                  d.getDay() === 0 || d.getDay() === 6 
                               }}
                               modifiersClassNames={{
                                 weekend: 'text-[#8B4513]/70'
@@ -3218,8 +3145,8 @@ const HotelForm = ({
                           <Input
                             type="date"
                             value={field.value || ''}
-                            onChange={(e) => field.onChange(e.target.value)} // editable in edit
-                            // readOnly={mode === 'view'}
+                            onChange={(e) => field.onChange(e.target.value)} 
+                            
                             disabled
                             className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
                           />
@@ -3242,8 +3169,8 @@ const HotelForm = ({
                           <Input
                             type="date"
                             value={field.value || ''}
-                            onChange={(e) => field.onChange(e.target.value)} // editable in edit
-                            // readOnly={mode === 'view'}
+                            onChange={(e) => field.onChange(e.target.value)} 
+                            
                             disabled
                             className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
                           />
@@ -3301,7 +3228,7 @@ const HotelForm = ({
                     </button>
                     <button
                       onClick={() => {
-                        rejectRequest(rejectionReason); // call function with reason
+                        rejectRequest(rejectionReason); 
                         setShowRejectModal(false);
                         setRejectionReason('');
                       }}
@@ -3315,7 +3242,7 @@ const HotelForm = ({
                 </div>
               </div>
             )}
-            {/* Chunk 3: Licenses and Certifications */}
+            {}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 2xl:gap-5 bg-[#FAF6EF] shadow-custom p-6 2xl:p-8 rounded-lg">
               <FormField
                 control={form.control}
@@ -3354,13 +3281,13 @@ const HotelForm = ({
                             onClick={
                               () =>
                                 !isDisabled &&
-                                triggerFileInput(hotelLicenseImageRef) // Trigger file input on click
+                                triggerFileInput(hotelLicenseImageRef) 
                             }
                           >
                             {imagePreviews.hotelLicenseImage &&
                               imagePreviews.hotelLicenseImage.length > 0 ? (
                               <img
-                                src={imagePreviews.hotelLicenseImage[0]} // Display the uploaded image
+                                src={imagePreviews.hotelLicenseImage[0]} 
                                 alt="Hotel License Preview"
                                 className="w-full h-full object-cover rounded-md"
                               />
@@ -3376,7 +3303,7 @@ const HotelForm = ({
                               onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
-                                  handleImageUpload(file, 'hotelLicenseImage'); // Upload and get the image URL
+                                  handleImageUpload(file, 'hotelLicenseImage'); 
                                 }
                               }}
                               className="hidden"
@@ -3409,64 +3336,7 @@ const HotelForm = ({
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="legalBusinessLicenseImage"
-                render={({ field }) => (
-                  <FormItem className="w-fit relative">
-                    <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                      Business License Image{' '}
-                    </FormLabel>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} rounded-md border border-gray-100`}
-                        onClick={() =>
-                          !isDisabled &&
-                          triggerFileInput(legalBusinessLicenseImageRef)
-                        }
-                      >
-                        {imagePreviews.legalBusinessLicenseImage &&
-                          imagePreviews.legalBusinessLicenseImage.length > 0 ? (
-                          <img
-                            src={imagePreviews.legalBusinessLicenseImage[0]}
-                            alt="Business License Preview"
-                            className="w-full h-full object-cover rounded-md"
-                          />
-                        ) : (
-                          <CiCamera className="w-8 h-8 text-coffee opacity-50" />
-                        )}
-                      </div>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          ref={legalBusinessLicenseImageRef}
-                          onChange={(e) =>
-                            handleImageChange(
-                              e,
-                              'legalBusinessLicenseImage',
-                              field.onChange
-                            )
-                          }
-                          className="hidden"
-                        />
-                      </FormControl>
-                      <Upload
-                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.legalBusinessLicenseImage && !isDisabled
-                          ? 'text-black cursor-pointer'
-                          : 'text-gray-400 cursor-not-allowed'
-                          }`}
-                        onClick={() =>
-                          imagePreviews.legalBusinessLicenseImage &&
-                          !isDisabled &&
-                          triggerFileInput(legalBusinessLicenseImageRef)
-                        }
-                      />
-                    </div>
-                    <FormMessage className="text-[10px]" />
-                  </FormItem>
-                )}
-              /> */}
+              {}
               {(!isDisabled ||
                 (imagePreviews.legalBusinessLicenseImage &&
                   imagePreviews.legalBusinessLicenseImage.length > 0)) && (
@@ -3484,13 +3354,13 @@ const HotelForm = ({
                             onClick={
                               () =>
                                 !isDisabled &&
-                                triggerFileInput(legalBusinessLicenseImageRef) // Trigger file input when clicked
+                                triggerFileInput(legalBusinessLicenseImageRef) 
                             }
                           >
                             {imagePreviews.legalBusinessLicenseImage &&
                               imagePreviews.legalBusinessLicenseImage.length > 0 ? (
                               <img
-                                src={imagePreviews.legalBusinessLicenseImage[0]} // Display the first uploaded image
+                                src={imagePreviews.legalBusinessLicenseImage[0]} 
                                 alt="Business License Preview"
                                 className="w-full h-full object-cover rounded-md"
                               />
@@ -3510,7 +3380,7 @@ const HotelForm = ({
                                     e,
                                     'legalBusinessLicenseImage',
                                     field.onChange
-                                  ) // Handle image change
+                                  ) 
                               }
                               className="hidden"
                             />
@@ -3524,13 +3394,13 @@ const HotelForm = ({
                               () =>
                                 imagePreviews.legalBusinessLicenseImage &&
                                 !isDisabled &&
-                                triggerFileInput(legalBusinessLicenseImageRef) // Trigger file input when clicked
+                                triggerFileInput(legalBusinessLicenseImageRef) 
                             }
                           />
                         </div>
                         <FormMessage className="text-[10px]" />
 
-                        {/* Display all selected images in a row, wrapping to the next line if necessary */}
+                        {}
                         <div className="flex flex-wrap gap-3 mt-4">
                           {imagePreviews.legalBusinessLicenseImage?.map(
                             (image, index) => (
@@ -3551,7 +3421,7 @@ const HotelForm = ({
                                       index,
                                       'legalBusinessLicenseImage'
                                     )
-                                  } // Handle image removal
+                                  } 
                                 >
                                   X
                                 </button>
@@ -3584,64 +3454,7 @@ const HotelForm = ({
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="touristLicenseImage"
-                render={({ field }) => (
-                  <FormItem className="w-fit relative">
-                    <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                      Tourist License Image{' '}
-                    </FormLabel>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} rounded-md border border-gray-100`}
-                        onClick={() =>
-                          !isDisabled &&
-                          triggerFileInput(touristLicenseImageRef)
-                        }
-                      >
-                        {imagePreviews.touristLicenseImage &&
-                          imagePreviews.touristLicenseImage.length > 0 ? (
-                          <img
-                            src={imagePreviews.touristLicenseImage[0]}
-                            alt="Tourist License Preview"
-                            className="w-full h-full object-cover rounded-md"
-                          />
-                        ) : (
-                          <CiCamera className="w-8 h-8 text-coffee opacity-50" />
-                        )}
-                      </div>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          ref={touristLicenseImageRef}
-                          onChange={(e) =>
-                            handleImageChange(
-                              e,
-                              'touristLicenseImage',
-                              field.onChange
-                            )
-                          }
-                          className="hidden"
-                        />
-                      </FormControl>
-                      <Upload
-                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.touristLicenseImage && !isDisabled
-                          ? 'text-black cursor-pointer'
-                          : 'text-gray-400 cursor-not-allowed'
-                          }`}
-                        onClick={() =>
-                          imagePreviews.touristLicenseImage &&
-                          !isDisabled &&
-                          triggerFileInput(touristLicenseImageRef)
-                        }
-                      />
-                    </div>
-                    <FormMessage className="text-[10px]" />
-                  </FormItem>
-                )}
-              /> */}
+              {}
               {(!isDisabled ||
                 (imagePreviews.touristLicenseImage &&
                   imagePreviews.touristLicenseImage.length > 0)) && (
@@ -3659,13 +3472,13 @@ const HotelForm = ({
                             onClick={
                               () =>
                                 !isDisabled &&
-                                triggerFileInput(touristLicenseImageRef) // Trigger file input when clicked
+                                triggerFileInput(touristLicenseImageRef) 
                             }
                           >
                             {imagePreviews.touristLicenseImage &&
                               imagePreviews.touristLicenseImage.length > 0 ? (
                               <img
-                                src={imagePreviews.touristLicenseImage[0]} // Display the first uploaded image
+                                src={imagePreviews.touristLicenseImage[0]} 
                                 alt="Tourist License Preview"
                                 className="w-full h-full object-cover rounded-md"
                               />
@@ -3684,7 +3497,7 @@ const HotelForm = ({
                                     e,
                                     'touristLicenseImage',
                                     field.onChange
-                                  ) // Handle image change
+                                  ) 
                               }
                               className="hidden"
                             />
@@ -3698,13 +3511,13 @@ const HotelForm = ({
                               () =>
                                 imagePreviews.touristLicenseImage &&
                                 !isDisabled &&
-                                triggerFileInput(touristLicenseImageRef) // Trigger file input when clicked
+                                triggerFileInput(touristLicenseImageRef) 
                             }
                           />
                         </div>
                         <FormMessage className="text-[10px]" />
 
-                        {/* Display all selected images in a row, wrapping to the next line if necessary */}
+                        {}
                         <div className="flex flex-wrap gap-3 mt-4">
                           {imagePreviews.touristLicenseImage?.map(
                             (image, index) => (
@@ -3725,7 +3538,7 @@ const HotelForm = ({
                                       index,
                                       'touristLicenseImage'
                                     )
-                                  } // Handle image removal
+                                  } 
                                 >
                                   X
                                 </button>
@@ -3771,13 +3584,13 @@ const HotelForm = ({
                         className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} rounded-md border border-gray-100`}
                         onClick={
                           () =>
-                            !isDisabled && triggerFileInput(tanNumberImageRef) // Trigger file input on click
+                            !isDisabled && triggerFileInput(tanNumberImageRef) 
                         }
                       >
                         {imagePreviews.tanNumberImage &&
                           imagePreviews.tanNumberImage.length > 0 ? (
                           <img
-                            src={imagePreviews.tanNumberImage[0]} // Display the first uploaded image
+                            src={imagePreviews.tanNumberImage[0]} 
                             alt="TAN Number Preview"
                             className="w-full h-full object-cover rounded-md"
                           />
@@ -3796,7 +3609,7 @@ const HotelForm = ({
                                 e,
                                 'tanNumberImage',
                                 field.onChange
-                              ) // Handle image change
+                              ) 
                           }
                           className="hidden"
                         />
@@ -3810,13 +3623,13 @@ const HotelForm = ({
                           () =>
                             imagePreviews.tanNumberImage &&
                             !isDisabled &&
-                            triggerFileInput(tanNumberImageRef) // Trigger file input on click
+                            triggerFileInput(tanNumberImageRef) 
                         }
                       />
                     </div>
                     <FormMessage className="text-[10px]" />
 
-                    {/* Display all selected images in a row, wrapping to the next line if necessary */}
+                    {}
                     <div className="flex flex-wrap gap-3 mt-4">
                       {imagePreviews.tanNumberImage?.map((image, index) => (
                         <div
@@ -3833,7 +3646,7 @@ const HotelForm = ({
                             className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
                             onClick={() =>
                               handleImageRemove(index, 'tanNumberImage')
-                            } // Handle image removal
+                            } 
                           >
                             X
                           </button>
@@ -3864,64 +3677,7 @@ const HotelForm = ({
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="dataPrivacyGdprImage"
-                render={({ field }) => (
-                  <FormItem className="w-fit relative">
-                    <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                      GDPR Compliance Image{' '}
-                    </FormLabel>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-32 h-12 2xl:w-36 2xl:h-14 bg-[#F6EEE0] flex items-center justify-center ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} rounded-md border border-gray-100`}
-                        onClick={() =>
-                          !isDisabled &&
-                          triggerFileInput(dataPrivacyGdprImageRef)
-                        }
-                      >
-                        {imagePreviews.dataPrivacyGdprImage &&
-                          imagePreviews.dataPrivacyGdprImage.length > 0 ? (
-                          <img
-                            src={imagePreviews.dataPrivacyGdprImage[0]}
-                            alt="GDPR Compliance Preview"
-                            className="w-full h-full object-cover rounded-md"
-                          />
-                        ) : (
-                          <CiCamera className="w-8 h-8 text-coffee opacity-50" />
-                        )}
-                      </div>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          ref={dataPrivacyGdprImageRef}
-                          onChange={(e) =>
-                            handleImageChange(
-                              e,
-                              'dataPrivacyGdprImage',
-                              field.onChange
-                            )
-                          }
-                          className="hidden"
-                        />
-                      </FormControl>
-                      <Upload
-                        className={`absolute left-20 z-20 h-3 w-3 2xl:h-4 2xl:w-4 ${imagePreviews.dataPrivacyGdprImage && !isDisabled
-                          ? 'text-black cursor-pointer'
-                          : 'text-gray-400 cursor-not-allowed'
-                          }`}
-                        onClick={() =>
-                          imagePreviews.dataPrivacyGdprImage &&
-                          !isDisabled &&
-                          triggerFileInput(dataPrivacyGdprImageRef)
-                        }
-                      />
-                    </div>
-                    <FormMessage className="text-[10px]" />
-                  </FormItem>
-                )}
-              /> */}
+              {}
               <FormField
                 control={form.control}
                 name="dataPrivacyGdprImage"
@@ -3936,13 +3692,13 @@ const HotelForm = ({
                         onClick={
                           () =>
                             !isDisabled &&
-                            triggerFileInput(dataPrivacyGdprImageRef) // Trigger file input on click
+                            triggerFileInput(dataPrivacyGdprImageRef) 
                         }
                       >
                         {imagePreviews.dataPrivacyGdprImage &&
                           imagePreviews.dataPrivacyGdprImage.length > 0 ? (
                           <img
-                            src={imagePreviews.dataPrivacyGdprImage[0]} // Display the first uploaded image
+                            src={imagePreviews.dataPrivacyGdprImage[0]} 
                             alt="GDPR Compliance Preview"
                             className="w-full h-full object-cover rounded-md"
                           />
@@ -3961,7 +3717,7 @@ const HotelForm = ({
                                 e,
                                 'dataPrivacyGdprImage',
                                 field.onChange
-                              ) // Handle image change
+                              ) 
                           }
                           className="hidden"
                         />
@@ -3975,13 +3731,13 @@ const HotelForm = ({
                           () =>
                             imagePreviews.dataPrivacyGdprImage &&
                             !isDisabled &&
-                            triggerFileInput(dataPrivacyGdprImageRef) // Trigger file input on click
+                            triggerFileInput(dataPrivacyGdprImageRef) 
                         }
                       />
                     </div>
                     <FormMessage className="text-[10px]" />
 
-                    {/* Display all selected images in a row, wrapping to the next line if necessary */}
+                    {}
                     <div className="flex flex-wrap gap-3 mt-4">
                       {imagePreviews.dataPrivacyGdprImage?.map(
                         (image, index) => (
@@ -3999,7 +3755,7 @@ const HotelForm = ({
                               className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
                               onClick={() =>
                                 handleImageRemove(index, 'dataPrivacyGdprImage')
-                              } // Handle image removal
+                              } 
                             >
                               X
                             </button>
@@ -4011,26 +3767,7 @@ const HotelForm = ({
                 )}
               />
 
-              {/* <FormField
-                control={form.control}
-                name="dataPrivacyGdprCompliances"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                      GST Details
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter GDPR details"
-                        {...field}
-                        disabled={isDisabled}
-                        className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-[10px]" />
-                  </FormItem>
-                )}
-              /> */}
+              {}
               <FormField
                 control={form.control}
                 name="gst"
@@ -4110,53 +3847,7 @@ const HotelForm = ({
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="merchantId"
-                render={({ field }) => (
-                  <FormItem className="sm:col-span-2">
-                    <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                      Cashfree Merchant ID
-                    </FormLabel>
-                    <div className="flex gap-2">
-                      <FormControl>
-                        <Input
-                          placeholder="Enter Cashfree Merchant ID"
-                          {...field}
-                          // Enable if hotelId exists and not pure view/pending
-                          disabled={
-                            !hotelId || mode === 'view' || mode === 'pending'
-                          }
-                          className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
-                          onChange={(e) => {
-                            // Optional lightweight validation: trim spaces
-                            const v = e.target.value.replace(/\s+/g, '');
-                            field.onChange(v);
-                          }}
-                        />
-                      </FormControl>
-
-                      <Button
-                        type="button"
-                        onClick={saveMerchantId}
-                        disabled={
-                          !hotelId ||
-                          mode === 'view' ||
-                          mode === 'pending' ||
-                          merchantSaving
-                        }
-                        className="btn-primary text-xs 2xl:text-sm whitespace-nowrap"
-                        title={
-                          !hotelId ? 'Create/Select a hotel first' : 'Save'
-                        }
-                      >
-                        {merchantSaving ? 'Saving…' : 'Save'}
-                      </Button>
-                    </div>
-                    <FormMessage className="text-[10px]" />
-                  </FormItem>
-                )}
-              /> */}
+              {}
               <FormField
                 control={form.control}
                 name="merchantId"
@@ -4167,7 +3858,7 @@ const HotelForm = ({
                     </FormLabel>
 
                     {mode === 'view' ? (
-                      // VIEW: read-only, no Save button
+                      
                       <FormControl>
                         <Input
                           {...field}
@@ -4177,7 +3868,7 @@ const HotelForm = ({
                         />
                       </FormControl>
                     ) : (
-                      // ADD/EDIT: editable + Save
+                      
                       <div className="flex gap-2">
                         <FormControl>
                           <Input
@@ -4211,69 +3902,11 @@ const HotelForm = ({
                 )}
               />
 
-              {/* {mode === 'view' && (
-                <FormField
-                  control={form.control}
-                  name="merchantId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                        Cashfree Merchant ID
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          readOnly
-                          disabled
-                          className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none focus:ring-0 text-xs 2xl:text-sm"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-[10px]" />
-                    </FormItem>
-                  )}
-                />
-              )} */}
+              {}
 
-              {/* <div className="flex flex-col gap-3"> */}
-              {/* <FormField
-                  control={form.control}
-                  name="internetConnectivity"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center w-fit gap-4">
-                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                        Internet Connectivity
-                      </FormLabel>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          disabled={isDisabled}
-                        />
-                      </FormControl>
-                      <FormMessage className="text-[10px]" />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="softwareCompatibility"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center w-fit gap-4">
-                      <FormLabel className="text-xs 2xl:text-sm font-medium text-gray-700">
-                        Software Compatibility
-                      </FormLabel>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          disabled={isDisabled}
-                        />
-                      </FormControl>
-                      <FormMessage className="text-[10px]" />
-                    </FormItem>
-                  )}
-                /> */}
-              {/* </div> */}
+              {}
+              {}
+              {}
 
               <FormField
                 control={form.control}
@@ -4318,7 +3951,49 @@ const HotelForm = ({
           </div>
         </form>
       </Form>
-    </FormWrapper>
+
+      {}
+      {showRejectModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Reject Hotel Request</h3>
+            <textarea
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              placeholder="Enter rejection reason..."
+              className="w-full border border-gray-300 rounded-md p-3 mb-4 min-h-[120px] focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            />
+            <div className="flex justify-end gap-3">
+              <Button
+                type="button"
+                onClick={() => {
+                  setShowRejectModal(false);
+                  setRejectionReason('');
+                }}
+                className="bg-gray-200 hover:bg-gray-300 text-gray-800"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  if (!rejectionReason.trim()) {
+                    ToastAtTopRight.fire('Please enter a rejection reason', 'error');
+                    return;
+                  }
+                  rejectRequest(rejectionReason);
+                  setShowRejectModal(false);
+                  setRejectionReason('');
+                }}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                Confirm Reject
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </FormWrapper >
   );
 };
 

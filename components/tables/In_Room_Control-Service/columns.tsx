@@ -72,17 +72,17 @@ export const columns: ColumnDef<InRoomControlDataType, any>[] = [
     cell: ({ row }) => {
       const serviceId = row.original.requestID;
 
-      // Map UI display values to backend values
+      
       const statusMap = {
         Pending: 'pending',
         'In-Progress': 'in-progress',
         Completed: 'completed',
-        Cancelled: 'cancelled', // ✅ added
+        Cancelled: 'cancelled', 
       } as const;
 
       type StatusLabel = keyof typeof statusMap;
 
-      // Normalize backend value to match UI expected values
+      
       const normalizeStatus = (statusFromBackend: string): StatusLabel => {
         switch (statusFromBackend.toLowerCase()) {
           case 'pending':
@@ -113,7 +113,7 @@ export const columns: ColumnDef<InRoomControlDataType, any>[] = [
 
         try {
           const data = await apiCall('PATCH', `/api/services/status/${serviceId}`, {
-            status: statusMap[newStatus], // Send lowercase value to backend
+            status: statusMap[newStatus], 
           });
 
           if (
@@ -122,7 +122,7 @@ export const columns: ColumnDef<InRoomControlDataType, any>[] = [
             data.message?.toLowerCase().includes('status updated')
           ) {
             setStatus(newStatus);
-            // ✅ UI is now in sync
+            
           } else {
             console.error('Failed to update status:', data.message || data);
           }
@@ -158,11 +158,11 @@ export const columns: ColumnDef<InRoomControlDataType, any>[] = [
       );
     },
   },
-  // {
-  //   accessorKey: 'paymentStatus',
-  //   header: 'Payment',
-  //   cell: ({ row }) => <div className="text-sm">{row.original.paymentStatus}</div>
-  // },
+  
+  
+  
+  
+  
   {
     accessorKey: 'description',
     header: 'Description',

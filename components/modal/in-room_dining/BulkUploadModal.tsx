@@ -4,7 +4,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { X, Upload, FileUp } from 'lucide-react';
 import apiCall from '@/lib/axios';
-import { ToastAtTopRight } from '@/lib/sweetalert'; // ✅ Toast import
+import { ToastAtTopRight } from '@/lib/sweetalert'; 
 
 export type BulkUploadedProduct = {
   _id: string;
@@ -30,8 +30,8 @@ const REQUIRED_COLUMNS = [
   'productName',
   'description',
   'cost',
-  'foodType',   // vegetarian | non-vegetarian
-  'visibility', // true | false
+  'foodType',   
+  'visibility', 
   'imageUrl',
 ] as const;
 
@@ -42,7 +42,7 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<BulkUploadedProduct[] | null>(null);
 
-  // header validation / preview (CSV only)
+  
   const [headerOk, setHeaderOk] = useState<boolean | null>(null);
   const [missingCols, setMissingCols] = useState<string[]>([]);
   const [rowCount, setRowCount] = useState<number>(0);
@@ -112,7 +112,7 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
 
     if (!isCsvFile(f) && !isXlsxFile(f)) {
       setError('Please select a .csv or .xlsx file');
-      ToastAtTopRight.fire({ icon: 'error', title: 'Please select a .csv or .xlsx file' }); // ✅ toast
+      ToastAtTopRight.fire({ icon: 'error', title: 'Please select a .csv or .xlsx file' }); 
       setFile(null);
       setHeaderOk(null);
       setMissingCols([]);
@@ -124,7 +124,7 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
     setError(null);
     setFile(f);
 
-    // CSV -> header validation + preview
+    
     if (isCsvFile(f)) {
       try {
         const text = await f.text();
@@ -135,7 +135,7 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
           setMissingCols(Array.from(REQUIRED_COLUMNS));
           setRowCount(0);
           setPreviewRows([]);
-          ToastAtTopRight.fire({ icon: 'warning', title: 'CSV is empty' }); // ✅ toast
+          ToastAtTopRight.fire({ icon: 'warning', title: 'CSV is empty' }); 
           return;
         }
 
@@ -153,10 +153,10 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
         setMissingCols([]);
         setRowCount(0);
         setPreviewRows([]);
-        ToastAtTopRight.fire({ icon: 'error', title: msg }); // ✅ toast
+        ToastAtTopRight.fire({ icon: 'error', title: msg }); 
       }
     } else {
-      // XLSX -> skip client header validation
+      
       setHeaderOk(null);
       setMissingCols([]);
       setRowCount(0);
@@ -167,18 +167,18 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
 
   const downloadHeaderOnlySample = async () => {
     try {
-      // dynamic import to keep bundle light
+      
       const XLSX = (await import('xlsx')) as typeof import('xlsx');
 
 
-      // 1) DATA: header-only sheet
+      
       const header = Array.from(REQUIRED_COLUMNS);
       const wsTemplate = XLSX.utils.aoa_to_sheet([header]);
 
-      // optional: set column widths based on header length
+      
       wsTemplate['!cols'] = header.map((h) => ({ wch: Math.max(12, String(h).length + 2) }));
 
-      // 2) README sheet
+      
       const readmeData = [
         ['Instructions'],
         ['• Keep the header row exactly as-is (case-sensitive).'],
@@ -191,12 +191,12 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
       const wsReadme = XLSX.utils.aoa_to_sheet(readmeData);
       wsReadme['!cols'] = [{ wch: 90 }];
 
-      // 3) Build workbook
+      
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, wsTemplate, 'Template');
       XLSX.utils.book_append_sheet(wb, wsReadme, 'README');
 
-      // 4) Write and download
+      
       const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
       const blob = new Blob([wbout], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -220,20 +220,20 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
 
 
 
-  // const downloadHeaderOnlySample = () => {
-  //   const info =
-  //     '# Rename this file to .csv and put your data row-wise under these columns.\n' +
-  //     '# Header row (comma-separated):\n' +
-  //     `${REQUIRED_COLUMNS.join(',')}\n`;
-  //   const blob = new Blob([info], { type: 'text/plain;charset=utf-8;' });
-  //   const url = URL.createObjectURL(blob);
-  //   const a = document.createElement('a');
-  //   a.href = url;
-  //   a.download = 'inroomdining-bulk-upload-headers.txt';
-  //   a.click();
-  //   URL.revokeObjectURL(url);
-  //   ToastAtTopRight.fire({ icon: 'success', title: 'Header guide downloaded' }); // ✅ toast
-  // };
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
 
   const handleUpload = async () => {
@@ -245,7 +245,7 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
 
     try {
       const form = new FormData();
-      // server expects 'excelFile'
+      
       form.append('excelFile', file, file.name);
 
       const res = await apiCall(
@@ -259,12 +259,12 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
         setServerMsg(title);
         const createdList: BulkUploadedProduct[] = Array.isArray(res.data) ? res.data : [];
         setCreated(createdList);
-        ToastAtTopRight.fire({ icon: 'success', title }); // ✅ toast
+        ToastAtTopRight.fire({ icon: 'success', title }); 
         onSuccess?.(createdList);
       } else {
         const msg = res?.message || 'Upload failed';
         setError(msg);
-        ToastAtTopRight.fire({ icon: 'error', title: msg }); // ✅ toast
+        ToastAtTopRight.fire({ icon: 'error', title: msg }); 
       }
     } catch (e: any) {
       const msg =
@@ -272,7 +272,7 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
         e?.message ||
         'Something went wrong during upload';
       setError(msg);
-      ToastAtTopRight.fire({ icon: 'error', title: msg }); // ✅ toast
+      ToastAtTopRight.fire({ icon: 'error', title: msg }); 
     } finally {
       setUploading(false);
     }
@@ -280,13 +280,13 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
 
   return (
     <div className="fixed inset-0 z-[999]">
-      {/* Backdrop */}
+      {}
       <div className="absolute inset-0 bg-black/40" onClick={handleClose} />
 
-      {/* Modal */}
+      {}
       <div className="absolute inset-0 flex items-center justify-center p-4">
         <div className="w-full max-w-xl rounded-2xl bg-white shadow-xl">
-          {/* Header */}
+          {}
           <div className="flex items-center justify-between px-5 py-4 border-b">
             <h3 className="text-lg font-semibold">Bulk Upload In-Room Dining Items</h3>
             <button
@@ -298,19 +298,13 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
             </button>
           </div>
 
-          {/* Body */}
+          {}
           <div className="px-5 py-4 space-y-4">
             <div>
               <p className="text-sm text-gray-600">
                 Upload a <strong>.csv</strong> or <strong>.xlsx</strong> with the following columns (case-sensitive for CSV):
               </p>
-              {/* <ul className="mt-2 list-disc pl-5 text-sm text-gray-700">
-                {REQUIRED_COLUMNS.map((c) => (
-                  <li key={c}>
-                    <code className="rounded bg-gray-100 px-1 py-0.5">{c}</code>
-                  </li>
-                ))}
-              </ul> */}
+              {}
 
 
               <div className="mt-3 flex gap-2">
@@ -319,11 +313,7 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
                 </Button>
               </div>
 
-              {/* <div className="mt-3 flex gap-2">
-                <Button variant="outline" size="sm" onClick={downloadHeaderOnlySample}>
-                  Download Header Guide
-                </Button>
-              </div> */}
+              {}
 
             </div>
 
@@ -355,7 +345,7 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
                 Supported: .csv, .xlsx
               </p>
 
-              {/* Quick validation + preview (CSV only) */}
+              {}
               {headerOk !== null && (
                 <div className="mt-3 text-sm">
                   {headerOk ? (
@@ -419,7 +409,7 @@ export default function BulkUploadModal({ isOpen, onClose, onSuccess }: Props) {
             )}
           </div>
 
-          {/* Footer */}
+          {}
           <div className="flex items-center justify-end gap-2 px-5 py-4 border-t">
             <Button variant="outline" onClick={handleClose} disabled={uploading}>
               Cancel

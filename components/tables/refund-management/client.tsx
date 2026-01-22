@@ -108,7 +108,7 @@ export const HotelRefundDetailsTable: React.FC = () => {
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
-    setCurrentPage(1); // reset to first page on new search
+    setCurrentPage(1); 
   };
 
   const changePage = (newPage: number) => {
@@ -119,7 +119,7 @@ export const HotelRefundDetailsTable: React.FC = () => {
 
   return (
     <>
-      {/* Heading & Create Modal */}
+      {}
       <div className="flex items-start justify-start">
         <div className="w-full flex justify-between items-center px-4">
           <Heading title={`Refunds Management`} />
@@ -134,7 +134,7 @@ export const HotelRefundDetailsTable: React.FC = () => {
         onClose={() => setModalOpen(false)}
       />
 
-      {/* Search Input */}
+      {}
       <div className="my-4 px-4">
         <input
           type="text"
@@ -145,7 +145,7 @@ export const HotelRefundDetailsTable: React.FC = () => {
         />
       </div>
 
-      {/* Table */}
+      {}
       {isLoading ? (
         <div className="text-center mt-6">Loading...</div>
       ) : error ? (
@@ -160,7 +160,7 @@ export const HotelRefundDetailsTable: React.FC = () => {
         />
       )}
 
-      {/* Pagination */}
+      {}
       <div className="flex justify-end space-x-2 px-3 py-2">
         <Button
           variant="outline"

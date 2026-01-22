@@ -6,7 +6,7 @@ import LoginForm from '@/components/form/login/login-form';
 const LoginPage = () => {
   return (
     <div className="min-h-screen w-full flex relative">
-      {/* left part Image */}
+      {}
       <div className="hidden lg:block w-[60%]">
         <Image
           src={loginPageImage}
@@ -17,7 +17,7 @@ const LoginPage = () => {
           quality={100}
         />
       </div>
-      {/* Right part form */}
+      {}
       <div className=" w-full login-background flex justify-center items-center">
         <LoginForm />
       </div>

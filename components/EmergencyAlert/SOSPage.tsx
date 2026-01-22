@@ -8,7 +8,7 @@ const SOSPage = () => {
   const [emergencyDetails, setEmergencyDetails] = useState<any>(null);
   const [showAlert, setShowAlert] = useState(false);
 
-  // Simulate receiving an emergency SOS (This should come from API or event)
+  
   const triggerEmergency = (type: string, guestName: string, roomNo: string, assignedStaff: string) => {
     setEmergencyDetails({
       type,
@@ -21,7 +21,7 @@ const SOSPage = () => {
   };
 
   useEffect(() => {
-    // Example trigger, replace with actual event/API response
+    
     const emergencyMessage = {
       type: 'Fire',
       guestName: 'Mr. Timothy Chalamate',
@@ -29,7 +29,7 @@ const SOSPage = () => {
       assignedStaff: 'Employee1',
     };
 
-    // Trigger the emergency
+    
     triggerEmergency(
       emergencyMessage.type,
       emergencyMessage.guestName,
@@ -43,7 +43,7 @@ const SOSPage = () => {
       {showAlert && emergencyDetails && (
         <EmergencyAlert
           emergencyDetails={emergencyDetails}
-          onClose={() => setShowAlert(false)} // Close the alert after 10 seconds
+          onClose={() => setShowAlert(false)} 
         />
       )}
 

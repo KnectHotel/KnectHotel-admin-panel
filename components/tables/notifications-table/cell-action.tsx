@@ -13,9 +13,9 @@ const CellAction = (props: any) => {
 
   const onConfirm = async () => {
     try {
-      // Perform user  logic here
+      
     } catch (error: any) {
-      // console.error("Error deactivating user:", error);
+      
     } finally {
       setOpen(false);
     }
@@ -31,7 +31,7 @@ const CellAction = (props: any) => {
 
   return (
     <>
-      {/* Deactivate Confirmation Modal */}
+      {}
       <AlertModal
         isOpen={open}
         onCloseAction={() => setOpen(false)}
@@ -40,9 +40,9 @@ const CellAction = (props: any) => {
         description="Are you sure you want to deactivate this user?"
       />
 
-      {/* Action Buttons */}
+      {}
       <div className="flex space-x-2">
-        {/* View user details */}
+        {}
         <button
           className="p-1 rounded-md group bg-[#A07D3D1A] hover:bg-[#a07d3d5e]"
           onClick={() => handleViewUser()}
@@ -50,7 +50,7 @@ const CellAction = (props: any) => {
           <Eye className=" w-4 text-button-dark group-hover:text-white" />
         </button>
 
-        {/* Delete User */}
+        {}
         <button
           onClick={() => setOpen(true)}
           className="p-1 rounded-md group bg-[#A07D3D1A] hover:bg-[#a07d3d5e]"

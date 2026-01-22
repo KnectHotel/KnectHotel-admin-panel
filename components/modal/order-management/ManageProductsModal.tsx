@@ -40,7 +40,7 @@ const ManageProductsModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     setProductList(productList.filter((_, i) => i !== index));
   };
 
-  // When conditionally rendering hooks always do it below everything else
+  
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
@@ -91,7 +91,7 @@ const ManageProductsModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             </div>
           </form>
         </Form>
-        {/* Product List */}
+        {}
         {productList.length > 0 && (
           <div className="border-t pt-4">
             <h6 className="font-medium mb-2">Product List</h6>

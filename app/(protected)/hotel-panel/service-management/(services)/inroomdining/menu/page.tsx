@@ -58,7 +58,7 @@ const MenuPage: React.FC = () => {
     setIsOpen(true);
   };
 
-  // Separate items into vegetarian and non-vegetarian
+  
   const vegetarianItems = menuData.filter(item => item.foodType === 'vegetarian');
   const nonVegetarianItems = menuData.filter(item => item.foodType === 'non-vegetarian');
 
@@ -76,20 +76,20 @@ const MenuPage: React.FC = () => {
         isOpen={isOpen}
         onClose={() => {
           setIsOpen(false);
-          setEditItem(null); // Reset edit mode on close
+          setEditItem(null); 
         }}
         editMode={!!editItem}
         productId={editItem?._id}
       />
 
-      {/* Loading/Error */}
+      {}
       {loading ? (
         <div className="text-center py-6">Loading menu...</div>
       ) : error ? (
         <div className="text-center text-red-500 py-6">{error}</div>
       ) : (
         <div className="h-auto w-full pt-8 px-4 space-y-12">
-          {/* Vegetarian Items */}
+          {}
           {vegetarianItems.length > 0 && (
             <div>
               <h3 className="font-bold text-2xl mb-4">Vegetarian Items</h3>
@@ -129,7 +129,7 @@ const MenuPage: React.FC = () => {
             </div>
           )}
 
-          {/* Non-Vegetarian Items */}
+          {}
           {nonVegetarianItems.length > 0 && (
             <div>
               <h3 className="font-bold text-2xl mb-4">Non-Vegetarian Items</h3>

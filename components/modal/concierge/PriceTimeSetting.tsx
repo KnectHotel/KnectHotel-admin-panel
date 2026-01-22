@@ -47,7 +47,7 @@ const PriceTimeSettingConciergeModal: React.FC<ModalProps> = ({
     }
   });
 
-  // Watch the value of priceType
+  
   const priceType = form.watch('priceType');
   if (!isOpen) return null;
 
@@ -71,7 +71,7 @@ const PriceTimeSettingConciergeModal: React.FC<ModalProps> = ({
               Edit time or price according to availability
             </p>
           </div>
-          {/* Close button */}
+          {}
           <button onClick={onClose} className="text-gray-600 hover:text-black">
             ✖
           </button>
@@ -126,7 +126,7 @@ const PriceTimeSettingConciergeModal: React.FC<ModalProps> = ({
                 </div>
               </div>
 
-              {/* Conditionally render the Amount field */}
+              {}
               {priceType === 'Paid' && (
                 <div className="flex gap-4 items-center justify-center">
                   <span className="text-sm pb-6 font-semibold">Amount</span>

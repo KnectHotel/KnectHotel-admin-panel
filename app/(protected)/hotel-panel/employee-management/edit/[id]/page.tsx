@@ -16,7 +16,7 @@ const EditGuestPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Use React.use to unwrap the params promise
+  
   const { id } = React.use(params);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-//****************Dummy guest data type definition*****************
+
 type TrackingStatusType = 'under review' | 'pending' | 'submitted';
 type PaymentStatusType = 'pending' | 'paid';
 
@@ -35,7 +35,7 @@ export type GuestDataType = {
   paymentStatus: PaymentStatusType;
 };
 
-// Dummy guest data
+
 export const GuestData: GuestDataType[] = [
   {
     guestId: 'GD17823450',
@@ -453,5 +453,5 @@ export const GuestData: GuestDataType[] = [
     trackingStatus: 'pending',
     paymentStatus: 'pending'
   }
-  // Continue updating all other guests with similar dummy values
+  
 ];

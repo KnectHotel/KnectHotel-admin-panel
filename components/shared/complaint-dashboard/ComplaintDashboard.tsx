@@ -2,8 +2,8 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 
-// - Pie charts (e.g., using Chart.js, Recharts, or a <canvas> element) often rely on browser-specific APIs that don’t exist in Node.js (the server environment).
-// - By using dynamic with ssr: false, you tell Next.js: "Don’t render this component on the server." The server skips it, leaving a placeholder, and the client loads and renders it post-hydration, ensuring consistency.
+
+
 const CustomPieChart = dynamic(() => import('./PieChart'), { ssr: false });
 
 type Props = {

@@ -98,12 +98,12 @@ const TransactionForm = ({ _id, mode, isHotelPanel = false }: Props) => {
 
   const formatDateAndTime = (dateString: string) => {
     const date = new Date(dateString);
-    const formattedDate = date.toLocaleDateString('en-GB'); // DD-MM-YYYY
+    const formattedDate = date.toLocaleDateString('en-GB'); 
     const formattedTime = date.toLocaleTimeString('en-GB', {
       hour: '2-digit',
       minute: '2-digit',
       hour12: true
-    }); // 12-hour time with AM/PM
+    }); 
     return `${formattedDate}, ${formattedTime}`;
   };
 
@@ -160,7 +160,7 @@ const TransactionForm = ({ _id, mode, isHotelPanel = false }: Props) => {
 
         <CardContent>
           <div className="space-y-4">
-            {/* Hotel Info - For Hotel Panel */}
+            {}
             {isHotelPanel && (
               <div className="space-y-2 pt-4">
                 <h3 className="text-sm font-semibold">Hotel Details</h3>
@@ -199,7 +199,7 @@ const TransactionForm = ({ _id, mode, isHotelPanel = false }: Props) => {
                     <label className="text-xs font-medium text-gray-600">
                       Coupon
                     </label>
-                    {/* ✅ FIX: never pass the object; pass a string */}
+                    {}
                     <Input
                       value={formatCoupon(transactionData.coupon)}
                       disabled
@@ -210,7 +210,7 @@ const TransactionForm = ({ _id, mode, isHotelPanel = false }: Props) => {
               </div>
             )}
 
-            {/* Service Request Details */}
+            {}
             {serviceRequest && (
               <div className="space-y-2 pt-4">
                 <h3 className="text-sm font-semibold">
@@ -311,7 +311,7 @@ const TransactionForm = ({ _id, mode, isHotelPanel = false }: Props) => {
               </div>
             )}
 
-            {/* Coupon Info - Non-Hotel Panel */}
+            {}
             {!isHotelPanel && transactionData.coupon && (
               <div className="space-y-2 pt-4">
                 <h3 className="text-sm font-semibold">Coupon Details</h3>
@@ -350,7 +350,7 @@ const TransactionForm = ({ _id, mode, isHotelPanel = false }: Props) => {
               </div>
             )}
 
-            {/* Payment Info - Non-Hotel Panel */}
+            {}
             {!isHotelPanel && (
               <div className="space-y-2 pt-4">
                 <h3 className="text-sm font-semibold">Payment Details</h3>

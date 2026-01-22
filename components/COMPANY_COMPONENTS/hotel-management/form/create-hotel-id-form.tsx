@@ -112,7 +112,7 @@ const CreateHotelIdForm = ({ hotelID, isEnabled = true, mode }: Props) => {
       console.log('API response:', response);
       setSubmitStatus('success');
       form.reset();
-      router.push('/hotels'); // Navigate to hotels list after success
+      router.push('/hotels'); 
     } catch (error: any) {
       console.error('Error occurred during API call:', error);
       setSubmitStatus('error');
@@ -122,9 +122,9 @@ const CreateHotelIdForm = ({ hotelID, isEnabled = true, mode }: Props) => {
   };
 
   const onCancel = () => {
-    form.reset(); // Reset form to initial values
-    setPreview(null); // Clear image preview
-    router.push('/hotels'); // Navigate back to hotels list
+    form.reset(); 
+    setPreview(null); 
+    router.push('/hotels'); 
   };
 
   const data = [
@@ -155,7 +155,7 @@ const CreateHotelIdForm = ({ hotelID, isEnabled = true, mode }: Props) => {
     }
   ];
 
-  // In your useEffect fetching the hotel data, map all fields:
+  
   useEffect(() => {
     if (hotelID) {
       const fetchHotel = async () => {
@@ -228,7 +228,7 @@ const CreateHotelIdForm = ({ hotelID, isEnabled = true, mode }: Props) => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-8 justify-center pt-4 items-center"
           >
-            {/* Image Upload */}
+            {}
             <div className="flex flex-col md:flex-row gap-4 items-center md:items-start justify-between w-full">
               <h2 className="text-[#362913] font-bold text-[16px]">
                 BRANDED HOTEL
@@ -281,7 +281,7 @@ const CreateHotelIdForm = ({ hotelID, isEnabled = true, mode }: Props) => {
             </div>
             <div className="flex flex-col gap-4 w-full px-0 md:px-0">
               <div className="w-full flex justify-between items-center gap-4">
-                {/* Left part */}
+                {}
                 <div className="flex flex-col gap-3 justify-center items-start">
                   <FormField
                     control={form.control}
@@ -352,7 +352,7 @@ const CreateHotelIdForm = ({ hotelID, isEnabled = true, mode }: Props) => {
                     )}
                   />
                 </div>
-                {/* Right part */}
+                {}
                 <div className="flex flex-col gap-3 justify-center items-start">
                   <FormField
                     control={form.control}
@@ -403,7 +403,7 @@ const CreateHotelIdForm = ({ hotelID, isEnabled = true, mode }: Props) => {
                 </div>
               </div>
               <div className="flex flex-col gap-4 justify-center items-start w-full">
-                {/* Services */}
+                {}
                 <FormField
                   control={form.control}
                   name="services"
@@ -523,9 +523,9 @@ const CreateHotelIdForm = ({ hotelID, isEnabled = true, mode }: Props) => {
       </FormWrapper>
       <FormWrapper title="">
         <div className="flex flex-col md:flex-row justify-between w-full">
-          {/* Left Column */}
+          {}
           <div className="w-full md:w-1/3 flex flex-col gap-3 md:gap-6">
-            {/* Room Types */}
+            {}
             <div className="flex">
               <div className="w-40 font-medium text-sm text-black">
                 Room types
@@ -543,7 +543,7 @@ const CreateHotelIdForm = ({ hotelID, isEnabled = true, mode }: Props) => {
               </ul>
             </div>
 
-            {/* Select Features */}
+            {}
             <div className="flex mt-4">
               <div className="w-40 font-medium text-sm text-black">
                 Select features
@@ -555,7 +555,7 @@ const CreateHotelIdForm = ({ hotelID, isEnabled = true, mode }: Props) => {
             </div>
           </div>
 
-          {/* Right Column */}
+          {}
           <div className="w-full md:w-2/3 flex flex-col justify-start gap-3 md:gap-6 mt-3 md:mt-0">
             <div className="flex flex-col gap-3 md:gap-0 md:flex-row w-full justify-evenly">
               <div className="flex justify-between w-52 text-sm text-black">
@@ -600,7 +600,7 @@ const CreateHotelIdForm = ({ hotelID, isEnabled = true, mode }: Props) => {
             </div>
           ))}
 
-          {/* Additional Labels */}
+          {}
           <div className="pt-6 space-y-6">
             <p className="text-sm font-medium text-black">
               Internet Connectivity

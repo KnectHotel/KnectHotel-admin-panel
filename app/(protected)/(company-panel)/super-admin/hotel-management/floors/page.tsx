@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { dummyHotels } from '@/data/foodPlans';
 import AnimatedSelect from '@/components/ui/AnimatedSelect';
 
-/* safeFetch identical to earlier — inline for brevity */
+
 async function safeFetch(url: string) {
   try {
     const r = await fetch(url, { cache: 'no-store' });

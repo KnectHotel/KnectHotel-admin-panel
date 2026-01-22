@@ -26,7 +26,7 @@ export default function ProductVideosPage() {
     thumbnail: ''
   });
 
-  // FETCH PRODUCT VIDEOS
+  
   const fetchVideos = async () => {
     try {
       const json = await apiCall('GET', ENDPOINTS.PRODUCT_VIDEOS);
@@ -45,7 +45,7 @@ export default function ProductVideosPage() {
     setOpenId(openId === id ? null : id);
   };
 
-  // CREATE / UPDATE
+  
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
@@ -70,7 +70,7 @@ export default function ProductVideosPage() {
     }
   };
 
-  // DELETE
+  
   const deleteVideo = async (id: string) => {
     try {
       await apiCall('DELETE', `${ENDPOINTS.PRODUCT_VIDEOS}/${id}`);
@@ -80,7 +80,7 @@ export default function ProductVideosPage() {
     }
   };
 
-  // OPEN EDIT FORM
+  
   const editVideo = (item: any) => {
     setEditingId(item._id);
     setShowForm(true);
@@ -95,7 +95,7 @@ export default function ProductVideosPage() {
 
   return (
     <div className="p-6 w-full">
-      {/* Header */}
+      {}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -133,7 +133,7 @@ export default function ProductVideosPage() {
         </motion.button>
       </motion.div>
 
-      {/* Empty State */}
+      {}
       {items.length === 0 ? (
         <div className="text-center text-gray-500 py-20">
           <img
@@ -166,7 +166,7 @@ export default function ProductVideosPage() {
                 />
               )}
 
-              {/* Dropdown */}
+              {}
               <button
                 onClick={() => toggleDropdown(item._id)}
                 className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded"
@@ -203,7 +203,7 @@ export default function ProductVideosPage() {
         </div>
       )}
 
-      {/* FORM MODAL */}
+      {}
       <AnimatePresence>
         {showForm && (
           <motion.div
@@ -223,7 +223,7 @@ export default function ProductVideosPage() {
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-3">
-                {/* Title */}
+                {}
                 <div>
                   <label className="text-sm font-medium">Title</label>
                   <input
@@ -237,7 +237,7 @@ export default function ProductVideosPage() {
                   />
                 </div>
 
-                {/* Description */}
+                {}
                 <div>
                   <label className="text-sm font-medium">Description</label>
                   <textarea
@@ -251,7 +251,7 @@ export default function ProductVideosPage() {
                   />
                 </div>
 
-                {/* Duration */}
+                {}
                 <div>
                   <label className="text-sm font-medium">Duration</label>
                   <input
@@ -266,7 +266,7 @@ export default function ProductVideosPage() {
                   />
                 </div>
 
-                {/* Thumbnail */}
+                {}
                 <div>
                   <label className="text-sm font-medium">Thumbnail URL</label>
                   <input

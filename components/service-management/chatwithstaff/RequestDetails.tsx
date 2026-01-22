@@ -73,7 +73,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
   const [chatRating, setChatRating] = useState<number | null>(null);
 
 
-  // ---------- Helpers ----------
+  
   const roomKey = (roomId: string, key: string) => `chat:${roomId}:${key}`;
 
   const safeParseInt = (val: string | null) => {
@@ -101,7 +101,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
     }, 1000);
   };
 
-  // ---------- Fetch chat details ----------
+  
   useEffect(() => {
     const fetchChatDetails = async () => {
       setLoading(true);
@@ -119,7 +119,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
 
           const rId: string = res.data.chatRoom.roomId;
 
-          // If we already have final duration, prefer that
+          
           const storedFinal = safeParseInt(
             localStorage.getItem(roomKey(rId, 'finalActiveDuration'))
           );
@@ -127,7 +127,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
             setEndedDuration(storedFinal);
             setActiveDuration(storedFinal);
           } else {
-            // Resume live timer if startTime exists
+            
             const storedStart = safeParseInt(
               localStorage.getItem(roomKey(rId, 'startTime'))
             );
@@ -157,7 +157,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
     };
   }, [chatId, refreshKey]);
 
-  // ---------- Join Chat ----------
+  
   const joinChat = () => {
     if (!chatRoom) return;
 
@@ -178,7 +178,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
       localStorage.getItem(roomKey(roomId, 'startTime'))
     );
     if (!storedStart) {
-      // First time joining the chat, start the timer
+      
       const startTime = Date.now();
       localStorage.setItem(roomKey(roomId, 'startTime'), startTime.toString());
       startTimer(startTime, roomId);
@@ -210,7 +210,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
         return;
       }
 
-      // 2) FINAL DURATION compute
+      
       const roomId = chatRoom.roomId;
       const storedStartStr = localStorage.getItem(roomKey(roomId, 'startTime'));
       const storedStart = storedStartStr ? parseInt(storedStartStr, 10) : null;
@@ -222,12 +222,12 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
         finalMs = activeDuration || 0;
       }
 
-      // 3) Timer clear + final state set
+      
       if (timerRef.current) clearInterval(timerRef.current);
       setEndedDuration(finalMs);
       setActiveDuration(finalMs);
 
-      // 4) Persist final duration (aur chaho to startTime ko remove bhi kar sakte ho)
+      
       localStorage.setItem(roomKey(roomId, 'finalActiveDuration'), String(finalMs));
       localStorage.removeItem(roomKey(roomId, 'startTime'));
 
@@ -254,12 +254,12 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
     };
   };
 
-  // ---------- Auto-scroll ----------
+  
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // ---------- Grouping ----------
+  
   const groupMessagesByDate = () => {
     const grouped: { [date: string]: Message[] } = {};
     messages.forEach((msg) => {
@@ -275,7 +275,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
     return grouped;
   };
 
-  // ---------- Send Message ----------
+  
   const handleSendMessage = () => {
     if (
       !newMessage.trim() ||
@@ -307,7 +307,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
     setNewMessage('');
   };
 
-  // ---------- End Chat (FINAL duration persist) ----------
+  
   const handleEndChat = () => {
     if (!chatRoom) return;
 
@@ -328,7 +328,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
 
     socket.emit('chat:close', { roomId, message: 'Chat has Closed.' });
 
-    // Compute FINAL duration
+    
     const storedStart = safeParseInt(
       localStorage.getItem(roomKey(roomId, 'startTime'))
     );
@@ -343,7 +343,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
     setEndedDuration(finalMs);
     setActiveDuration(finalMs);
 
-    // Persist final duration (stays forever unless manually cleared)
+    
     localStorage.setItem(
       roomKey(roomId, 'finalActiveDuration'),
       finalMs.toString()
@@ -371,7 +371,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
     );
   };
 
-  // ---------- Render ----------
+  
   if (loading) return <div className="mt-24 p-4">Loading chat...</div>;
   if (!chatRoom)
     return <div className="mt-24 p-4 text-red-500">Chat not found.</div>;
@@ -381,7 +381,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
   return (
     <div className="min-h-screen bg-[#f3efea] py-14 px-8 md:px-24">
       <div className="max-w-4xl mx-auto bg-[#FAF6EF] rounded-xl shadow-lg overflow-hidden">
-        {/* Header */}
+        {}
         <div className="border-b px-6 py-5">
           <h2 className="text-xl font-semibold text-[#4b392e]">Chat Details</h2>
           <div className="mt-2 text-sm text-[#555] flex flex-wrap gap-x-8 gap-y-2">
@@ -404,7 +404,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
           )}
         </div>
 
-        {/* Info */}
+        {}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-6 py-4 border-b bg-[#f9f5ee] text-sm">
           <Info label="Guest Name" value={chatRoom.guestId.firstName} />
           <Info
@@ -433,7 +433,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
         </div>
 
 
-        {/* Chat Messages */}
+        {}
         <div
           className="px-6 py-6 max-h-[500px] overflow-y-auto space-y-8"
           style={{
@@ -442,7 +442,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
             backgroundPosition: 'center'
           }}
         >
-          {/* Initial guest query */}
+          {}
           {chatRoom.guestQuery && (
             <div className="flex justify-start mb-2">
               <div className="flex flex-col max-w-[70%]">
@@ -488,7 +488,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input */}
+        {}
         <div className="px-6 py-4 border-t bg-[rgba(69,53,25,1)] flex gap-3 items-center">
           <input
             type="text"
@@ -510,7 +510,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
           </button>
         </div>
 
-        {/* End Chat */}
+        {}
         {chatRoom.status !== 'Closed' && isJoined && (
           <div className="px-6 pb-6 pt-2">
             <button
@@ -525,7 +525,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
           <h3 className="text-lg font-semibold text-[#4b392e] mb-4">Feedback</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-            {/* Agent Feedback & Rating */}
+            {}
             <div className="rounded-lg bg-[#f4e7cf] p-4 space-y-3">
               <div className="flex items-center gap-2">
                 <span className="font-medium text-[#4b392e]">Agent Feedback:</span>
@@ -537,7 +537,7 @@ const ChatWithStaffDetail: React.FC<Props> = ({ chatId }) => {
               </div>
             </div>
 
-            {/* Chat Feedback & Rating */}
+            {}
             <div className="rounded-lg bg-[#f4e7cf] p-4 space-y-3">
               <div className="flex items-center gap-2">
                 <span className="font-medium text-[#4b392e]">Chat Feedback:</span>

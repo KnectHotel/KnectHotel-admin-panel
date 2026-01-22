@@ -1,4 +1,4 @@
-// app/data/foodPlans.ts
+
 
 export const dummyHotels = [
   {

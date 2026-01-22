@@ -9,7 +9,7 @@ const HotelProfile = () => {
 
   useEffect(() => {
     const adminData = getSessionStorageItem<any>('admin');
-    // console.log('Raw session storage:', adminData);
+    
     setHotelId(adminData?.user?.HotelId || null);
   }, []);
 

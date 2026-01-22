@@ -48,13 +48,13 @@ const TableFooter = React.forwardRef<
 TableFooter.displayName = 'TableFooter';
 
 interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-  highlightedRow?: number; // Add a prop to specify which row to highlight
-  rowNumber?: number; // Prop to receive the row number
+  highlightedRow?: number; 
+  rowNumber?: number; 
 }
 
 const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
   ({ className, highlightedRow, rowNumber, ...props }, ref) => {
-    const isHighlighted = highlightedRow === rowNumber; // Check if the current row should be highlighted
+    const isHighlighted = highlightedRow === rowNumber; 
 
     return (
       <tr
@@ -62,7 +62,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
         className={cn(
           ' relative transition-colors data-[state=selected]:bg-muted',
           '',
-          isHighlighted ? '' : 'drop-shadow-md relative  rounded-xl', // Apply green background if highlighted
+          isHighlighted ? '' : 'drop-shadow-md relative  rounded-xl', 
           className
         )}
         {...props}

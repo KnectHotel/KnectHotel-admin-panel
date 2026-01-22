@@ -8,8 +8,8 @@ import { columns } from './columns';
 import { Heading } from '@/components/ui/heading';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import axios, { apiCall } from '@/lib/axios'; // ✅ your custom axios instance
-// import toast from 'react-hot-toast';
+import axios, { apiCall } from '@/lib/axios'; 
+
 
 export interface Subscription {
   _id: string;
@@ -33,7 +33,7 @@ export const SubscriptionManagementHomePage: React.FC = () => {
   const [limit, setLimit] = useState(10);
   const [totalRecords, setTotalRecords] = useState(0);
 
-  // 🧠 Fetch subscriptions from API
+  
   const fetchSubscriptions = async () => {
     try {
       setLoading(true);
@@ -45,7 +45,7 @@ export const SubscriptionManagementHomePage: React.FC = () => {
       setTotalRecords(subscriptions.length);
     } catch (err) {
       console.error('Failed to fetch subscriptions:', err);
-      // toast.error('Failed to load subscriptions');
+      
     } finally {
       setLoading(false);
     }

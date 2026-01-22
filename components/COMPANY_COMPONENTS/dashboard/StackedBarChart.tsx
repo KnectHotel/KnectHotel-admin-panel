@@ -69,7 +69,7 @@ export function StackedBarChart({ chartData }: { chartData: chartDataType[] }) {
           <BarChart
             accessibilityLayer
             data={chartData}
-            // margin={{ bottom: 60 }} // Increased bottom margin for stacked labels
+            
           >
             <XAxis
               className="text-white/60"
@@ -79,7 +79,7 @@ export function StackedBarChart({ chartData }: { chartData: chartDataType[] }) {
               axisLine={false}
               tick={<CustomTick />}
               interval={0}
-              height={40} // Increased height to accommodate stacked labels
+              height={40} 
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
             <ChartLegend content={<ChartLegendContent />} />

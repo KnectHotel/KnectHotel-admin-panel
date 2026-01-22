@@ -1,4 +1,4 @@
-// KnectHotel-admin-panel/app/hotel-panel/room-management/page.tsx
+
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';

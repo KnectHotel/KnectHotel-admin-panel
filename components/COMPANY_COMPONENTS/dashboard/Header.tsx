@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import DateRangePickerComponent from './DateRangePicker';
 
 const Header: React.FC = () => {
-  // State to track the active link
+  
   const [activeLink, setActiveLink] = useState<string>('Weekly');
 
-  // List of links
+  
   const links = ['Weekly', 'Monthly', 'Yearly'];
 
-  // Handle link click
+  
   const handleLinkClick = (link: string) => {
     setActiveLink(link);
   };
@@ -19,7 +19,7 @@ const Header: React.FC = () => {
       <div className="min-w-44">
         <DateRangePickerComponent />
       </div>
-      {/* Navigation Links */}
+      {}
       <nav className="flex gap-6">
         {links.map((link) => (
           <button
@@ -36,7 +36,7 @@ const Header: React.FC = () => {
         ))}
       </nav>
 
-      {/* Date Range Picker */}
+      {}
     </header>
   );
 };

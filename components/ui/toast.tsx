@@ -38,7 +38,7 @@ const toastVariants = cva(
   }
 )
 
-/** Props used by the exported <Toast /> component */
+
 export type ToastProps =
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
   VariantProps<typeof toastVariants>

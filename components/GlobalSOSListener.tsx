@@ -17,14 +17,14 @@ export default function GlobalSOSListener() {
     bound.current = true;
 
     const handler = (payload: any) => {
-      // Save SOS payload globally
+      
       setLatest(payload);
 
-      // Navigate using MongoDB _id instead of uniqueId
+      
       if (payload?._id) {
         router.push(`/sos/${payload._id}`);
       } else {
-        // fallback
+        
         router.push('/sos');
       }
     };

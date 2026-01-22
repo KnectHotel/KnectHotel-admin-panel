@@ -28,7 +28,7 @@ export default function UpdatesPage() {
     image: ''
   });
 
-  // LOAD DATA FROM BACKEND
+  
   const fetchUpdates = async () => {
     try {
       const json = await apiCall('GET', ENDPOINTS.UPDATES);
@@ -47,7 +47,7 @@ export default function UpdatesPage() {
     setOpenId(openId === id ? null : id);
   };
 
-  // CREATE or UPDATE
+  
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
@@ -73,7 +73,7 @@ export default function UpdatesPage() {
     }
   };
 
-  // DELETE
+  
   const deleteItem = async (id: string) => {
     try {
       await apiCall('DELETE', `${ENDPOINTS.UPDATES}/${id}`);
@@ -83,7 +83,7 @@ export default function UpdatesPage() {
     }
   };
 
-  // OPEN EDIT FORM
+  
   const editItem = (item: any) => {
     setEditingId(item._id);
     setShowForm(true);
@@ -98,7 +98,7 @@ export default function UpdatesPage() {
 
   return (
     <div className="p-6 w-full">
-      {/* Header */}
+      {}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -131,7 +131,7 @@ export default function UpdatesPage() {
         </motion.button>
       </motion.div>
 
-      {/* Empty state */}
+      {}
       {items.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
@@ -160,7 +160,7 @@ export default function UpdatesPage() {
               <h3 className="font-semibold text-[#3b2f1c]">{item.title}</h3>
               <p className="text-sm text-gray-600 mt-1">{item.description}</p>
 
-              {/* Dropdown Trigger */}
+              {}
               <button
                 onClick={() => toggleDropdown(item._id)}
                 className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded transition"
@@ -168,7 +168,7 @@ export default function UpdatesPage() {
                 <FiMoreVertical size={18} />
               </button>
 
-              {/* Dropdown */}
+              {}
               <AnimatePresence>
                 {openId === item._id && (
                   <motion.div
@@ -199,7 +199,7 @@ export default function UpdatesPage() {
         </div>
       )}
 
-      {/* Add / Edit Form Modal */}
+      {}
       <AnimatePresence>
         {showForm && (
           <motion.div
@@ -219,7 +219,7 @@ export default function UpdatesPage() {
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Title */}
+                {}
                 <div>
                   <label className="text-sm font-medium">Title</label>
                   <input
@@ -233,7 +233,7 @@ export default function UpdatesPage() {
                   />
                 </div>
 
-                {/* Date */}
+                {}
                 <div>
                   <label className="text-sm font-medium">Date</label>
                   <input
@@ -247,7 +247,7 @@ export default function UpdatesPage() {
                   />
                 </div>
 
-                {/* Description */}
+                {}
                 <div>
                   <label className="text-sm font-medium">Description</label>
                   <textarea
@@ -261,7 +261,7 @@ export default function UpdatesPage() {
                   />
                 </div>
 
-                {/* Category */}
+                {}
                 <div>
                   <label className="text-sm font-medium">Category</label>
                   <input
@@ -275,7 +275,7 @@ export default function UpdatesPage() {
                   />
                 </div>
 
-                {/* Image */}
+                {}
                 <div>
                   <label className="text-sm font-medium">Image URL</label>
                   <input

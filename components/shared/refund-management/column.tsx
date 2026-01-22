@@ -48,7 +48,7 @@ export const columns: ColumnDef<SuperRefundType>[] = [
 
           {showModal && (
             <AssignModal
-              open={showModal} // ✅ add this line
+              open={showModal} 
               requestId={row.original._id}
               onClose={() => setShowModal(false)}
               onAssignSuccess={() => {

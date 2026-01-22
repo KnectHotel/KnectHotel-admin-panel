@@ -8,7 +8,7 @@ const ViewPendingHotelPage = async ({
   params: Promise<{ id: string }>;
 }) => {
   const id = (await params).id;
-  // console.log(id)
+  
   const mode = 'pending';
 
   return (

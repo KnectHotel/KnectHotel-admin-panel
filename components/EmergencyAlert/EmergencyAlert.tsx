@@ -15,17 +15,17 @@ const EmergencyAlert = ({ emergencyDetails, onClose }: { emergencyDetails: any, 
       return () => clearInterval(interval);
     }
 
-    // Revert to the original page after 10 seconds
+    
     onClose();
   }, [seconds, onClose]);
 
   useEffect(() => {
-    // Play bip sound when the component is shown
-    const beepSound = new Audio('/path/to/bip-sound.mp3'); // You can use your custom sound file
+    
+    const beepSound = new Audio('/path/to/bip-sound.mp3'); 
     beepSound.play();
     setIsBip(true);
 
-    // Stop the beep sound after 10 seconds
+    
     setTimeout(() => {
       setIsBip(false);
     }, 10000);
@@ -38,7 +38,7 @@ const EmergencyAlert = ({ emergencyDetails, onClose }: { emergencyDetails: any, 
       <p className="text-lg mt-2">Assigned Staff: {emergencyDetails.assignedStaff}</p>
       <p className="text-2xl mt-4">Time Remaining: {seconds}s</p>
 
-      {/* Play beep sound */}
+      {}
       {isBip && <audio src="/path/to/bip-sound.mp3" autoPlay loop />}
     </div>
   );

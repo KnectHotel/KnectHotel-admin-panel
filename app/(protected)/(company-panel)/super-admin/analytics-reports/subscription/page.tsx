@@ -18,7 +18,7 @@ import { Calendar } from '@/components/ui/calendar';
 import apiCall from '@/lib/axios';
 import { cn } from '@/lib/utils';
 
-// ---------- Types ----------
+
 interface PopularPlanRow {
   soldCount: number;
   planId: string;
@@ -44,7 +44,7 @@ interface SubscriptionsReportRes {
   excelFileName?: string;
 }
 
-// ---------- Utils ----------
+
 const toYMD = (d: Date) => format(d, 'yyyy-MM-dd');
 
 function percent(part: number, total: number) {
@@ -76,7 +76,7 @@ function downloadBase64File(
   URL.revokeObjectURL(url);
 }
 
-// ---------- UI Bits ----------
+
 function MetricCard({
   title,
   value,
@@ -133,9 +133,9 @@ function SplitBar({
   );
 }
 
-// ---------- Page ----------
+
 export default function SubscriptionsReportsPage() {
-  // default: last 30 days
+  
   const [range, setRange] = useState<DateRange | undefined>({
     from: subDays(new Date(), 30),
     to: new Date()
@@ -217,14 +217,14 @@ export default function SubscriptionsReportsPage() {
     }
   }
 
-  // Build a clean Excel workbook (Summary + Revenue + PopularPlans). Fallback to API excelBase64 if needed.
+  
   async function handleDownloadExcel() {
     if (!startDate || !endDate || !data) return;
     setDownloading(true);
     try {
       const XLSX = await import('xlsx');
 
-      // --- Summary sheet (Key/Value) ---
+      
       const summaryAoA = [
         ['Key', 'Value'],
         ['totalSubscriptionsCreated', data.totalSubscriptionsCreated],
@@ -234,7 +234,7 @@ export default function SubscriptionsReportsPage() {
       ];
       const wsSummary = XLSX.utils.aoa_to_sheet(summaryAoA);
 
-      // --- Revenue sheet (Key/Value) ---
+      
       const r = data.revenue ?? {
         totalRevenue: 0,
         paidSubscriptionsCount: 0,
@@ -248,7 +248,7 @@ export default function SubscriptionsReportsPage() {
       ];
       const wsRevenue = XLSX.utils.aoa_to_sheet(revenueAoA);
 
-      // --- PopularPlans sheet (tabular) ---
+      
       const plansAoA = [
         ['Plan Name', 'Unique ID', 'Cost (₹)', 'Sold', 'Plan ID'],
         ...(data.popularSubscriptions ?? []).map((p) => [
@@ -261,7 +261,7 @@ export default function SubscriptionsReportsPage() {
       ];
       const wsPlans = XLSX.utils.aoa_to_sheet(plansAoA);
 
-      // --- Build + download ---
+      
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
       XLSX.utils.book_append_sheet(wb, wsRevenue, 'Revenue');
@@ -282,7 +282,7 @@ export default function SubscriptionsReportsPage() {
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error(err);
-      // Fallback to API-provided Excel, if any
+      
       try {
         const fresh = await fetchReport();
         const base64 = fresh?.excelBase64 ?? data?.excelBase64;
@@ -304,10 +304,10 @@ export default function SubscriptionsReportsPage() {
     }
   }
 
-  // initial + on date change
+  
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [startDate, endDate]);
 
   const totals = {
@@ -332,7 +332,7 @@ export default function SubscriptionsReportsPage() {
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <Heading title="Subscriptions Reports" className="mt-0 md:mt-0" />
 
-            {/* Date Range + Download */}
+            {}
             <div className="flex items-center gap-2">
               <Popover>
                 <PopoverTrigger asChild>
@@ -389,14 +389,14 @@ export default function SubscriptionsReportsPage() {
             </div>
           </div>
 
-          {/* Error */}
+          {}
           {err && (
             <div className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {err}
             </div>
           )}
 
-          {/* Top metrics */}
+          {}
           <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-6">
             <MetricCard
               title="Total Subscriptions Created"
@@ -420,7 +420,7 @@ export default function SubscriptionsReportsPage() {
             />
           </div>
 
-          {/* Revenue metrics */}
+          {}
           <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
             <MetricCard
               title="Total Revenue"
@@ -441,7 +441,7 @@ export default function SubscriptionsReportsPage() {
             />
           </div>
 
-          {/* Active vs Inactive split */}
+          {}
           <div className="mt-6 rounded-2xl border bg-white p-5 shadow-sm">
             <div className="mb-3 text-sm text-muted-foreground">
               Subscription Status Split
@@ -452,10 +452,10 @@ export default function SubscriptionsReportsPage() {
               leftLabel="Active"
               rightLabel="Inactive"
             />
-            {/* <div className="mt-3 text-xs text-muted-foreground">Endpoint: <code>/api/reports/subscriptionReports</code></div> */}
+            {}
           </div>
 
-          {/* Popular plans table */}
+          {}
           <div className="mt-6 rounded-2xl border bg-white p-5 shadow-sm">
             <div className="mb-3 text-lg font-semibold">
               Popular Subscriptions
@@ -509,7 +509,7 @@ export default function SubscriptionsReportsPage() {
             </div>
           </div>
 
-          {/* Back link */}
+          {}
           <div className="mt-8">
             <Link
               href="/super-admin/analytics-reports"

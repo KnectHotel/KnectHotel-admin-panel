@@ -33,7 +33,7 @@ const AddMenuModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     resolver: zodResolver(AddMenuSchema),
     defaultValues: {
       newProductType: '',
-      selectType: undefined, // Ensure undefined is handled properly
+      selectType: undefined, 
       productName: '',
       description: '',
       barcode: '',
@@ -47,7 +47,7 @@ const AddMenuModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     console.log('Submitted Data:', data);
     addMenuForm.reset();
   };
-  // When conditionally rendering hooks always do it below everything else
+  
   if (!isOpen) return null;
 
   return (
@@ -63,7 +63,7 @@ const AddMenuModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             onSubmit={addMenuForm.handleSubmit(onSubmit)}
             className="flex flex-col gap-6 text-sm"
           >
-            {/* Upper part of the form */}
+            {}
             <div className="flex justify-between w-full md:w-[80%] lg:w-[75%] 2xl:w-[70%] gap-6 px-10">
               <FormField
                 control={addMenuForm.control}
@@ -110,12 +110,12 @@ const AddMenuModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                 )}
               />
             </div>
-            {/* line */}
+            {}
             <div className="w-full h-[1px] bg-black opacity-20"></div>
-            {/* Lower part of the form */}
+            {}
             <div className="flex justify-between items-start px-10">
               <div className="w-[60%]">
-                {/* Description */}
+                {}
                 <FormField
                   control={addMenuForm.control}
                   name="description"
@@ -136,7 +136,7 @@ const AddMenuModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   )}
                 />
 
-                {/* Barcode */}
+                {}
                 <FormField
                   control={addMenuForm.control}
                   name="barcode"
@@ -157,7 +157,7 @@ const AddMenuModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   )}
                 />
 
-                {/* Sales Price */}
+                {}
                 <FormField
                   control={addMenuForm.control}
                   name="salesPrice"
@@ -182,7 +182,7 @@ const AddMenuModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   )}
                 />
 
-                {/* Sales Taxes */}
+                {}
                 <FormField
                   control={addMenuForm.control}
                   name="salesTaxes"
@@ -207,7 +207,7 @@ const AddMenuModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   )}
                 />
               </div>
-              {/* Product Image Upload */}
+              {}
               <div className="w-[30%] pt-7">
                 <FormField
                   control={addMenuForm.control}
@@ -246,7 +246,7 @@ const AddMenuModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               </div>
             </div>
             <div className="w-full h-[1px] bg-black opacity-5"></div>
-            {/* Submit Button */}
+            {}
             <div className="flex items-center gap-4 px-10">
               <Button type="submit" className="btn-secondary">
                 Cancel

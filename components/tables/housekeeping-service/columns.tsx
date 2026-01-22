@@ -64,17 +64,17 @@ export const columns: ColumnDef<HousekeepingDataType>[] = [
     cell: ({ row }) => {
       const serviceId = row.original._id || row.original.requestID;
 
-      // Map UI display values to backend values
+      
       const statusMap = {
         Pending: 'pending',
         'In-Progress': 'in-progress',
         Completed: 'completed',
-        Cancelled: 'cancelled', // ✅ added
+        Cancelled: 'cancelled', 
       } as const;
 
       type StatusLabel = keyof typeof statusMap;
 
-      // Normalize backend value to match UI expected values
+      
       const normalizeStatus = (statusFromBackend: string): StatusLabel => {
         switch (statusFromBackend.toLowerCase()) {
           case 'pending':
@@ -105,7 +105,7 @@ export const columns: ColumnDef<HousekeepingDataType>[] = [
 
         try {
           const data = await apiCall('PATCH', `/api/services/status/${serviceId}`, {
-            status: statusMap[newStatus], // lowercase value for backend
+            status: statusMap[newStatus], 
           });
 
           if (

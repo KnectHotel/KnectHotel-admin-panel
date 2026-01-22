@@ -12,9 +12,9 @@ const CellAction = ({ data }: { data: any }) => {
 
   const onConfirm = async () => {
     try {
-      // You can perform delete or deactivate logic here if needed
+      
     } catch (error: any) {
-      // Handle error if needed
+      
     } finally {
       setOpen(false);
     }
@@ -29,7 +29,7 @@ const CellAction = ({ data }: { data: any }) => {
 
   return (
     <>
-      {/* Optional Alert Modal */}
+      {}
       <AlertModal
         isOpen={open}
         onCloseAction={() => setOpen(false)}

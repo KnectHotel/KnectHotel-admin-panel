@@ -7,7 +7,7 @@ import { MultipleLineChart } from '../../../../../components/COMPANY_COMPONENTS/
 import Header from '../../../../../components/COMPANY_COMPONENTS/dashboard/Header';
 import Navbar from '@/components/Navbar';
 
-// Type definitions
+
 type OverviewCardData = {
   position: string;
   increment: string;
@@ -40,7 +40,7 @@ type LineChartData = {
   averageOrderValue: number;
 }[];
 
-// Dummy data
+
 const OverviewCardDummyData: OverviewCardData = {
   position: '24.5',
   increment: '28.1',
@@ -200,9 +200,9 @@ const DBPage: React.FC = () => {
       <div className="min-h-screen w-full bg-coffee overflow-x-hidden mt-20">
         <Header />
 
-        {/* Main content container */}
+        {}
         <div className="p-4 space-y-6 w-full flex flex-col justify-center items-center">
-          {/* Upper part - StackedBarChart and DonutChart */}
+          {}
           <div className="flex flex-col lg:flex-row justify-center items-center gap-6 w-full">
             <div className="flex-1 flex justify-center">
               <StackedBarChart chartData={StackedBarChartDummyData} />
@@ -212,7 +212,7 @@ const DBPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Lower part - Overview, LineChart, and Details cards */}
+          {}
           <div className="flex flex-col md:flex-row overflow-x-auto md:justify-between space-x-4 items-center w-full">
             <div className="flex flex-col justify-center items-center gap-3">
               <OverviewCard

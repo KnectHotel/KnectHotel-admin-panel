@@ -3,7 +3,7 @@ import CellAction from './cell-action';
 import { EmployeeDataType } from 'app/static/EmployeeManagement';
 import { StatusType } from 'app/static/Type';
 
-// Update type to match guestDataType for better type safety
+
 export const columns: ColumnDef<EmployeeDataType>[] = [
   {
     accessorKey: 'requestID',
@@ -53,7 +53,7 @@ export const columns: ColumnDef<EmployeeDataType>[] = [
       <div className="flex items-center justify-center">
         <CellAction
           data={row.original}
-        // onStatusChange={updateEmployeeStatus}
+        
         />
       </div>
     )

@@ -37,33 +37,6 @@ export default function RootLayout({
   const [showHotelSidebar, setShowHotelSidebar] = useState(false);
   //   const adminData = getSessionStorageItem<any>('admin');
   //   if (!adminData) return;
-
-  //   const allowedModules = adminData.allowedModules || [];
-  //   const permissions = adminData.permissions || [];
-  //   const isSuperAdmin = adminData.isSuperAdmin === true;
-  //   const hasAllAccess = permissions.includes('all');
-
-  //   const hasAccess = (module: string) =>
-  //     isSuperAdmin || hasAllAccess || allowedModules.includes(module);
-
-  //   const hotelModules = [
-  //     'dashboard',
-  //     'roles-and-permissions',
-  //     'admin-management',
-  //     'guest-management',
-  //     'service-management',
-  //     'complaint-management',
-  //     'payment-management',
-  //     'coupons-management',
-  //     'refund-management',
-  //     'hotel-management',
-  //     'analytics-reports',
-  //   ];
-
-  //   const accessExists = hotelModules.some(hasAccess);
-  //   setShowHotelSidebar(accessExists);
-  // }, []);
-
   useEffect(() => {
     const adminData = getSessionStorageItem<any>('admin');
     if (!adminData) return;
@@ -125,7 +98,7 @@ export default function RootLayout({
   return (
     <Providers>
       <div className="flex w-full overflow-hidden min-h-screen">
-        {/* Sidebar */}
+        {}
         {shouldShowSidebar && (
           <div
             className={`lg:w-[20%] fixed top-0 left-0 h-full transition-transform duration-300 ease-in-out transform ${
@@ -140,13 +113,13 @@ export default function RootLayout({
           </div>
         )}
 
-        {/* Main Content */}
+        {}
         <div
           className={`w-full ${
             shouldShowSidebar ? 'lg:w-[80%]' : 'lg:w-full'
           } flex flex-col h-screen overflow-hidden transition-all duration-300`}
         >
-          {/* Header */}
+          {}
           <header className="lg:hidden flex items-center justify-between p-4 bg-coffeeLight">
             <Link
               href={isSuperAdminRoute ? '/super-admin/dashboard' : '/dashboard'}
@@ -167,7 +140,7 @@ export default function RootLayout({
           </main>
         </div>
 
-        {/* Overlay */}
+        {}
         {isSidebarOpen && shouldShowSidebar && (
           <div
             className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-40"
@@ -301,46 +274,15 @@ function SuperAdminPanelSideNav() {
                 >
                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
-                {/* <NavItem
-                  href="/super-admin/hotel-management/rooms"
-                  label="Room Management"
-                >
-                  {/* <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
-                </NavItem>
-                <NavItem
-                  href="/super-admin/hotel-management/room-upgrade"
-                  label="Room Upgrade"
-                > 
-                  <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
-                </NavItem> */}
+                {}
                 <NavItem
                   href="/super-admin/hotel-management/food-plans"
                   label="Food Plans"
                 >
-                  {/* <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
-                </NavItem>
-                <NavItem
-                  href="/super-admin/hotel-management/coupons"
-                  label="Coupons"
-                > */}
-                  {/* <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
-                </NavItem>
-                <NavItem
-                  href="/super-admin/hotel-management/room-categories"
-                  label="Room Categories"
-                > */}
-                  {/* <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
-                </NavItem>
-                <NavItem
-                  href="/super-admin/hotel-management/floors"
-                  label="Floors"
-                > */}
-                  {/* <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
-                </NavItem>
-                <NavItem
-                  href="/super-admin/hotel-management/services"
-                  label="Services"
-                > */}
+                  {}
+                  {}
+                  {}
+                  {}
 
                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
@@ -376,7 +318,7 @@ function HotelPanelSideNav() {
   useEffect(() => {
     setAdminData(getSessionStorageItem<any>('admin'));
   }, []);
-  // console.log('admin data', allServices);
+  
 
   if (!adminData) return null;
 
@@ -394,7 +336,7 @@ function HotelPanelSideNav() {
   const hasServiceAccess = () =>
     isSuperAdmin || hasAllAccess || serviceManagementModules.length > 0;
 
-  // Check if at least one module is accessible before rendering the sidebar
+  
   const isAnyModuleAccessible =
     hasServiceAccess() ||
     [
@@ -410,7 +352,7 @@ function HotelPanelSideNav() {
       'hotel-management',
       'analytics-reports'
     ].some(hasAccess);
-  // console.log('isAnyModuleAccessible', isAnyModuleAccessible);
+  
 
   if (!isAnyModuleAccessible) return null;
 
@@ -462,19 +404,7 @@ function HotelPanelSideNav() {
                   openGuestSubMenu ? 'max-h-screen' : 'max-h-0'
                 }`}
               >
-                {/* <NavItem
-                  href="/hotel-panel/guest-management/room-upgrade"
-                  label="Room Upgrade"
-                >
-                  <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
-                </NavItem>
-
-                <NavItem
-                  href="/hotel-panel/guest-management/room-categories"
-                  label="Room Categories"
-                >
-                  <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
-                </NavItem> */}
+                {}
 
                 <NavItem
                   href="/hotel-panel/guest-management/food-plans"
@@ -483,12 +413,7 @@ function HotelPanelSideNav() {
                   <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
                 </NavItem>
 
-                {/* <NavItem
-                  href="/hotel-panel/guest-management/services"
-                  label="Services"
-                >
-                  <div className="h-2 w-2 lg:h-3 lg:w-3 bg-brown rounded-full" />
-                </NavItem> */}
+                {}
               </div>
             </div>
           )}

@@ -42,7 +42,7 @@ interface RequestData {
     phoneNumber?: string;
   };
 
-  // ✅ Additional fields
+  
   uniqueId?: string;
   status?: string;
   paymentStatus?: string;
@@ -83,7 +83,7 @@ interface RequestData {
       cost: number;
       HotelId: string;
       visibility?: boolean;
-      [key: string]: any; // for any extra keys
+      [key: string]: any; 
     };
   }[];
 
@@ -95,7 +95,7 @@ interface RequestData {
     price: number;
     maxCapacity: number;
     currentCapacity: number;
-    [key: string]: any; // fallback for unexpected keys
+    [key: string]: any; 
   };
 }
 
@@ -201,19 +201,19 @@ const RequestDetail = <T extends Record<string, any>>({
   }
 
   const StarRating = ({ rating }: { rating: number }) => {
-    // Create an array of 5 items to represent 5 stars
+    
     const stars = [];
 
     for (let i = 1; i <= 5; i++) {
       if (i <= rating) {
-        // Filled star
+        
         stars.push(
           <span key={i} className="text-yellow-500">
             ★
           </span>
         );
       } else {
-        // Empty star
+        
         stars.push(
           <span key={i} className="text-gray-300">
             ★
@@ -235,16 +235,16 @@ const RequestDetail = <T extends Record<string, any>>({
   return (
     <>
       <div className="bg-[#FAF6EF] rounded-md shadow-custom px-8 pb-10 pt-6 flex font-medium flex-col gap-16 w-full">
-        {/* Header */}
+        {}
         <div className="flex flex-wrap gap-16 text-lg font-bold opacity-55">
           <p>Guest ID: {apiData?.uniqueId || 'N/A'}</p>
           <p>Status: {apiData?.status || 'N/A'}</p>
           <p>Request Type: {formatRequestType(apiData?.requestType)}</p>
         </div>
 
-        {/* Details */}
+        {}
         <div className="space-y-8">
-          {/* Upper Part (3-column layout) */}
+          {}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             <div className="flex gap-2 items-center text-sm">
               <span className="opacity-75">Guest name</span>{' '}
@@ -268,9 +268,9 @@ const RequestDetail = <T extends Record<string, any>>({
             </div>
           </div>
 
-          {/* Lower Part (3-column layout) */}
+          {}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {/* Left section */}
+            {}
             <div className="space-y-8">
               <div className="flex flex-col gap-2 items-start text-sm">
                 <span className="opacity-75">Response Detail</span>
@@ -292,7 +292,7 @@ const RequestDetail = <T extends Record<string, any>>({
               </div>
             </div>
 
-            {/* Middle section */}
+            {}
             <div className="space-y-8">
               <div className="flex flex-col gap-2 items-start text-sm">
                 <span className="opacity-75">Request Assigned to</span>
@@ -337,14 +337,9 @@ const RequestDetail = <T extends Record<string, any>>({
               )}
             </div>
 
-            {/* Right section */}
+            {}
             <div className="space-y-8">
-              {/* <div className="flex flex-col gap-2 items-start text-sm">
-                <span className="opacity-75">Request Type</span>
-                <span className="bg-[#F6EEE0] rounded-md px-10 py-1">
-                  {apiData?.requestType || 'N/A'}
-                </span>
-              </div> */}
+              {}
               {apiData?.requestType &&
                 ['Reception', 'Housekeeping'].includes(apiData.requestType) && (
                   <div className="space-y-8">
@@ -357,16 +352,11 @@ const RequestDetail = <T extends Record<string, any>>({
                   </div>
                 )}
 
-              {/* <div className="flex flex-col gap-2 items-start text-sm">
-                <span className="opacity-75">Service Type</span>
-                <span className="bg-[#F6EEE0] rounded-md px-10 py-1">
-                  {apiData?.serviceType || 'N/A'}
-                </span>
-              </div> */}
+              {}
             </div>
           </div>
 
-          {/* Created / Updated info */}
+          {}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-8 text-sm">
             <div className="flex flex-col gap-1">
               <span className="opacity-75">Created At</span>
@@ -388,7 +378,7 @@ const RequestDetail = <T extends Record<string, any>>({
         </div>
       </div>
 
-      {/* Guest Feedback + Rating (side-by-side) */}
+      {}
       <div className="mt-6 bg-[#F6EEE0] p-6 rounded-lg shadow-md">
         <h3 className="text-lg font-semibold text-gray-800">Guest Feedback</h3>
 
@@ -422,7 +412,7 @@ const RequestDetail = <T extends Record<string, any>>({
       {mode === 'housekeeping' ||
         (mode === 'inroomdining' && requestId && (
           <div className="flex flex-col gap-6">
-            {/* Amount Section */}
+            {}
             <div className="w-full rounded-lg border border-[#E4D7C4] bg-[#F6EEE0] px-6 py-4 shadow-sm">
               <h3 className="text-base font-semibold text-[#4B3F2F] mb-2">
                 Amount Details
@@ -443,7 +433,7 @@ const RequestDetail = <T extends Record<string, any>>({
               </div>
             </div>
 
-            {/* Coupon Section */}
+            {}
             {apiData?.coupon?.code && (
               <div className="w-full rounded-lg border border-[#E4D7C4] bg-[#F6EEE0] px-6 py-4 shadow-sm">
                 <h3 className="text-base font-semibold text-[#4B3F2F] mb-2">
@@ -466,7 +456,7 @@ const RequestDetail = <T extends Record<string, any>>({
               </div>
             )}
 
-            {/* Ordered Items Section */}
+            {}
             {(() => {
               const items = apiData?.items;
               if (!items || items.length === 0) return null;
@@ -629,7 +619,7 @@ const RequestDetail = <T extends Record<string, any>>({
 
       <AssignModal
         onClose={() => setIsAssignModalOpen(false)}
-        // onAssign={() => {}}
+        
         requestId={isAssignModalOpen ? requestId : undefined}
         title="Assign Request to Employee"
         moduleName={

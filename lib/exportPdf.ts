@@ -1,34 +1,30 @@
-// lib/exportPdf.ts
+
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
-/**
- * Export a DOM element to a paginated A4 PDF.
- * @param selector - e.g. '#report-root'
- * @param filename - e.g. 'Admin-Report.pdf'
- */
+
 export async function exportElementToPdf(selector: string, filename: string) {
   const el = document.querySelector(selector) as HTMLElement | null;
   if (!el) throw new Error(`Element not found: ${selector}`);
 
-  // Ensure images/fonts are loaded
+  
   await new Promise((r) => setTimeout(r, 100));
 
   const canvas = await html2canvas(el, {
-    scale: 2,           // crisp
-    useCORS: true,      // allow cross-origin images (if permitted)
+    scale: 2,           
+    useCORS: true,      
     logging: false,
     backgroundColor: '#ffffff',
   });
 
   const imgData = canvas.toDataURL('image/jpeg', 0.98);
-  // A4 dimensions in pt at 72 DPI: 595.28 x 841.89
+  
   const pdf = new jsPDF('p', 'pt', 'a4');
 
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
 
-  // Scale canvas to fit page width
+  
   const imgWidth = pageWidth;
   const imgHeight = (canvas.height * imgWidth) / canvas.width;
 

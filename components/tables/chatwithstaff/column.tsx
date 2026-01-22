@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Eye } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import apiCall from '@/lib/axios'; // Make sure this points to your Axios instance
+import apiCall from '@/lib/axios'; 
 import CellAction from './cell-action';
 import AssignChatModal from './AssignChatModal';
 
@@ -78,15 +78,15 @@ export const columns: ColumnDef<ChatWithStaff>[] = [
     header: 'Agent Info',
     cell: ({ row }) => {
       const agent = row.original.agentDetails || {};
-      const role = agent.name || 'N/A'; // Assuming roleId is directly on agentDetails
+      const role = agent.name || 'N/A'; 
       return (
         <div className="flex flex-col text-xs text-gray-700">
           <span className="text-sm font-semibold">
             {agent.firstName} {agent.lastName || ''}
           </span>{' '}
-          {/* First and last name */}
+          {}
           <span>{agent.email || 'N/A'}</span>
-          <span>Role: {role}</span> {/* Role name */}
+          <span>Role: {role}</span> {}
         </div>
       );
     }
@@ -95,9 +95,9 @@ export const columns: ColumnDef<ChatWithStaff>[] = [
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => {
-      const { useState } = React; // or: import React, { useState } from 'react';
+      const { useState } = React; 
 
-      // Label -> backend value map (display labels are consistent)
+      
       const statusMap = {
         Pending: 'pending',
         Active: 'active',
@@ -107,7 +107,7 @@ export const columns: ColumnDef<ChatWithStaff>[] = [
 
       type StatusLabel = keyof typeof statusMap;
 
-      // Normalize any backend/status string to a display label
+      
       const normalize = (value: string): StatusLabel => {
         const val = value?.toLowerCase?.() ?? '';
         if (val === 'active') return 'Active';
@@ -117,7 +117,7 @@ export const columns: ColumnDef<ChatWithStaff>[] = [
         return 'Pending';
       };
 
-      // Color classes by display label
+      
       const colorByLabel: Record<StatusLabel, string> = {
         Active: 'text-green-600',
         Pending: 'text-yellow-600',
@@ -133,16 +133,16 @@ export const columns: ColumnDef<ChatWithStaff>[] = [
         setStatus(next);
         setLoading(true);
         try {
-          // Backend value to send
+          
           const statusValue = statusMap[next];
 
-          // TODO: uncomment & adjust your API
+          
           await apiCall('PATCH', `/api/services/status/${row.original.chatId}`, {
             status: statusValue,
           });
         } catch (err) {
           console.error('❌ Error updating status:', err);
-          // Optional rollback:
+          
           setStatus(normalize(row.original.status));
         } finally {
           setLoading(false);
@@ -173,13 +173,13 @@ export const columns: ColumnDef<ChatWithStaff>[] = [
       const [showModal, setShowModal] = useState(false);
       const assigned = row.original.assignedTo;
 
-      // Check if assigned data is available and extract details
+      
       const assignedName =
         assigned && typeof assigned === 'object'
           ? `${assigned.firstName} ${assigned.lastName || ''}`.trim()
           : 'Unassigned';
 
-      const roleName = assigned && assigned.roleId ? assigned.roleId.name : 'No Role'; // Extract role name
+      const roleName = assigned && assigned.roleId ? assigned.roleId.name : 'No Role'; 
 
       return (
         <>
@@ -187,7 +187,7 @@ export const columns: ColumnDef<ChatWithStaff>[] = [
             onClick={() => setShowModal(true)}
             className="text-sm underline text-black"
           >
-            {assignedName} - <span className="font-semibold">{roleName}</span> {/* Show role name */}
+            {assignedName} - <span className="font-semibold">{roleName}</span> {}
           </button>
 
           {showModal && (

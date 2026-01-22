@@ -6,7 +6,7 @@ import apiCall from '@/lib/axios';
 import type { SweetAlertIcon } from 'sweetalert2';
 import { ToastAtTopRight } from '@/lib/sweetalert';
 
-/** -------------------- Toast helper -------------------- */
+
 const notify = (icon: SweetAlertIcon, title: string, ms = 2200) =>
   ToastAtTopRight.fire({
     icon,
@@ -20,7 +20,7 @@ const notify = (icon: SweetAlertIcon, title: string, ms = 2200) =>
 
 const DEFAULT_GYM_NAME = 'Gym';
 
-/** -------------------- Types & Constants -------------------- */
+
 const weekdays = [
   'Monday',
   'Tuesday',
@@ -98,34 +98,34 @@ const extractErr = (err: any) => ({
   data: err?.response?.data
 });
 
-// unwrap various apiCall response shapes safely
+
 const unwrap = (res: any) => res?.data?.data ?? res?.data ?? res;
 
-/** -------------------- Component -------------------- */
+
 const GymFacilityManager: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
-  // facility id + raw doc from GET
+  
   const [gymFacilityId, setGymFacilityId] = useState<string | null>(null);
   const [gymDoc, setGymDoc] = useState<any>(null);
 
-  // Images
+  
   const [images, setImages] = useState<string[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
   const [savingImages, setSavingImages] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  // Day inputs (inline add)
+  
   const [dayInputs, setDayInputs] =
     useState<Record<Weekday, DayInputs>>(emptyWeek());
   const [addingForDay, setAddingForDay] = useState<Weekday | null>(null);
 
-  // Existing slots (flat) + UI state
+  
   const [existingSlots, setExistingSlots] = useState<GymSlotRow[]>([]);
   const [updatingSlotId, setUpdatingSlotId] = useState<string | null>(null);
   const [deletingSlotId, setDeletingSlotId] = useState<string | null>(null);
 
-  // Derived: grouped by weekday
+  
   const groupedExisting = useMemo(() => {
     const g = emptyGroups();
     existingSlots.forEach((s) => {
@@ -135,7 +135,7 @@ const GymFacilityManager: React.FC = () => {
     return g;
   }, [existingSlots]);
 
-  /** -------------------- Load Gym (images + slots) -------------------- */
+  
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -158,14 +158,14 @@ const GymFacilityManager: React.FC = () => {
         setGymFacilityId(gym._id || null);
         setGymDoc(gym);
 
-        // images
+        
         const imgs = Array.isArray(gym.images)
           ? gym.images.filter(Boolean)
           : [];
         setImages(imgs);
         setPreview(imgs[0] ?? null);
 
-        // slots -> support slotsByDay (grouped) OR slots (flat)
+        
         const flat: GymSlotRow[] = [];
 
         const slotsByDay = gym.slotsByDay;
@@ -201,7 +201,7 @@ const GymFacilityManager: React.FC = () => {
 
         setExistingSlots(flat);
 
-        // pre-check days having slots
+        
         const pre = emptyWeek();
         flat.forEach((s) => {
           const d = normalizeDay(String(s.dayOfWeek));
@@ -224,10 +224,10 @@ const GymFacilityManager: React.FC = () => {
     })();
   }, []);
 
-  /** -------------------- Upload helpers -------------------- */
+  
   const uploadFile = async (file: File): Promise<string> => {
     const fd = new FormData();
-    fd.append('file', file); // keep field name as your backend expects
+    fd.append('file', file); 
     const res = await apiCall('POST', 'api/upload/admin', fd);
     const body = unwrap(res);
     const url = body?.data?.url || body?.url || '';
@@ -261,7 +261,7 @@ const GymFacilityManager: React.FC = () => {
     }
   };
 
-  /** -------------------- Images Handlers (server uploads) -------------------- */
+  
   const addImage = () => {
     if (uploading) return;
     const input = document.createElement('input');
@@ -334,7 +334,7 @@ const GymFacilityManager: React.FC = () => {
   const saveImages = async () => {
     const imgs = images.filter(Boolean);
 
-    // ensure a facility exists (create with images if missing)
+    
     const id =
       gymFacilityId ??
       (await ensureGym({
@@ -345,7 +345,7 @@ const GymFacilityManager: React.FC = () => {
     const base = scrubForUpdate(gymDoc || {});
     const payload = {
       ...base,
-      name: base.name ?? gymDoc?.name ?? DEFAULT_GYM_NAME, // ensure name
+      name: base.name ?? gymDoc?.name ?? DEFAULT_GYM_NAME, 
       facilityType: base.facilityType ?? 'Gym',
       images: imgs
     };
@@ -373,7 +373,7 @@ const GymFacilityManager: React.FC = () => {
     }
   };
 
-  /** -------------------- Inline add per-day -------------------- */
+  
   const handleDayToggle = (day: Weekday) => {
     setDayInputs((p) => ({
       ...p,
@@ -406,7 +406,7 @@ const GymFacilityManager: React.FC = () => {
 
     setAddingForDay(day);
     try {
-      // ensure facility exists (create empty if needed)
+      
       const id =
         gymFacilityId ??
         (await ensureGym({ name: gymDoc?.name || DEFAULT_GYM_NAME }));
@@ -454,7 +454,7 @@ const GymFacilityManager: React.FC = () => {
     }
   };
 
-  /** -------------------- Edit / Save / Delete existing -------------------- */
+  
   const toggleEditSlot = (id: string, on: boolean) => {
     setExistingSlots((prev) =>
       prev.map((s) => (s._id === id ? { ...s, isEditing: on } : s))
@@ -487,7 +487,7 @@ const GymFacilityManager: React.FC = () => {
   };
 
   const handleSaveSlot = async (slot: GymSlotRow) => {
-    // also resilient if facility not yet created
+    
     const id =
       gymFacilityId ??
       (await ensureGym({ name: gymDoc?.name || DEFAULT_GYM_NAME }));
@@ -579,12 +579,12 @@ const GymFacilityManager: React.FC = () => {
     }
   };
 
-  /** -------------------- Ensure facility exists -------------------- */
+  
   const ensureGym = async (initial?: Record<string, any>): Promise<string> => {
     if (gymFacilityId) return gymFacilityId;
 
     const payload = {
-      name: initial?.name || gymDoc?.name || DEFAULT_GYM_NAME, // REQUIRED
+      name: initial?.name || gymDoc?.name || DEFAULT_GYM_NAME, 
       facilityType: 'Gym',
       images: [] as string[],
       slots: [] as any[],
@@ -599,7 +599,7 @@ const GymFacilityManager: React.FC = () => {
       const id = doc?._id;
       if (!id) throw new Error('No _id in create response');
 
-      // seed state
+      
       setGymFacilityId(id);
       setGymDoc(doc);
 
@@ -630,7 +630,7 @@ const GymFacilityManager: React.FC = () => {
     }
   };
 
-  /** -------------------- Render -------------------- */
+  
   return (
     <div className="p-4 sm:p-6 rounded-lg shadow-md bg-[#FAF6EF] w-full mx-auto">
       <div className="flex items-center justify-between mb-4">
@@ -641,10 +641,10 @@ const GymFacilityManager: React.FC = () => {
         <div className="py-12 text-center text-gray-600">Loading…</div>
       ) : (
         <>
-          {/* ========== IMAGES ========== */}
+          {}
           <h3 className="text-base font-semibold mb-3">Images</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Preview */}
+            {}
             <div>
               <h4 className="text-sm font-semibold mb-2">Preview</h4>
               <div className="relative h-44 w-full max-w-[260px] rounded-lg bg-[#F6EEE0] overflow-hidden">
@@ -662,7 +662,7 @@ const GymFacilityManager: React.FC = () => {
               </div>
             </div>
 
-            {/* Grid */}
+            {}
             <div className="md:col-span-2">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-semibold mb-2">Gallery</h4>
@@ -738,7 +738,7 @@ const GymFacilityManager: React.FC = () => {
             </div>
           </div>
 
-          {/* ========== SLOTS ========== */}
+          {}
           <h3 className="text-base font-semibold mt-10 mb-3">Slots</h3>
 
           <div className="grid grid-cols-12 font-semibold text-gray-700 text-sm px-1 mb-2 gap-x-4">
@@ -751,7 +751,7 @@ const GymFacilityManager: React.FC = () => {
           <div className="space-y-4">
             {weekdays.map((day) => (
               <div key={day} className="grid grid-cols-12 gap-x-4 items-start">
-                {/* Checkbox + Day */}
+                {}
                 <label className="flex items-center gap-2 col-span-2">
                   <input
                     type="checkbox"
@@ -762,7 +762,7 @@ const GymFacilityManager: React.FC = () => {
                   <span className="text-gray-700">{day}</span>
                 </label>
 
-                {/* From */}
+                {}
                 <input
                   type="time"
                   value={dayInputs[day].from}
@@ -772,7 +772,7 @@ const GymFacilityManager: React.FC = () => {
                   className="rounded border border-gray-300 px-3 py-1 bg-[#EFE9DF] col-span-2"
                 />
 
-                {/* To */}
+                {}
                 <input
                   type="time"
                   value={dayInputs[day].to}
@@ -780,7 +780,7 @@ const GymFacilityManager: React.FC = () => {
                   className="rounded border border-gray-300 px-3 py-1 bg-[#EFE9DF] col-span-2"
                 />
 
-                {/* Max Allowed */}
+                {}
                 <input
                   type="number"
                   placeholder="e.g. 20"
@@ -791,7 +791,7 @@ const GymFacilityManager: React.FC = () => {
                   className="rounded border border-gray-300 px-3 py-1 bg-[#EFE9DF] text-center col-span-2"
                 />
 
-                {/* Price + Plus */}
+                {}
                 <div className="col-span-4 flex items-center gap-3">
                   <input
                     type="text"
@@ -811,7 +811,7 @@ const GymFacilityManager: React.FC = () => {
                   </button>
                 </div>
 
-                {/* Existing Slots (for this day) */}
+                {}
                 {groupedExisting[day].length > 0 && (
                   <div className="col-span-12 mt-3 space-y-2">
                     {groupedExisting[day].map((s) => (
@@ -819,7 +819,7 @@ const GymFacilityManager: React.FC = () => {
                         key={s._id}
                         className="grid grid-cols-12 gap-3 items-center border rounded p-3"
                       >
-                        {/* Day */}
+                        {}
                         <div className="col-span-2">
                           {s.isEditing ? (
                             <select
@@ -846,7 +846,7 @@ const GymFacilityManager: React.FC = () => {
                           )}
                         </div>
 
-                        {/* Start */}
+                        {}
                         <div className="col-span-2">
                           {s.isEditing ? (
                             <input
@@ -866,7 +866,7 @@ const GymFacilityManager: React.FC = () => {
                           )}
                         </div>
 
-                        {/* End */}
+                        {}
                         <div className="col-span-2">
                           {s.isEditing ? (
                             <input
@@ -886,7 +886,7 @@ const GymFacilityManager: React.FC = () => {
                           )}
                         </div>
 
-                        {/* Max */}
+                        {}
                         <div className="col-span-2">
                           {s.isEditing ? (
                             <input
@@ -906,7 +906,7 @@ const GymFacilityManager: React.FC = () => {
                           )}
                         </div>
 
-                        {/* Price */}
+                        {}
                         <div className="col-span-2">
                           {s.isEditing ? (
                             <input
@@ -926,7 +926,7 @@ const GymFacilityManager: React.FC = () => {
                           )}
                         </div>
 
-                        {/* Actions */}
+                        {}
                         <div className="col-span-2 flex gap-2 justify-end">
                           {s.isEditing ? (
                             <button

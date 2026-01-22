@@ -39,14 +39,14 @@ export const EmployeeTable: React.FC = () => {
         console.log(response);
 
         if (response.status && Array.isArray(response.employees)) {
-          // Map API data to EmployeeDataType
+          
           const mappedEmployees: EmployeeDataType[] = response.employees.map(
             (emp) => ({
               employeeID: emp._id,
               requestID: emp.uniqueId || 'N/A',
               employeeDetails: {
                 name: emp.firstName + ' ' + emp.lastName,
-                roomNo: '', // No roomNo in API, set blank or handle separately
+                roomNo: '', 
                 mobileNo: emp.mobileNumber || '',
                 emailID: emp.email || emp.emailID || ''
               },
@@ -153,14 +153,14 @@ export const EmployeeTable: React.FC = () => {
           searchKey="firstName"
           columns={columns}
           data={filteredData.slice((pageNo - 1) * limit, pageNo * limit)}
-          // onSearch={(searchValue) => {
-          //     const filtered = data.filter((item) =>
-          //         item.firstName.toLowerCase().includes(searchValue.toLowerCase())
-          //     );
-          //     setData(filtered);
-          // }}
-          // filters={filters}
-          // onFilterChange={handleFilterChange}
+          
+          
+          
+          
+          
+          
+          
+          
         />
       )}
       <PaginationControls

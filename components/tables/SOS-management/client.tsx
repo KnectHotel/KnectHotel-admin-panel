@@ -26,7 +26,7 @@ export const SOSManagementDataTable: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
 
-  // Fetch SOS data from API
+  
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -68,7 +68,7 @@ export const SOSManagementDataTable: React.FC = () => {
       item.type.toLowerCase().includes(searchValue.toLowerCase())
     );
     setFilteredData(filtered);
-    setPageNo(1); // Reset to page 1 when search changes
+    setPageNo(1); 
   };
 
   return (
@@ -85,7 +85,7 @@ export const SOSManagementDataTable: React.FC = () => {
         <DataTable
           searchKey="uniqueId"
           columns={columns}
-          data={filteredData.slice((pageNo - 1) * limit, pageNo * limit)} // Display paginated data
+          data={filteredData.slice((pageNo - 1) * limit, pageNo * limit)} 
           onSearch={handleSearchChange}
         />
       )}

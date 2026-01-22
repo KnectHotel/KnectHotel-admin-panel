@@ -7,16 +7,16 @@ import { DataTable } from '@/components/ui/data-table';
 import { columns } from './columns';
 import apiCall from '@/lib/axios';
 
-// export interface ComplaintDataType {
-//   complaintID: string;
-//   userID: string;
 
-//   complaintType: string;
-//   complaintTime: string;
-//   status: 'OPEN' | 'CLOSED';
-//   assignedTo: string;
-//   uniqueId: string;
-// }
+
+
+
+
+
+
+
+
+
 
 export interface ComplaintItem {
   _id: string;

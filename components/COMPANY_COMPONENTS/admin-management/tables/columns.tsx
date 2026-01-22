@@ -1,4 +1,4 @@
-'use client'; // Mark as Client Component
+'use client'; 
 
 import { useState, useEffect } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
@@ -25,7 +25,7 @@ export interface AdminDataType {
   __v: number;
 }
 
-// Custom hook to fetch roles and return columns
+
 export const useColumns = (): ColumnDef<AdminDataType>[] => {
   return [
     {

@@ -6,7 +6,7 @@ import { FireIcon, LifebuoyIcon, ShieldCheckIcon } from '@heroicons/react/24/sol
 import { useSOSStore } from '@/lib/sos-store';
 import apiCall from '@/lib/axios';
 
-// ----- Types -----
+
 type Guest = {
   firstName?: string;
   lastName?: string;
@@ -26,7 +26,7 @@ type SOSPayload = {
   updatedAt?: string;
 };
 
-// ----- Optional DOM typing for Safari -----
+
 declare global {
   interface Window {
     webkitAudioContext?: typeof AudioContext;
@@ -49,20 +49,20 @@ export default function SOSPage() {
         ? params.id[0]
         : '';
 
-  // Prefer data set by GlobalSOSListener; fallback to fetch by id
+  
   const storeData = useSOSStore((s) => s.latest);
   const [fetchedData, setFetchedData] = useState<SOSPayload | null>(null);
   const [fetching, setFetching] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(2);
 
-  // ----- Audio refs/state (TS-safe) -----
+  
   const audioCtxRef = useRef<AudioContext | null>(null);
   const oscRef = useRef<OscillatorNode | null>(null);
   const gainRef = useRef<GainNode | null>(null);
   const rafRef = useRef<number | null>(null);
   const [audioUnlocked, setAudioUnlocked] = useState(false);
 
-  // Guaranteed (non-null) AudioContext getter
+  
   const getCtx = (): AudioContext => {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!audioCtxRef.current) {
@@ -71,7 +71,7 @@ export default function SOSPage() {
     return audioCtxRef.current as AudioContext;
   };
 
-  // Resume context if suspended; return true if running
+  
   const ensureAudioUnlocked = async (): Promise<boolean> => {
     const ctx = getCtx();
     if (ctx.state === 'suspended') {
@@ -84,7 +84,7 @@ export default function SOSPage() {
     return ok;
   };
 
-  // Unlock on first user gesture
+  
   useEffect(() => {
     const handler = () => {
       ensureAudioUnlocked().finally(() => {
@@ -129,7 +129,7 @@ export default function SOSPage() {
     const ctx = getCtx();
     if (ctx.state !== 'running') return;
 
-    // clean any previous run
+    
     stopSiren();
 
     const osc = ctx.createOscillator();
@@ -159,7 +159,7 @@ export default function SOSPage() {
     gainRef.current = gain;
   };
 
-  // Fetch by id if no store data (hard refresh/direct link)
+  
   useEffect(() => {
     if (storeData) return;
     if (!id) return;
@@ -178,7 +178,7 @@ export default function SOSPage() {
     })();
   }, [id, storeData]);
 
-  // Build the data to display
+  
   const data: SOSPayload | null = useMemo(() => {
     if (storeData) return storeData as SOSPayload;
     if (fetchedData) return fetchedData;
@@ -192,7 +192,7 @@ export default function SOSPage() {
     };
   }, [storeData, fetchedData, id]);
 
-  // Theme classes based on type
+  
   const pageBgClass = useMemo(() => {
     switch (data?.type) {
       case 'Fire':
@@ -219,7 +219,7 @@ export default function SOSPage() {
     }
   }, [data?.type]);
 
-  // Countdown timer
+  
   useEffect(() => {
     const t = window.setInterval(() => {
       setSecondsLeft((s) => (s > 0 ? s - 1 : 0));
@@ -227,7 +227,7 @@ export default function SOSPage() {
     return () => clearInterval(t);
   }, []);
 
-  // Start siren when timer hits 0 (if audio is unlocked)
+  
   useEffect(() => {
     if (secondsLeft === 0 && data) {
       ensureAudioUnlocked().then((ok) => {
@@ -237,7 +237,7 @@ export default function SOSPage() {
     return () => stopSiren();
   }, [secondsLeft, data]);
 
-  // Guest info helpers (support guest OR populated guestId)
+  
   const guestObj: Guest =
     data?.guest ??
     (typeof data?.guestId === 'object' ? (data?.guestId as Guest) : {});
@@ -265,17 +265,17 @@ export default function SOSPage() {
 
   return (
     <main className={`relative min-h-screen overflow-hidden ${pageBgClass}`}>
-      {/* Header */}
+      {}
       <header className="pt-12 text-center text-white flex flex-col items-center gap-3">
         <div className="flex items-center gap-2">{getEmergencyIcon(data.type)}</div>
         <h1 className="text-5xl font-extrabold tracking-wide drop-shadow-sm md:text-6xl">SOS</h1>
         <p className="text-xl font-medium opacity-95 md:text-2xl">{data.type}</p>
       </header>
 
-      {/* Card */}
+      {}
       <section className="mx-auto mt-10 flex max-w-3xl justify-center px-4">
         <div className={`relative w-full rounded-3xl ${cardClass} border-2 p-10 shadow-xl backdrop-blur-md ring-1`}>
-          {/* Timer */}
+          {}
           <div className="absolute right-4 top-3 select-none text-lg font-semibold text-white/90">
             {formatTime(secondsLeft)}
           </div>
@@ -293,7 +293,7 @@ export default function SOSPage() {
               {fetching && <p className="text-sm opacity-80">Loading details…</p>}
             </div>
 
-            {/* Show when autoplay blocked */}
+            {}
             {!audioUnlocked && (
               <div className="text-center">
                 <button

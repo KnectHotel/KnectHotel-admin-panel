@@ -1,5 +1,5 @@
-// utils/roomSync.ts
-// Utility to sync room management data with hotel management form
+
+
 
 import { setLocalStorageItem, getLocalStorageItem } from './localstorage';
 
@@ -12,41 +12,33 @@ export interface RoomSyncData {
   maxOccupancy?: number;
   roomSize?: string;
   baseRate?: number;
-  amenities?: string; // comma separated
+  amenities?: string; 
 }
 
 const ROOM_SYNC_KEY = 'room_management_sync_data';
 
-/**
- * Save room management data to sync with hotel form
- */
+
 export function saveRoomSyncData(data: RoomSyncData): void {
   setLocalStorageItem(ROOM_SYNC_KEY, data);
 }
 
-/**
- * Get room management data for syncing
- */
+
 export function getRoomSyncData(): RoomSyncData | null {
   return getLocalStorageItem<RoomSyncData>(ROOM_SYNC_KEY);
 }
 
-/**
- * Clear room sync data
- */
+
 export function clearRoomSyncData(): void {
   if (typeof window !== 'undefined') {
     localStorage.removeItem(ROOM_SYNC_KEY);
   }
 }
 
-/**
- * Convert room sync data to hotel form roomConfigs format
- */
+
 export function convertToRoomConfigs(data: RoomSyncData): { roomType: string; features: string[] } {
   const features: string[] = [];
   
-  // Convert amenities (comma separated) to features array
+  
   if (data.amenities) {
     const amenityList = data.amenities
       .split(',')
@@ -55,7 +47,7 @@ export function convertToRoomConfigs(data: RoomSyncData): { roomType: string; fe
     features.push(...amenityList);
   }
   
-  // Add other fields as features if they exist
+  
   if (data.roomCategory) {
     features.push(`Category: ${data.roomCategory}`);
   }

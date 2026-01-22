@@ -36,7 +36,7 @@ type ServicesReportRes = {
   cancelledServices: number;
   avgServiceRating: number;
   avgAgentRating: number;
-  // — These were getting dropped earlier —
+  
   excelBase64?: string;
   excelFileName?: string;
 };
@@ -51,39 +51,39 @@ const cf = new Intl.NumberFormat('en-IN', {
 const oneDecimal = (n: number | null | undefined) =>
   n == null ? '—' : (Math.round(n * 10) / 10).toFixed(1);
 
-/** Only keep specific services + add 'all' */
-// const SERVICE_OPTIONS = [
-//   'all',
-//   'InRoomControlRequest',
-//   'HousekeepingRequest',
-//   'FacilityRequest',
-//   'InRoomDiningBooking',
-//   'SpaSalonBooking'
-// ] as const;
-/** Only keep specific services + add 'all' */
+
+
+
+
+
+
+
+
+
+
 const SERVICE_OPTIONS = [
   'all',
   'InRoomControlRequest',
   'HousekeepingRequest',
-  'FacilityRequest', // Added Gym
-  'SwimmingPoolBooking', // Added SwimmingPoolBooking
-  'ConciergeRequest', // Added ConciergeRequest
+  'FacilityRequest', 
+  'SwimmingPoolBooking', 
+  'ConciergeRequest', 
   'InRoomDiningBooking',
   'SpaSalonBooking'
-  // 'ConferenceHall', // Added ConferenceHall
-  // 'CommunityHall' // Added CommunityHall
+  
+  
 ] as const;
 
 export default function ServicesReportsPage() {
   const today = new Date();
 
-  // default: last 30 days through today
+  
   const [range, setRange] = useState<DateRange | undefined>({
     from: subDays(today, 30),
     to: today
   });
 
-  /** default to 'all' */
+  
   const [service, setService] = useState<string>('all');
 
   const [data, setData] = useState<ServicesReportRes | null>(null);
@@ -100,30 +100,30 @@ export default function ServicesReportsPage() {
     [range?.to]
   );
 
-  // Turn "InRoomDiningBooking" -> "In Room Dining Booking", "all" -> "All"
-  // const humanizeService = (s: string) =>
-  //   s === 'all'
-  //     ? 'All'
-  //     : s
-  //         .replace(/([a-z])([A-Z0-9])/g, '$1 $2')
-  //         .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
-  //         .replace(/\b[a-z]/g, (m) => m.toUpperCase());
-  // const humanizeService = (s: string) =>
-  //   s === 'all'
-  //     ? 'All'
-  //     : s
-  //         .replace(/([a-z])([A-Z0-9])/g, '$1 $2')
-  //         .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
-  //         .replace(/\b[a-z]/g, (m) => m.toUpperCase())
-  //         .replace('Gym', 'Gym') // Ensuring that Gym is correctly capitalized
-  //         .replace('SwimmingPoolBooking', 'Swimming Pool Booking') // Formatting SwimmingPoolBooking
-  //         .replace('ConferenceHall', 'Conference Hall') // Formatting ConferenceHall
-  //         .replace('CommunityHall', 'Community Hall'); // Formatting CommunityHall
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   const humanizeService = (s: string) => {
     if (s === 'all') return 'All';
 
-    // Remove the 'Request' word in the dropdown, but keep it for the API call
-    if (s === 'FacilityRequest') return 'Gym/Conference Hall/Community Hall'; // For display, show 'Facility' instead of 'FacilityRequest'
+    
+    if (s === 'FacilityRequest') return 'Gym/Conference Hall/Community Hall'; 
     if (s === 'InRoomControlRequest') return 'In Room Control';
     if (s === 'HousekeepingRequest') return 'Housekeeping';
     if (s === 'ConciergeRequest') return 'Concierge';
@@ -223,13 +223,13 @@ export default function ServicesReportsPage() {
   }, [startDate, endDate, service]);
 
   function handleExcelDownload() {
-    // Only allow for "All" services
+    
     if (service !== 'all') return;
     if (!data?.excelBase64 || !data?.excelFileName) return;
 
     setDownloading(true);
     try {
-      // Use a direct data URL to avoid atob/Blob issues with very large base64 strings
+      
       const a = document.createElement('a');
       a.href = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${data.excelBase64}`;
       a.download = data.excelFileName;
@@ -251,22 +251,9 @@ export default function ServicesReportsPage() {
           <div className="flex items-center justify-between">
             <Heading title="Services Report" className="mt-0 md:mt-0" />
 
-            {/* Filters: Service, Date Range and Download button */}
+            {}
             <div className="flex items-center gap-3">
-              {/* <Select value={service} onValueChange={setService}>
-                <SelectTrigger className="min-w-[220px]">
-                  <SelectValue placeholder="All Services">
-                    {humanizeService(service)}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {SERVICE_OPTIONS.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {humanizeService(s)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select> */}
+              {}
               <Select value={service} onValueChange={setService}>
                 <SelectTrigger className="min-w-[220px]">
                   <SelectValue placeholder="All Services">
@@ -422,7 +409,7 @@ export default function ServicesReportsPage() {
   );
 }
 
-/** Preserve excel fields (bug fix) and coerce numerics safely */
+
 function normalize(p: Partial<ServicesReportRes>): ServicesReportRes {
   return {
     totalServices: toNum(p.totalServices),
@@ -435,8 +422,8 @@ function normalize(p: Partial<ServicesReportRes>): ServicesReportRes {
     cancelledServices: toNum(p.cancelledServices),
     avgServiceRating: toNum(p.avgServiceRating),
     avgAgentRating: toNum(p.avgAgentRating),
-    excelBase64: p.excelBase64, // ← keep these
-    excelFileName: p.excelFileName // ← keep these
+    excelBase64: p.excelBase64, 
+    excelFileName: p.excelFileName 
   };
 }
 const toNum = (v: any) =>

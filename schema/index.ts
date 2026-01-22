@@ -199,7 +199,6 @@ export const guestSchema = z
       reason: z.string().optional(),
     }).optional(),
 
-    // Payment Details
     paymentDetails: z.object({
       sellRate: z.number().default(300).optional(),
       netRate: z.number().default(0).optional(),
@@ -210,6 +209,13 @@ export const guestSchema = z
       tcs: z.number().default(0).optional(),
       tds: z.number().default(0).optional(),
       payAtHotel: z.boolean().default(false).optional(),
+      billingName: z.string().optional(),
+      billingEmail: z.string().optional(),
+      billingMobile: z.string().optional(),
+      companyName: z.string().optional(),
+      gstNumber: z.string().optional(),
+      corporateCode: z.string().optional(),
+      invoiceRequired: z.boolean().optional(),
     }).optional(),
 
     // Promo Info

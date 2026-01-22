@@ -50,7 +50,7 @@ export const columns: ColumnDef<TransactionDataType>[] = [
           bgColor = 'bg-red-300 text-red-800';
           break;
         default:
-          bgColor = 'bg-orange-200 text-orange-800'; // normal/default
+          bgColor = 'bg-orange-200 text-orange-800'; 
           break;
       }
 

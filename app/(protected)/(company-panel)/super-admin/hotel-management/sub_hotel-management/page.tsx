@@ -8,7 +8,7 @@ const SubHotelManagementPage = () => {
     <div className="flex flex-col w-full">
       <Navbar active search />
       <div className="container px-7 mt-20">
-        {/* <Heading title={`Hotels(Sub-Hotels)`} /> */}
+        {}
       </div>
       <div className="w-full h-screen">
         <div className="h-full w-full container">

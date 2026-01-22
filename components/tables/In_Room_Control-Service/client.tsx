@@ -170,14 +170,10 @@ export const InRoomControlDataTable: React.FC = () => {
           <div className="flex w-full justify-between items-center">
             <h2 className="text-coffee text-xl font-bold">In-room Control</h2>
             <div className="flex items-center gap-2">
-              {/* <ToggleButton /> */}
+              {}
             </div>
           </div>
-          {/* <Settings className="cursor-pointer" onClick={() => setIsModalOpen(true)} />
-          <PriceTimeSettingInRoomControlModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-          /> */}
+          {}
         </div>
       </div>
 

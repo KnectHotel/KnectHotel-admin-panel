@@ -18,16 +18,16 @@ const CellAction = (props: any) => {
 
   return (
     <>
-      {/* Action Buttons */}
+      {}
       <div className="flex items-center space-x-2">
-        {/* Edit User */}
+        {}
         <Button
           onClick={() => handleEditUser()}
           className="p-3 rounded-md group cursor-pointer hover:bg-[#a07d3d5e]"
         >
           <Edit className=" w-4 text-button-dark group-hover:text-white" />
         </Button>
-        {/* <ToggleButton /> */}
+        {}
       </div>
     </>
   );

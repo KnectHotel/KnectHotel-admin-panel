@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import ComplaintDashboard from './ComplaintDashboard'; // Your component
+import ComplaintDashboard from './ComplaintDashboard'; 
 import apiCall from '@/lib/axios';
-// Adjust if your API utility is different
+
 
 const ComplaintDashboardWrapper = () => {
   const [stats, setStats] = useState({

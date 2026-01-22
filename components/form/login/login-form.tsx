@@ -1,4 +1,4 @@
-// KnectHotel-admin-panel/components/form/login/login-form.tsx
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -48,7 +48,7 @@ const LoginForm = () => {
     }
   });
 
-  // Load saved credentials if "Remember me" was checked previously
+  
   useEffect(() => {
     const savedCredentials = getLocalStorageItem('rememberedCredentials');
     if (
@@ -73,21 +73,21 @@ const LoginForm = () => {
     setIsLoading(true);
     setLoginError(null);
 
-    // Save credentials if "Remember me" is checked
+    
     if (data.rememberMe) {
       setLocalStorageItem('rememberedCredentials', {
         email: data.email,
         password: data.password
       });
     } else {
-      // Clear saved credentials if "Remember me" is unchecked
+      
       localStorage.removeItem('rememberedCredentials');
     }
-    // Hardcoded test login bypass
+    
     if (data.email === 'info@knecthotel.com' && data.password === 'knect@123') {
       router.push('/super-admin/dashboard');
 
-      // Fake user object for testing
+      
       const fakeUser = {
         scope: 'Platform',
         isSuperAdmin: true,
@@ -124,8 +124,8 @@ const LoginForm = () => {
         const isSuperAdmin = response.user?.isSuperAdmin || false;
         const allowedModules =
           response.user?.permissions?.map((p) => p.module) || [];
-        // const serviceManagementModules = allServices.filter(service => allowedModules.includes(service.name));
-        // Secure token storage
+        
+        
         setSessionStorageItem('admin', {
           token: response.token,
           user: response.user,
@@ -134,12 +134,12 @@ const LoginForm = () => {
           permissions: response.user?.permissions || []
         });
 
-        // Set secure cookie for middleware
+        
         document.cookie = `token=${response.token}; path=/; SameSite=Lax`;
         const s = getSocket();
         socketRef.current = s;
         if (s) {
-          // Initialize connection state and listeners
+          
           setIsSocketConnected(s.connected);
           s.on('connect', () => setIsSocketConnected(true));
           s.on('disconnect', () => setIsSocketConnected(false));
@@ -147,17 +147,17 @@ const LoginForm = () => {
           s.on('sos', (data) => console.log(data));
         }
 
-        // Determine redirect based on user role/scope
+        
         const redirectPath = determineRedirectPath(response.user);
         router.push(redirectPath);
         console.log('Login successful:', response);
         console.log('Allowed modules:', allowedModules);
-        // console.log('service ManagementModules', serviceManagementModules)
+        
       } else {
         throw new Error('Invalid login credentials');
       }
     } catch (error: any) {
-      // Handle different types of errors with user-friendly messages
+      
       if (!navigator.onLine) {
         setLoginError(
           'No internet connection. Please check your network and try again.'
@@ -178,13 +178,13 @@ const LoginForm = () => {
         setLoginError(error.message || 'Login failed. Please try again later.');
       }
       setSnackbarOpen(true);
-      // console.error('Login error:', error);
+      
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Determine redirect path based on user role/scope
+  
   const determineRedirectPath = (user: LoginResponse['user']) => {
     switch (user.scope) {
       case 'Platform':
@@ -231,7 +231,7 @@ const LoginForm = () => {
             className="flex flex-col gap-8 text-black"
           >
             <div className="space-y-4">
-              {/* Email Field */}
+              {}
               <FormField
                 control={form.control}
                 name="email"
@@ -266,7 +266,7 @@ const LoginForm = () => {
                 )}
               />
 
-              {/* Password Field */}
+              {}
               <FormField
                 control={form.control}
                 name="password"
@@ -307,7 +307,7 @@ const LoginForm = () => {
                 )}
               />
 
-              {/* Remember Me and Forgot Password */}
+              {}
               <div className="w-full flex justify-between items-center">
                 <FormField
                   control={form.control}
@@ -344,7 +344,7 @@ const LoginForm = () => {
               </div>
             </div>
 
-            {/* Submit Button */}
+            {}
             <Button
               type="submit"
               className="w-full btn-primary"
@@ -356,7 +356,7 @@ const LoginForm = () => {
           </form>
         </Form>
 
-        {/* Material UI Snackbar for Error Messages */}
+        {}
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={6000}

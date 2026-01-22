@@ -43,7 +43,7 @@ const EmployeeForm = ({ employeeID, isEnabled, mode, employeeData }: Props) => {
   const [roles, setRoles] = useState<Role[]>([]);
   const router = useRouter();
 
-  // Fetch roles when the form is opened
+  
   useEffect(() => {
     const fetchRoles = async () => {
       try {
@@ -53,7 +53,7 @@ const EmployeeForm = ({ employeeID, isEnabled, mode, employeeData }: Props) => {
         );
         console.log('aaaaaaaaaa', response);
         if (response.status) {
-          setRoles(response.roles); // Set roles in state
+          setRoles(response.roles); 
         }
       } catch (error) {
         console.error('Error fetching roles:', error);
@@ -86,21 +86,21 @@ const EmployeeForm = ({ employeeID, isEnabled, mode, employeeData }: Props) => {
         status: data.status
       };
 
-      // If not in 'edit' mode, include the password (i.e., creating a new employee)
+      
       if (mode !== 'edit' && data.password) {
         payload.password = data.password;
       }
 
       let response;
       if (mode === 'edit') {
-        // If editing, send PUT request (without password)
+        
         response = await apiCall<{ status: boolean; message: string }>(
           'PUT',
-          `api/employee/${employeeID}`, // Employee ID for editing
+          `api/employee/${employeeID}`, 
           payload
         );
       } else {
-        // If creating, send POST request (with password)
+        
         response = await apiCall<{ status: boolean; message: string }>(
           'POST',
           'api/employee/',
@@ -268,7 +268,7 @@ const EmployeeForm = ({ employeeID, isEnabled, mode, employeeData }: Props) => {
                         {...field}
                         maxLength={10}
                         onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
+                          const value = e.target.value.replace(/\D/g, ''); 
                           if (value.length <= 10) {
                             field.onChange(value);
                           }
@@ -281,39 +281,7 @@ const EmployeeForm = ({ employeeID, isEnabled, mode, employeeData }: Props) => {
                 </FormItem>
               )}
             />
-            {/* <FormField
-              control={employeeForm.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-black text-[0.8rem]">
-                    Role
-                    {isEnabled && <span className="text-red-500 ml-1">*</span>}
-                  </FormLabel>
-                  <FormControl>
-                    <div className="flex gap-1">
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <SelectTrigger className="w-full bg-[#F6EEE0] text-gray-700 p-2 rounded-md border-none relative pr-8">
-                          <SelectValue placeholder="Select Role" />
-                          <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4 pointer-events-none" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-[#362913] rounded-2xl text-white border-2 shadow-md border-white">
-                          {roles.map((role) => (
-                            <SelectItem key={role._id} value={role._id}>
-                              {role.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
+            {}
             <FormField
               control={employeeForm.control}
               name="role"
@@ -334,7 +302,7 @@ const EmployeeForm = ({ employeeID, isEnabled, mode, employeeData }: Props) => {
                           <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 h-4 w-4 pointer-events-none" />
                         </SelectTrigger>
 
-                        {/* 👇 Add these two classes */}
+                        {}
                         <SelectContent className="bg-[#362913] rounded-2xl text-white border-2 shadow-md border-white max-h-56 overflow-y-auto">
                           {roles.map((role) => (
                             <SelectItem key={role._id} value={role._id}>
@@ -376,7 +344,7 @@ const EmployeeForm = ({ employeeID, isEnabled, mode, employeeData }: Props) => {
               )}
             />
           </div>
-          {/* Buttons */}
+          {}
           <div className="flex items-center gap-3">
             <Button
               type="button"

@@ -27,7 +27,7 @@ const showToast = (icon: SweetAlertIcon, title: string, ms = 2200) =>
     timerProgressBar: true
   });
 
-// ---- time helpers ----
+
 const fmtDateTime = (iso?: string | null) => {
   if (!iso) return "—";
   const d = new Date(iso);
@@ -54,7 +54,7 @@ const humanizeDuration = (fromIso?: string | null, toIso?: string | null) => {
   return parts.join(" ");
 };
 
-// prefers `resolvedAt`, else if status is Resolved uses `updatedAt`
+
 const pickResolvedAt = (row: any) => {
   if (row?.resolvedAt) return row.resolvedAt as string;
   if (row?.status === "Resolved") return row?.updatedAt as string | undefined;
@@ -95,7 +95,7 @@ export const columns: ColumnDef<ComplaintItem>[] = [
         </div>
       );
     },
-    // optional: sort by total duration
+    
     sortingFn: (a, b) => {
       const ca = new Date((a.original as any).createdAt ?? 0).getTime();
       const ra = new Date(pickResolvedAt(a.original as any) ?? Date.now()).getTime();
@@ -119,8 +119,8 @@ export const columns: ColumnDef<ComplaintItem>[] = [
     cell: ({ row }) => {
       const [status, setStatus] = useState(row.original.status);
       const [open, setOpen] = useState(false);
-      const [isModalOpen, setIsModalOpen] = useState(false); // Modal state for remark
-      const [remark, setRemark] = useState(''); // State for remark
+      const [isModalOpen, setIsModalOpen] = useState(false); 
+      const [remark, setRemark] = useState(''); 
       const router = useRouter();
 
       const handleStatusChange = async (newStatus: string) => {
@@ -129,7 +129,7 @@ export const columns: ColumnDef<ComplaintItem>[] = [
         setOpen(false);
 
         if (newStatus === 'Resolved') {
-          setIsModalOpen(true); // Open modal when status is "Resolved"
+          setIsModalOpen(true); 
           return;
         }
 
@@ -142,7 +142,7 @@ export const columns: ColumnDef<ComplaintItem>[] = [
 
           showToast('success', 'Complaint status updated successfully');
         } catch (error: any) {
-          setStatus(prev); // revert on failure
+          setStatus(prev); 
           console.error('Status update error:', error?.response?.data || error?.message || error);
           showToast(
             'error',
@@ -164,7 +164,7 @@ export const columns: ColumnDef<ComplaintItem>[] = [
             { status: 'Resolved', remark }
           );
           showToast('success', 'Complaint marked as resolved with remark');
-          setIsModalOpen(false); // Close modal after saving the remark
+          setIsModalOpen(false); 
         } catch (error) {
           console.error('Error saving remark:', error);
           showToast('error', 'Failed to save remark');
@@ -211,7 +211,7 @@ export const columns: ColumnDef<ComplaintItem>[] = [
             </DropdownMenu.Portal>
           </DropdownMenu.Root>
 
-          {/* Show only when Resolved */}
+          {}
           {status === 'Resolved' && (
             <button
               onClick={() =>
@@ -223,7 +223,7 @@ export const columns: ColumnDef<ComplaintItem>[] = [
             </button>
           )}
 
-          {/* Modal for remark when status is Resolved */}
+          {}
           {isModalOpen && (
             <Dialog.Root open={isModalOpen} onOpenChange={() => setIsModalOpen(false)}>
               <Dialog.Overlay className="fixed inset-0 bg-black/40 z-40" />
@@ -289,7 +289,7 @@ export const columns: ColumnDef<ComplaintItem>[] = [
             {label}
           </button>
 
-          {/* Modal */}
+          {}
           <AssignComplaintModal
             open={open}
             onClose={() => setOpen(false)}

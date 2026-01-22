@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 
-// Removes attributes that some browser extensions inject (e.g. fdprocessedid)
-// which can cause React hydration mismatches. Also observes the DOM briefly
-// to remove newly injected attributes during initial load.
+
+
+
 export default function RemoveInjectedAttributes() {
   useEffect(() => {
     const ATTRS_TO_REMOVE = ['fdprocessedid'];
@@ -16,15 +16,15 @@ export default function RemoveInjectedAttributes() {
           els.forEach((el) => el.removeAttribute(attr));
         });
       } catch (e) {
-        // ignore
+        
       }
     }
 
-    // initial pass
+    
     removeAttrs(document);
 
-    // Observe mutations for a short period to clean up attributes injected
-    // by extensions that run slightly later than our script.
+    
+    
     const observer = new MutationObserver((mutations) => {
       for (const m of mutations) {
         if (m.type === 'attributes') {
@@ -52,7 +52,7 @@ export default function RemoveInjectedAttributes() {
       subtree: true
     });
 
-    // Stop observing after a short grace period
+    
     const timeout = setTimeout(() => observer.disconnect(), 3000);
 
     return () => {

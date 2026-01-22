@@ -15,11 +15,11 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import FormWrapper from '@/components/shared/change-password/form-wrapper'; // Adjust path as needed
+import FormWrapper from '@/components/shared/change-password/form-wrapper'; 
 import {
   changePasswordSchema,
   ChangePasswordSchemaType
-} from '../../../schema'; // Adjust path as needed
+} from '../../../schema'; 
 import apiCall from '@/lib/axios';
 
 export default function ChangePasswordForm() {
@@ -37,7 +37,7 @@ export default function ChangePasswordForm() {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
-  // Initialize form with schema resolver
+  
   const changePasswordForm = useForm<ChangePasswordSchemaType>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: {
@@ -47,7 +47,7 @@ export default function ChangePasswordForm() {
     }
   });
 
-  // Submit handler
+  
   const onChangePasswordSubmit = async (data: ChangePasswordSchemaType) => {
     try {
       const payload = {
@@ -67,8 +67,8 @@ export default function ChangePasswordForm() {
       );
       changePasswordForm.reset();
     } catch (error: any) {
-      // Hide the console error message
-      // console.error('Change password error:', error); // Remove or comment out this line
+      
+      
       showSnackbar(error.message || 'Failed to change password', 'error');
     }
   };
@@ -81,7 +81,7 @@ export default function ChangePasswordForm() {
           className="lg:flex flex-col w-full bg-[#FAF6EF] h-full justify-center items-start space-y-6 bg-[AF6EF] shadow-custom p-8 border-none outline-none rounded-md"
         >
           <div className="flex justify-between items-center w-full">
-            {/* Old Password Field */}
+            {}
             <FormField
               control={changePasswordForm.control}
               name="oldPassword"
@@ -101,7 +101,7 @@ export default function ChangePasswordForm() {
               )}
             />
 
-            {/* New Password Field */}
+            {}
             <FormField
               control={changePasswordForm.control}
               name="newPassword"
@@ -121,7 +121,7 @@ export default function ChangePasswordForm() {
               )}
             />
 
-            {/* Confirm New Password Field */}
+            {}
             <FormField
               control={changePasswordForm.control}
               name="confirmNewPassword"
@@ -144,7 +144,7 @@ export default function ChangePasswordForm() {
             />
           </div>
 
-          {/* Submit Button */}
+          {}
           <Button
             type="submit"
             className="btn-primary text-xs 2xl:text-sm xl:text-sm"

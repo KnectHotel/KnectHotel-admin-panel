@@ -6,7 +6,7 @@ import { dummyRoomTypes, dummyRoomUpgrades } from '@/data/roomUpgrades';
 import AnimatedSelect from '@/components/ui/AnimatedSelect';
 import { Upload, Plus, Trash } from 'lucide-react';
 
-/* SAFE FETCH FOR BACKEND FALLBACK */
+
 async function safeFetch(url: string) {
   try {
     const res = await fetch(url, { cache: 'no-store' });
@@ -37,7 +37,7 @@ export default function RoomUpgradePage() {
 
   const [amenityInput, setAmenityInput] = useState('');
 
-  /* LOAD REAL DATA IF API EXISTS */
+  
   useEffect(() => {
     async function load() {
       const apiHotels = await safeFetch('/api/hotels');
@@ -51,7 +51,7 @@ export default function RoomUpgradePage() {
     load();
   }, []);
 
-  /* AUTO-LOAD EXISTING UPGRADE DETAILS */
+  
   const loadUpgradeDetails = () => {
     if (!selectedHotel || !selectedRoomType) return;
 
@@ -101,37 +101,15 @@ export default function RoomUpgradePage() {
     >
       <h1 className="text-3xl font-bold">Room Upgrades</h1>
 
-      {/* CARD */}
+      {}
       <div
         className="rounded-xl shadow p-8 space-y-10"
         style={{ background: '#fff', border: '1px solid #e8dfd2' }}
       >
-        {/* SELECT HOTEL + VIEW BUTTON */}
-        {/* <div className="flex items-end gap-5">
-          <div className="flex-1">
-            <AnimatedSelect
-              label="HOTEL"
-              name="hotel"
-              searchable={true}
-              value={selectedHotel}
-              onChange={(e: any) => {
-                setSelectedHotel(e.target.value);
-              }}
-              options={hotels.map((h) => h._id)} // bind IDs
-            />
-          </div>
+        {}
+        {}
 
-          <button
-            onClick={() => setShowList(!showList)}
-            className="px-5 py-3 rounded-md text-white font-semibold"
-            style={{ background: '#B28A41' }}
-            disabled={!selectedHotel}
-          >
-            {showList ? 'Hide Upgrades' : 'View All Upgrades'}
-          </button>
-        </div> */}
-
-        {/* TABLE VIEW */}
+        {}
         {showList && (
           <div
             className="rounded-md p-6"
@@ -165,7 +143,7 @@ export default function RoomUpgradePage() {
           </div>
         )}
 
-        {/* MAIN FORM */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
           <AnimatedSelect
             label="ROOM TYPE"
@@ -203,7 +181,7 @@ export default function RoomUpgradePage() {
           />
         </div>
 
-        {/* IMAGE */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <div>
             <label className="font-medium text-sm mb-1 block">IMAGE</label>
@@ -230,7 +208,7 @@ export default function RoomUpgradePage() {
           </div>
         </div>
 
-        {/* AMENITIES */}
+        {}
         <div>
           <label className="font-medium text-sm block">AMENITIES</label>
 
@@ -271,7 +249,7 @@ export default function RoomUpgradePage() {
           </div>
         </div>
 
-        {/* DESCRIPTION */}
+        {}
         <div>
           <label className="font-medium text-sm mb-1 block">DESCRIPTION</label>
           <textarea
@@ -294,7 +272,7 @@ export default function RoomUpgradePage() {
   );
 }
 
-/* SMALL INPUT BOX */
+
 function InputBox(props: any) {
   return (
     <div>
